@@ -118,6 +118,7 @@ public Plugin:myinfo = {
 
 public OnPluginStart() {
     LoadTranslations("common.phrases");
+    LoadTranslations("retakes.phrases");
 
     /** ConVars **/
     g_hEditorEnabled = CreateConVar("sm_retakes_editor_enabled", "1", "Whether the editor can be launched by admins");

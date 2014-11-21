@@ -152,13 +152,6 @@ public Action Timer_GiveWeapons(Handle timer, int client) {
     if (!IsValidClient(client))
         return Plugin_Handled;
 
-    float ratio = float(g_NumCT) / float(g_NumT);
-    if (ratio >= 2.0 && g_Team[client] == CS_TEAM_CT) {
-        float f = GetRandomFloat();
-        if (f < 0.4)
-            g_PlayerNades[client] = "";
-    }
-
     Client_RemoveAllWeapons(client);
     GivePlayerItem(client, "weapon_knife");
 

@@ -38,7 +38,6 @@ public Action Command_EditSpawns(int client, args) {
         }
     }
 
-
     return Plugin_Handled;
 }
 
