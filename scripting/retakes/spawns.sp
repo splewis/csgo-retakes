@@ -6,8 +6,8 @@ static void GetConfigFileName(char[] buffer, int size) {
 }
 
 public void FindSites() {
-    g_SiteMins.Clear();
-    g_SiteMaxs.Clear();
+    ClearArray(g_SiteMins);
+    ClearArray(g_SiteMaxs);
 
     int maxEnt = GetMaxEntities();
     char sClassName[128];

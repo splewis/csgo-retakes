@@ -29,7 +29,6 @@ int g_Team[MAXPLAYERS+1] = 0;
 Handle g_hWaitingQueue = INVALID_HANDLE;
 Handle g_hRankingQueue = INVALID_HANDLE;
 
-
 /** ConVar handles **/
 Handle g_hCvarVersion = INVALID_HANDLE;
 Handle g_hEditorEnabled = INVALID_HANDLE;
