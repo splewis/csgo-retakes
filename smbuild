@@ -1,0 +1,5 @@
+Plugin(source='scripting/retakes.sp')
+
+Package(name='retakes-release',
+        plugins=['retakes'],
+)
