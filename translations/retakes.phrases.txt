@@ -12,7 +12,7 @@
 	"RetakeSiteMessage"
 	{
 		"#format"		"{1:s},{2:d},{3:d}"
-		"#en"			"Retake {GREEN}{1}: {LIGHT_RED}{2} Ts {NORMAL}vs {PURPLE}{3} CTs"
+		"en"			"Retake {GREEN}{1}: {LIGHT_RED}{2} Ts {NORMAL}vs {PURPLE}{3} CTs"
 	}
 	"ScrambleMessage"
 	{
