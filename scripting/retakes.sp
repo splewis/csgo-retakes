@@ -137,7 +137,6 @@ public OnPluginStart() {
 
     /** Admin commands **/
     RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_scenario", Command_EditSpawns, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_spawns", Command_EditSpawns, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_new", Command_AddPlayer, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_player", Command_AddPlayer, ADMFLAG_CHANGEMAP);
