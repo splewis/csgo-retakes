@@ -8,15 +8,70 @@ enum Bombsite {
     BombsiteB
 };
 
+/**
+ * Maxmimum length of a nade string. Example: "hfs" is a hegrenade, flashbang, and smoke.
+ */
 #define NADE_STRING_LENGTH 8
+
+/**
+ * Maxmimum length of a weapon name. Example: "weapon_ak47"
+ */
 #define WEAPON_STRING_LENGTH 32
 
+/**
+ * Called right before players get put onto teams for the next round.
+ * This is the best place to decide who goes onto what team if you want
+ * to change the default behavior.
+ *
+ * @param rankingQueue a priority queue (see include/priorityqueue.inc)
+ * @param waitingQueue a queue of the players waiting to join (see include/queue.inc)
+ * @noreturn
+ */
 forward void Retakes_OnPreRoundEnqueue(Handle rankingQueue, Handle waitingQueue);
+
+/**
+ * Called when the bombsite for the round is decided.
+ *
+ * @param site which bombsite the round will use
+ * @noreturn
+ */
 forward void Retakes_OnSitePicked(Bombsite& site);
+
+/**
+ * Called when the team sizes are set for the round.
+ *
+ * @param tCount the number of terrorists that will play the round
+ * @param ctcount the number of counter-terrorists that will play the round
+ * @noreturn
+ */
 forward void Retakes_OnTeamSizesSet(int& tCount, int& ctCount);
-forward void Retakes_OnTeamsSet();
+
+/**
+ * Called when a player fails to plant the bomb when he spawned with it.
+ *
+ * @param client the player that did not plant
+ * @noreturn
+ */
 forward void Retakes_OnFailToPlant(int client);
+
+/**
+ * Called when a team wins a round.
+ *
+ * @param winner the winning team (CS_TEAM_T or CS_TEAM_CT)
+ * @param tPlayers an ArrayList of the players on the terrorist team
+ * @param ctPlayers an ArrayList of the players on the counter-terrorist team
+ * @noreturn
+ */
 forward void Retakes_OnRoundWon(int winner, ArrayList tPlayers, ArrayList ctPlayers);
+
+/**
+ * Called when player weapons are being allocated for the round.
+ *
+ * @param tPlayers an ArrayList of the players on the terrorist team
+ * @param ctPlayers an ArrayList of the players on the counter-terrorist team
+ * @param bombsite
+ * @noreturn
+ */
 forward void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite);
 
 // Returns if the player has joined the game, i.e. if they are on a team or in the waiting queue.
