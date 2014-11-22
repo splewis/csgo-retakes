@@ -39,6 +39,7 @@ public Native_RetakeMessage(Handle plugin, numParams) {
     if (!IsPlayer(client))
         ThrowNativeError(SP_ERROR_PARAM, "Client %d is not a player", client);
 
+    SetGlobalTransTarget(client);
     char buffer[1024];
     int bytesWritten = 0;
     FormatNativeString(0, 2, 3, sizeof(buffer), bytesWritten, buffer);
@@ -52,14 +53,18 @@ public Native_RetakeMessage(Handle plugin, numParams) {
 
 public Native_RetakeMessageToAll(Handle plugin, numParams) {
     char buffer[1024];
-    int bytesWritten = 0;
-    FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
-
     char finalMsg[1024];
-    Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
-    Colorize(finalMsg, sizeof(finalMsg));
+    int bytesWritten = 0;
 
-    PrintToChatAll(finalMsg);
+    for (int i = 1; i <= MaxClients; i++) {
+        if (IsPlayer(i)) {
+            FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
+            Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
+
+            Colorize(finalMsg, sizeof(finalMsg));
+            PrintToChat(i, finalMsg);
+        }
+    }
 }
 
 public Native_GetNumActiveTs(Handle plugin, numParams) {

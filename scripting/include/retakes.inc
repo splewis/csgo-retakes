@@ -74,31 +74,92 @@ forward void Retakes_OnRoundWon(int winner, ArrayList tPlayers, ArrayList ctPlay
  */
 forward void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite);
 
-// Returns if the player has joined the game, i.e. if they are on a team or in the waiting queue.
-// Clients not joined can be considered AFK.
+/**
+ * Returns if a player has joined the game, i.e., if they are on T/Ct or in the waiting queue.
+ *
+ * @param client a player
+ * @return if the player has joined
+ */
 native bool Retakes_IsJoined(int client);
 
-// Returns if a client is in the waiting queue.
+/**
+ * Returns if a player is in the waiting queue.
+ *
+ * @param client a player
+ * @return if the player is in the waiting queue
+ */
 native bool Retakes_IsInQueue(int client);
 
-// Sends a retake formatted message to a client.
+/**
+ * Sends a retake formatted message to a client.
+ *
+ * @param client a player
+ * @param format string message
+ * @noreturn
+ */
 native void Retakes_Message(int client, const char[] format, any:...);
 
-// Sends a retake formatted message to all clients.
+/**
+ * Sends a retake formatted message to all clients.
+ *
+ * @param format string message
+ * @noreturn
+ */
 native void Retakes_MessageToAll(const char[] format, any:...);
 
+/**
+ * Returns the number of terrorists for the current round.
+ */
 native int Retakes_GetNumActiveTs();
+
+/**
+ * Returns the number of terrorists for the current round.
+ */
 native int Retakes_GetNumActiveCTs();
+
+/**
+ * Returns the number of active players (t+ct) for the current round.
+ */
 native int Retakes_GetNumActivePlayers();
+
+/**
+ * Returns the bombsite for the current scenario.
+ */
 native Bombsite Retakes_GetCurrrentBombsite();
 
+/**
+ * Returns the round points for a client in the current round.
+ */
 native int Retakes_GetRoundPoints(int client);
-native int Retakes_SetRoundPoints(int client, int points);
-native int Retakes_ChangeRoundPoints(int client, int dp);
 
+/**
+ * Sets the round points for a client in the current round.
+ */
+native int Retakes_SetRoundPoints(int client, int points);
+
+/**
+ * Changes the round points for a client in the current round.
+ */
+native void Retakes_ChangeRoundPoints(int client, int dp);
+
+/**
+ * Sets player weapon/equipment information for the current round.
+ */
 native void Retakes_SetPlayerInfo(int client, char[] primary="", char[] secondary="", char[] nades="", int health=100, int armor=0, bool helmet=false, bool kit=false);
+
+/**
+ * Returns the total number of live rounds played on the current map.
+ */
 native int Retakes_GetRetakeRoundsPlayed();
+
+/**
+ * Returns if the game is currently in a warmup phase.
+ */
 native bool Retakes_InWarmup();
+
+/**
+ * Returns the maximum number of players allowed into the game.
+ */
 native int Retakes_GetMaxPlayers();
 
 stock void GetSiteString(Bombsite site, char[] buffer, int length) {
