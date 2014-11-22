@@ -1,11 +1,11 @@
 #pragma semicolon 1
-
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
 #include <cstrike>
 #include <smlib>
 #include "include/retakes.inc"
+
 
 
 /***********************
@@ -22,7 +22,7 @@
 /** Client variable arrays **/
 int g_SpawnIndices[MAXPLAYERS+1] = 0;
 int g_RoundPoints[MAXPLAYERS+1] = 0;
-bool g_PluginTeamSwitch[MAXPLAYERS+1] = false;  // Flags the teamswitches as being done by the plugin)
+bool g_PluginTeamSwitch[MAXPLAYERS+1] = false;
 int g_Team[MAXPLAYERS+1] = 0;
 
 /** Queue Handles **/
@@ -40,17 +40,15 @@ Handle g_hRoundTime = INVALID_HANDLE;
 /** Editing global variables **/
 bool g_EditMode = false;
 int g_PlayerBeingEdited = -1;
+bool g_ShowingSpawns = false;
 
-/** Scenario info **/
-#define MAX_SPAWNS 256
-
+/** Win-streak data **/
 bool g_ScrambleSignal = false;
 int g_WinStreak = 0;
 int g_RoundCount = 0;
 
-bool g_ShowingSpawns = false;
-
-/** Stored info from the config file **/
+/** Stored info from the spawns config file **/
+#define MAX_SPAWNS 256
 int g_NumSpawns = 0;
 bool g_SpawnDeleted[MAX_SPAWNS];
 float g_SpawnPoints[MAX_SPAWNS][3];
@@ -59,7 +57,7 @@ Bombsite g_SpawnSites[MAX_SPAWNS];
 int g_SpawnTeams[MAX_SPAWNS];
 bool g_SpawnNoBomb[MAX_SPAWNS];
 
-/** Bomb-site stuff **/
+/** Bomb-site stuff read from the map **/
 ArrayList g_SiteMins = null;
 ArrayList g_SiteMaxs = null;
 
@@ -74,14 +72,16 @@ int g_PlayerArmor[MAXPLAYERS+1];
 bool g_PlayerHelmet[MAXPLAYERS+1];
 bool g_PlayerKit[MAXPLAYERS+1];
 
+/** Global offsets needed **/
 int g_helmetOffset = 0;
+
+/** Per-round information about the player setup **/
 bool g_bombPlanted = false;
 int g_BombOwner = -1;
 int g_NumCT = 0;
 int g_NumT = 0;
 int g_ActivePlayers = 0;
-bool g_RoundSpawnsDecided = false;
-
+bool g_RoundSpawnsDecided = false; // spawns are lazily decided on the first player spawn event
 
 /** Forwards **/
 Handle g_OnTeamsSet = INVALID_HANDLE;
@@ -91,7 +91,6 @@ Handle g_OnSitePicked = INVALID_HANDLE;
 Handle g_hOnTeamSizesSet = INVALID_HANDLE;
 Handle g_OnWeaponsAllocated = INVALID_HANDLE;
 Handle g_hOnPreRoundEnqueue = INVALID_HANDLE;
-
 
 #include "retakes/editor.sp"
 #include "retakes/generic.sp"
@@ -127,11 +126,11 @@ public OnPluginStart() {
     g_hRoundsToScramble = CreateConVar("sm_retakes_scramble_rounds", "10", "Consecutive terrorist wins to cause a team scramble.");
     g_hRoundTime = CreateConVar("sm_retakes_round_time", "12", "Round time left in seconds.");
 
-    g_hCvarVersion = CreateConVar("sm_retakes_version", PLUGIN_VERSION, "Current retakes version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
-    SetConVarString(g_hCvarVersion, PLUGIN_VERSION);
-
     /** Create/Execute retakes cvars **/
     AutoExecConfig(true, "retakes", "sourcemod/retakes");
+
+    g_hCvarVersion = CreateConVar("sm_retakes_version", PLUGIN_VERSION, "Current retakes version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
+    SetConVarString(g_hCvarVersion, PLUGIN_VERSION);
 
     /** Command hooks **/
     AddCommandListener(Command_TeamJoin, "jointeam");
@@ -197,7 +196,6 @@ public OnMapStart() {
     ServerCommand("mp_warmup_start");
 }
 
-
 public OnMapEnd() {
     WriteSpawns();
     Queue_Destroy(g_hWaitingQueue);
@@ -227,8 +225,6 @@ ResetClientVariables(client) {
     g_PluginTeamSwitch[client] = false;
     g_RoundPoints[client] = -POINTS_LOSS;
 }
-
-
 
 /***********************
  *                     *
@@ -644,7 +640,6 @@ public void UpdateTeams() {
     delete cts;
     PQ_Destroy(g_hRankingQueue);
 }
-
 
 /**
  * Timer event to handle Terrorist Win
