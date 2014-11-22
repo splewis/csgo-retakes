@@ -50,8 +50,26 @@ public Action Command_AddPlayer(int client, args) {
     char arg1[32];
     char arg2[32];
     if (args >= 2 && GetCmdArg(1, arg1, sizeof(arg1)) && GetCmdArg(2, arg2, sizeof(arg2))) {
-        int team = (StrEqual(arg1, "CT", false)) ? CS_TEAM_CT : CS_TEAM_T;
-        Bombsite site = (StrEqual(arg2, "A", false)) ? BombsiteA : BombsiteB;
+        int team;
+        if (StrEqual(arg1, "CT", false)) {
+            team = CS_TEAM_CT;
+        } else if (StrEqual(arg1, "T", false)) {
+            team = CS_TEAM_T;
+        } else {
+            ReplyToCommand(client, "Invalid team name: %s", arg1);
+            return Plugin_Handled;
+        }
+
+        Bombsite site;
+        if (StrEqual(arg2, "A", false)) {
+            site = BombsiteA;
+        } else if (StrEqual(arg2, "B", false)) {
+            site = BombsiteB;
+        } else {
+            ReplyToCommand(client, "Invalid bomb site name: %s", arg2);
+            return Plugin_Handled;
+        }
+
         g_PlayerBeingEdited = g_NumSpawns;
         g_SpawnTeams[g_PlayerBeingEdited] = team;
         g_SpawnSites[g_PlayerBeingEdited] = site;
