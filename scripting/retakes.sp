@@ -5,6 +5,8 @@
 #include <cstrike>
 #include <smlib>
 #include "include/retakes.inc"
+#include "include/priorityqueue.inc"
+#include "include/queue.inc"
 
 
 
@@ -84,7 +86,6 @@ int g_ActivePlayers = 0;
 bool g_RoundSpawnsDecided = false; // spawns are lazily decided on the first player spawn event
 
 /** Forwards **/
-Handle g_OnTeamsSet = INVALID_HANDLE;
 Handle g_OnFailToPlant = INVALID_HANDLE;
 Handle g_OnRoundWon = INVALID_HANDLE;
 Handle g_OnSitePicked = INVALID_HANDLE;
@@ -95,8 +96,6 @@ Handle g_hOnPreRoundEnqueue = INVALID_HANDLE;
 #include "retakes/editor.sp"
 #include "retakes/generic.sp"
 #include "retakes/natives.sp"
-#include "retakes/priorityqueue.sp"
-#include "retakes/queue.sp"
 #include "retakes/spawns.sp"
 
 
@@ -160,7 +159,6 @@ public OnPluginStart() {
     HookEvent("round_end", Event_RoundEnd);
 
     g_OnFailToPlant = CreateGlobalForward("Retakes_OnFailToPlant", ET_Ignore, Param_Cell);
-    g_OnTeamsSet = CreateGlobalForward("Retakes_OnTeamsSet", ET_Ignore);
     g_OnRoundWon = CreateGlobalForward("Retakes_OnRoundWon", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
     g_OnSitePicked = CreateGlobalForward("Retakes_OnSitePicked", ET_Ignore, Param_CellByRef);
     g_hOnTeamSizesSet = CreateGlobalForward("Retakes_OnTeamSizesSet", ET_Ignore, Param_CellByRef, Param_CellByRef);
@@ -224,6 +222,8 @@ ResetClientVariables(client) {
     g_PluginTeamSwitch[client] = false;
     g_RoundPoints[client] = -POINTS_LOSS;
 }
+
+
 
 /***********************
  *                     *
@@ -418,9 +418,6 @@ public Event_RoundPreStart(Handle event, const char[] name, bool dontBroadcast) 
     RoundEndUpdates();
     UpdateTeams();
 
-    Call_StartForward(g_OnTeamsSet);
-    Call_Finish();
-
     ArrayList ts = ArrayList();
     for (int i = 1; i < MaxClients; i++) {
         if (IsValidClient(i) && IsOnTeam(i)) {
@@ -527,7 +524,6 @@ public void RoundEndUpdates() {
     Call_PushCell(g_hWaitingQueue);
     Call_Finish();
 
-
     for (int i = 1; i <= MaxClients; i++) {
         if (IsPlayer(i) && IsOnTeam(i)) {
             PQ_Enqueue(g_hRankingQueue, i, g_RoundPoints[i]);
@@ -618,6 +614,13 @@ public void UpdateTeams() {
             g_PlayerHealth[client] = 100;
             g_PlayerArmor[client] = 100;
             g_PlayerHelmet[client] = true;
+        }
+    }
+
+    while (!PQ_IsEmpty(g_hRankingQueue)) {
+        int client = PQ_Dequeue(g_hRankingQueue);
+        if (IsPlayer(client)) {
+            Queue_EnqueueFront(g_hWaitingQueue, client);
         }
     }
 
