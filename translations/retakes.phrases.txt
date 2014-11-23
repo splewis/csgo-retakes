@@ -17,7 +17,7 @@
 	"ScrambleMessage"
 	{
 		"#format"		"{1:d}"
-		"en"			"The terrorists won {GREEN}{1}{NORMAL} rounds in a row. {PURPLE}Teams are being scrambled!""
+		"en"			"The terrorists won {GREEN}{1}{NORMAL} rounds in a row. {PURPLE}Teams are being scrambled!"
 	}
 	"WinStreakAlmostToScramble"
 	{
