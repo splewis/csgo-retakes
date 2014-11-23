@@ -56,7 +56,7 @@ Here is how to operate the spawn editor:
 - use ``sm_show`` to show the spawns for a site. Example: ``!show a`` in chat will show all spawns for bombsite A.
 - use ``sm_deletespawn`` to delete the nearest spawn. Example: ``!deletespawn`` in chat.
 - use ``sm_bomb`` to toggle whether to display all spawns or potential bomb-carrier spawns. Example: ``!bomb`` in chat
-- use ``sm_nobomb`` to mark a spawn as unavailable to a bomb carrier. (by default, all bombs within the xy plane of a bombsite are available for a bomb carrier). Example: ``!nobomb`` in chat on top of the spawn you want to edit.
+- use ``sm_nobomb`` to mark a spawn as unavailable to a bomb carrier. (by default, all spawns within the xy plane of a bombsite are available for a bomb carrier). Example: ``!nobomb`` in chat on top of the spawn you want to edit.
 
 ## Contribution and Suggestions
 First, check the [issue tracker](https://github.com/splewis/csgo-multi-1v1/issues?state=open) to ask questions or make a suggestion.

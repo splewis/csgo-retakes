@@ -121,7 +121,7 @@ public OnPluginStart() {
     /** ConVars **/
     g_hEditorEnabled = CreateConVar("sm_retakes_editor_enabled", "1", "Whether the editor can be launched by admins");
     g_hMaxPlayers = CreateConVar("sm_retakes_maxplayers", "9", "Maximum number of players allowed in the game at once.", _, true, 2.0);
-    g_hRatioConstant = CreateConVar("sm_retakes_ratio_constant", "0.4", "Ratio constant for team sizes.");
+    g_hRatioConstant = CreateConVar("sm_retakes_ratio_constant", "0.425", "Ratio constant for team sizes.");
     g_hRoundsToScramble = CreateConVar("sm_retakes_scramble_rounds", "10", "Consecutive terrorist wins to cause a team scramble.");
     g_hRoundTime = CreateConVar("sm_retakes_round_time", "12", "Round time left in seconds.");
 
