@@ -16,6 +16,11 @@
  *                     *
  ***********************/
 
+/**
+ * The general way players are put on teams is using a system of
+ * "round points". Actions during a round earn points, and at the end of the round,
+ * players are put into a priority queue using their rounds as the value.
+ */
 #define POINTS_KILL 300
 #define POINTS_DMG 10
 #define POINTS_BOMB 150
@@ -78,6 +83,7 @@ bool g_PlayerKit[MAXPLAYERS+1];
 int g_helmetOffset = 0;
 
 /** Per-round information about the player setup **/
+bool g_bombPlantSignal = false;
 bool g_bombPlanted = false;
 int g_BombOwner = -1;
 int g_NumCT = 0;
@@ -391,6 +397,7 @@ public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadc
  */
 public Event_BombPlant(Handle event, const char[] name, bool dontBroadcast) {
     g_bombPlanted = true;
+    g_bombPlantSignal = false;
 }
 
 /**
@@ -643,9 +650,6 @@ public void UpdateTeams() {
     PQ_Destroy(g_hRankingQueue);
 }
 
-/**
- * Timer event to handle Terrorist Win
- */
 public void TerroristsWon() {
     int toScramble = GetConVarInt(g_hRoundsToScramble);
     g_WinStreak++;
@@ -661,9 +665,6 @@ public void TerroristsWon() {
     }
 }
 
-/**
- * Timer event to handle Counter-Terrorist Win
- */
 public void CounterTerroristsWon() {
     if (!g_bombPlanted && IsValidClient(g_BombOwner) && g_RoundCount >= 3) {
         Retakes_MessageToAll("\x03%N \x01failed to plant...", g_BombOwner);

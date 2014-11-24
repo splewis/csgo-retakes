@@ -145,7 +145,26 @@ native void Retakes_ChangeRoundPoints(int client, int dp);
 /**
  * Sets player weapon/equipment information for the current round.
  */
-native void Retakes_SetPlayerInfo(int client, char[] primary="", char[] secondary="", char[] nades="", int health=100, int armor=0, bool helmet=false, bool kit=false);
+native void Retakes_SetPlayerInfo(int client,
+                                  const char[] primary="",
+                                  const char[] secondary="",
+                                  const char[] nades="",
+                                  int health=100,
+                                  int armor=0,
+                                  bool helmet=false,
+                                  bool kit=false);
+
+/**
+ * Gets player weapon/equipment information for the current round.
+ */
+native void Retakes_GetPlayerInfo(int client,
+                                  char primary[WEAPON_STRING_LENGTH],
+                                  char secondary[WEAPON_STRING_LENGTH],
+                                  char nades[NADE_STRING_LENGTH],
+                                  int& health,
+                                  int& armor,
+                                  bool& helmet,
+                                  bool& kit);
 
 /**
  * Returns the total number of live rounds played on the current map.
@@ -194,6 +213,7 @@ public __pl_retakes_SetNTVOptional() {
     MarkNativeAsOptional("Retakes_SetRoundPoints");
     MarkNativeAsOptional("Retakes_ChangeRoundPoints");
     MarkNativeAsOptional("Retakes_SetPlayerInfo");
+    MarkNativeAsOptional("Retakes_GetPlayerInfo");
     MarkNativeAsOptional("Retakes_GetRetakeRoundsPlayed");
     MarkNativeAsOptional("Retakes_InWarmup");
     MarkNativeAsOptional("Retakes_GetMaxPlayers");

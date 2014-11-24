@@ -12,6 +12,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max) {
     CreateNative("Retakes_GetRoundPoints", Native_GetRoundPoints);
     CreateNative("Retakes_SetRoundPoints", Native_SetRoundPoints);
     CreateNative("Retakes_ChangeRoundPoints", Native_ChangeRoundPoints);
+    CreateNative("Retakes_GetPlayerInfo", Native_GetPlayerInfo);
     CreateNative("Retakes_SetPlayerInfo", Native_SetPlayerInfo);
     CreateNative("Retakes_GetRetakeRoundsPlayed", Native_GetRetakeRoundsPlayed);
     CreateNative("Retakes_InWarmup", Native_InWarmup);
@@ -58,6 +59,7 @@ public Native_RetakeMessageToAll(Handle plugin, numParams) {
 
     for (int i = 1; i <= MaxClients; i++) {
         if (IsPlayer(i)) {
+            SetGlobalTransTarget(i);
             FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
             Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
 
@@ -109,6 +111,21 @@ public Native_ChangeRoundPoints(Handle plugin, numParams) {
     g_RoundPoints[client] += dp;
 }
 
+public Native_GetPlayerInfo(Handle plugin, numParams) {
+    int client = GetNativeCell(1);
+    if (client <= 0)
+        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not a player", client);
+
+    SetNativeString(2, g_PlayerPrimary[client], WEAPON_STRING_LENGTH);
+    SetNativeString(3, g_PlayerSecondary[client], WEAPON_STRING_LENGTH);
+    SetNativeString(4, g_PlayerNades[client], NADE_STRING_LENGTH);
+
+    SetNativeCellRef(5, g_PlayerHealth[client]);
+    SetNativeCellRef(6, g_PlayerArmor[client]);
+    SetNativeCellRef(7, g_PlayerHelmet[client]);
+    SetNativeCellRef(8, g_PlayerKit[client]);
+}
+
 public Native_SetPlayerInfo(Handle plugin, numParams) {
     int client = GetNativeCell(1);
     if (client <= 0)
@@ -117,6 +134,7 @@ public Native_SetPlayerInfo(Handle plugin, numParams) {
     GetNativeString(2, g_PlayerPrimary[client], WEAPON_STRING_LENGTH);
     GetNativeString(3, g_PlayerSecondary[client], WEAPON_STRING_LENGTH);
     GetNativeString(4, g_PlayerNades[client], NADE_STRING_LENGTH);
+
     g_PlayerHealth[client] = GetNativeCell(5);
     g_PlayerArmor[client] = GetNativeCell(6);
     g_PlayerHelmet[client] = GetNativeCell(7);
