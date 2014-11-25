@@ -23,21 +23,24 @@ public Action Command_Site(int client, args) {
     char arg[32];
     if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
         if (StrEqual(arg, "a", false)) {
-        	g_forceSite = true;
-        	g_pickedSite = BombsiteA;
+            g_forceSite = true;
+            g_pickedSite = BombsiteA;
+            Retakes_Message(client, "Now only using bombsite A");
         } else  if (StrEqual(arg, "b", false)) {
-        	g_forceSite = true;
-        	g_pickedSite = BombsiteB;
+            g_forceSite = true;
+            g_pickedSite = BombsiteB;
+            Retakes_Message(client, "Now only using bombsite B");
         } else {
-        	g_forceSite = false;
+            g_forceSite = false;
+            Retakes_Message(client, "Now using all bombsites");
         }
     } else {
-    	ReplyToCommand(client, "Usage: sm_site [a|b|any]");
+        Retakes_Message(client, "Usage: sm_site [a|b|any]");
     }
 }
 
 public void Retakes_OnSitePicked(Bombsite& site) {
-	if (g_forceSite) {
-		site = g_pickedSite;
-	}
+    if (g_forceSite) {
+        site = g_pickedSite;
+    }
 }
