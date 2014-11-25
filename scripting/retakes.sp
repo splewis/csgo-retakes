@@ -193,7 +193,7 @@ public OnMapStart() {
     FindSites();
     g_NumSpawns = ParseSpawns();
     if (g_NumSpawns < 10) {
-        Command_EditSpawns(0);
+        Command_EditSpawns(0, 0);
     }
 
     g_hWaitingQueue = Queue_Init();
