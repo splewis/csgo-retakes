@@ -175,7 +175,7 @@ public Action Timer_ShowSpawns(Handle timer) {
 }
 
 public bool SpawnFilter(int i) {
-    return !g_SpawnDeleted[i] && g_ShowingSite == g_SpawnSites[i] && (!g_ShowingBombSpawns || CloseToBomb(i));
+    return !g_SpawnDeleted[i] && g_ShowingSite == g_SpawnSites[i] && (!g_ShowingBombSpawns || InsideBombSite(i));
 }
 
 public void TeamMenu(int client) {

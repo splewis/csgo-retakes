@@ -183,12 +183,19 @@ public OnMapStart() {
     g_RoundCount = 0;
     g_RoundSpawnsDecided = false;
 
+    g_bombPlanted = false;
+    g_bombPlantSignal = false;
+
     g_ShowingSpawns = false;
     g_EditMode = false;
     CreateTimer(1.0, Timer_ShowSpawns, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 
     FindSites();
     g_NumSpawns = ParseSpawns();
+    if (g_NumSpawns < 10) {
+        Command_EditSpawns(0);
+    }
+
     g_hWaitingQueue = Queue_Init();
     ServerCommand("exec sourcemod/retakes/retakes_game.cfg");
 

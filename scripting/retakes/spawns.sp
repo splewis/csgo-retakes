@@ -144,7 +144,6 @@ public void SetupPlayer(int client) {
 
     SwitchPlayerTeam(client, g_Team[client]);
     TeleportEntity(client, g_SpawnPoints[spawnIndex], g_SpawnAngles[spawnIndex], NULL_VECTOR);
-    // GiveWeapons(client);
     CreateTimer(0.1, Timer_GiveWeapons, client);
 }
 
@@ -190,12 +189,11 @@ public Action Timer_GiveWeapons(Handle timer, int client) {
 
 // public Action Timer_StartPlant(Handle timer, any:client) {
 //     if (IsPlayer(client)) {
-//         g_BombPlantSignal = true;
+//         g_bombPlantSignal = true;
 //     }
 // }
 
-
-public bool CloseToBomb(int spawnIndex) {
+public bool InsideBombSite(int spawnIndex) {
     float spawn[3];
     spawn = g_SpawnPoints[spawnIndex];
 
@@ -217,11 +215,13 @@ public bool CloseToBomb(int spawnIndex) {
 }
 
 // public Action OnPlayerRunCmd(int client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon, &subtype, &cmdnum, &tickcount, &seed, mouse[2]) {
-//     if (g_BombPlantSignal && client == g_BombOwner) {
-//         // g_BombPlantSignal = false;
+//     if (g_bombPlantSignal && !g_bombPlanted && client == g_BombOwner && !Retakes_InWarmup()) {
 //         buttons |= IN_USE;
+//         // buttons |= IN_DUCK;
+//         // LogMessage("forcing player bomb plant");
 //         return Plugin_Changed;
 //     }
+
 //     return Plugin_Continue;
 // }
 
@@ -233,7 +233,7 @@ public int SelectSpawn(int client, bool bombSpawn) {
     int team = g_Team[client];
     for (int i = 0; i < g_NumSpawns; i++) {
         if (g_SpawnTeams[i] == team && !g_SpawnTaken[i] && g_Bombsite == g_SpawnSites[i]) {
-            if (!bombSpawn || CloseToBomb(i))
+            if (!bombSpawn || InsideBombSite(i))
                 potentialSpawns.Push(i);
         }
     }
