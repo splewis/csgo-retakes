@@ -144,12 +144,12 @@ public void SetupPlayer(int client) {
 
     SwitchPlayerTeam(client, g_Team[client]);
     TeleportEntity(client, g_SpawnPoints[spawnIndex], g_SpawnAngles[spawnIndex], NULL_VECTOR);
-    CreateTimer(0.1, Timer_GiveWeapons, client);
+    GiveWeapons(client);
 }
 
-public Action Timer_GiveWeapons(Handle timer, int client) {
+public void GiveWeapons(int client) {
     if (!IsValidClient(client))
-        return Plugin_Handled;
+        return;
 
     Client_RemoveAllWeapons(client);
     GivePlayerItem(client, "weapon_knife");
@@ -180,18 +180,17 @@ public Action Timer_GiveWeapons(Handle timer, int client) {
     }
 
     if (g_BombOwner == client) {
+        g_bombPlantSignal = false;
         GivePlayerItem(client, "weapon_c4");
-        // CreateTimer(0.1, Timer_StartPlant, client);
+        CreateTimer(1.0, Timer_StartPlant, client);
     }
-
-    return Plugin_Handled;
 }
 
-// public Action Timer_StartPlant(Handle timer, any:client) {
-//     if (IsPlayer(client)) {
-//         g_bombPlantSignal = true;
-//     }
-// }
+public Action Timer_StartPlant(Handle timer, any:client) {
+    if (IsPlayer(client)) {
+        g_bombPlantSignal = true;
+    }
+}
 
 public bool InsideBombSite(int spawnIndex) {
     float spawn[3];
@@ -207,23 +206,22 @@ public bool InsideBombSite(int spawnIndex) {
         bool in_x = (min[0] <= spawn[0] && spawn[0] <= max[0]) || (max[0] <= spawn[0] && spawn[0] <= min[0]);
         bool in_y = (min[1] <= spawn[1] && spawn[1] <= max[1]) || (max[1] <= spawn[1] && spawn[1] <= min[1]);
 
-        if (in_x && in_y && !g_SpawnNoBomb[spawnIndex])
+        if (in_x && in_y && !g_SpawnNoBomb[spawnIndex]) {
             return true;
+        }
 
     }
     return false;
 }
 
-// public Action OnPlayerRunCmd(int client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon, &subtype, &cmdnum, &tickcount, &seed, mouse[2]) {
-//     if (g_bombPlantSignal && !g_bombPlanted && client == g_BombOwner && !Retakes_InWarmup()) {
-//         buttons |= IN_USE;
-//         // buttons |= IN_DUCK;
-//         // LogMessage("forcing player bomb plant");
-//         return Plugin_Changed;
-//     }
+public Action OnPlayerRunCmd(int client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon, &subtype, &cmdnum, &tickcount, &seed, mouse[2]) {
+    if (g_bombPlantSignal && !g_bombPlanted && client == g_BombOwner) {
+        buttons |= IN_USE;
+        g_bombPlantSignal = false;
+    }
 
-//     return Plugin_Continue;
-// }
+    return Plugin_Continue;
+}
 
 /**
  * Returns an appropriate spawn index for a player.
