@@ -30,6 +30,17 @@ enum Bombsite {
 forward void Retakes_OnPreRoundEnqueue(Handle rankingQueue, Handle waitingQueue);
 
 /**
+ * Called after active players have been placed into the priority scoring queue
+ * for the next round. This is a convenient place to change their scores by
+ * editing the ranking priority queue itself.
+ * (rather than using the Retakes_SetRoundPoints native)
+ *
+ * @param rankingQueue a priority queue (see include/priorityqueue.inc)
+ * @noreturn
+ */
+forward void Retakes_OnPostRoundEnqueue(Handle rankingQueue);
+
+/**
  * Called when the bombsite for the round is decided.
  *
  * @param site which bombsite the round will use

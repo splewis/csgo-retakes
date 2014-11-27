@@ -98,6 +98,7 @@ Handle g_OnSitePicked = INVALID_HANDLE;
 Handle g_hOnTeamSizesSet = INVALID_HANDLE;
 Handle g_OnWeaponsAllocated = INVALID_HANDLE;
 Handle g_hOnPreRoundEnqueue = INVALID_HANDLE;
+Handle g_hOnPostRoundEnqueue = INVALID_HANDLE;
 
 #include "retakes/editor.sp"
 #include "retakes/generic.sp"
@@ -170,6 +171,7 @@ public OnPluginStart() {
     g_hOnTeamSizesSet = CreateGlobalForward("Retakes_OnTeamSizesSet", ET_Ignore, Param_CellByRef, Param_CellByRef);
     g_OnWeaponsAllocated = CreateGlobalForward("Retakes_OnWeaponsAllocated", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
     g_hOnPreRoundEnqueue = CreateGlobalForward("Retakes_OnPreRoundEnqueue", ET_Ignore, Param_Cell, Param_Cell);
+    g_hOnPostRoundEnqueue = CreateGlobalForward("Retakes_OnPostRoundEnqueue", ET_Ignore, Param_Cell);
 
     g_helmetOffset = FindSendPropOffs("CCSPlayer", "m_bHasHelmet");
 
@@ -549,6 +551,10 @@ public void RoundEndUpdates() {
             break;
         }
     }
+
+    Call_StartForward(g_hOnPostRoundEnqueue);
+    Call_PushCell(g_hRankingQueue);
+    Call_Finish();
 }
 
 /**
