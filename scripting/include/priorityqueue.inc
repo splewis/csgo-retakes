@@ -12,17 +12,13 @@ public Handle PQ_Init() {
  * If the player is already in the queue, their score is updatd.
  */
 public void PQ_Enqueue(Handle queueHandle, int client, value) {
-    int index = PQ_FindClient(queueHandle, client);
-    if (index == -1) {
-        // set the value
-        SetArrayCell(queueHandle, index, value, 1);
-    } else {
-        // add to the end
-        index = GetArraySize(queueHandle);
-        PushArrayCell(queueHandle, client);
-        SetArrayCell(queueHandle, index, client, 0);
-        SetArrayCell(queueHandle, index, value, 1);
-    }
+    if (PQ_FindClient(queueHandle, client) != -1)
+        PQ_DropFromQueue(queueHandle, client);
+
+    int index = GetArraySize(queueHandle);
+    PushArrayCell(queueHandle, client);
+    SetArrayCell(queueHandle, index, client, 0);
+    SetArrayCell(queueHandle, index, value, 1);
 }
 
 /**
