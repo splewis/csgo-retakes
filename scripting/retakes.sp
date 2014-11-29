@@ -590,7 +590,7 @@ public void UpdateTeams() {
     Call_PushCellRef(g_NumCT);
     Call_Finish();
 
-    if (g_ScrambleSignal) {
+    if (g_ScrambleSignal && ScramblesEnabled()) {
         int n = GetArraySize(g_hRankingQueue);
         for (int i = 0; i < n; i++) {
             int value = GetRandomInt(1, 1000);
@@ -660,17 +660,23 @@ public void UpdateTeams() {
     PQ_Destroy(g_hRankingQueue);
 }
 
+static bool ScramblesEnabled() {
+    return GetConVarInt(g_hRoundsToScramble) >= 1;
+}
+
 public void TerroristsWon() {
     int toScramble = GetConVarInt(g_hRoundsToScramble);
     g_WinStreak++;
 
     if (g_WinStreak >= toScramble) {
-        g_ScrambleSignal = true;
-        Retakes_MessageToAll("%t", "ScrambleMessage", toScramble);
+        if (ScramblesEnabled()) {
+            g_ScrambleSignal = true;
+            Retakes_MessageToAll("%t", "ScrambleMessage", toScramble);
+        }
         g_WinStreak = 0;
-    } else if (g_WinStreak >= toScramble - 3) {
+    } else if (g_WinStreak >= toScramble - 3 && ScramblesEnabled()) {
         Retakes_MessageToAll("%t", "WinStreakAlmostToScramble", g_WinStreak, toScramble - g_WinStreak);
-    } else if (g_WinStreak >= 3) {
+    } else if (g_WinStreak >= 3 && ScramblesEnabled()) {
         Retakes_MessageToAll("%t", "WinStreak", g_WinStreak);
     }
 }
