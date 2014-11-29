@@ -76,6 +76,16 @@ forward void Retakes_OnFailToPlant(int client);
 forward void Retakes_OnRoundWon(int winner, ArrayList tPlayers, ArrayList ctPlayers);
 
 /**
+ * Called after teams have been determined for the round.
+ *
+ * @param tPlayers an ArrayList of the players on the terrorist team
+ * @param ctPlayers an ArrayList of the players on the counter-terrorist team
+ * @param bombsite
+ * @noreturn
+ */
+forward void Retakes_OnTeamsSet(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite);
+
+/**
  * Called when player weapons are being allocated for the round.
  *
  * @param tPlayers an ArrayList of the players on the terrorist team
@@ -84,6 +94,7 @@ forward void Retakes_OnRoundWon(int winner, ArrayList tPlayers, ArrayList ctPlay
  * @noreturn
  */
 forward void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite);
+
 
 /**
  * Returns if a player has joined the game, i.e., if they are on T/Ct or in the waiting queue.

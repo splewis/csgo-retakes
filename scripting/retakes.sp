@@ -99,6 +99,7 @@ Handle g_hOnTeamSizesSet = INVALID_HANDLE;
 Handle g_OnWeaponsAllocated = INVALID_HANDLE;
 Handle g_hOnPreRoundEnqueue = INVALID_HANDLE;
 Handle g_hOnPostRoundEnqueue = INVALID_HANDLE;
+Handle g_hOnTeamsSet = INVALID_HANDLE;
 
 #include "retakes/editor.sp"
 #include "retakes/generic.sp"
@@ -172,6 +173,7 @@ public OnPluginStart() {
     g_OnWeaponsAllocated = CreateGlobalForward("Retakes_OnWeaponsAllocated", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
     g_hOnPreRoundEnqueue = CreateGlobalForward("Retakes_OnPreRoundEnqueue", ET_Ignore, Param_Cell, Param_Cell);
     g_hOnPostRoundEnqueue = CreateGlobalForward("Retakes_OnPostRoundEnqueue", ET_Ignore, Param_Cell);
+    g_hOnTeamsSet = CreateGlobalForward("Retakes_OnTeamsSet", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
 
     g_helmetOffset = FindSendPropOffs("CCSPlayer", "m_bHasHelmet");
 
@@ -605,8 +607,27 @@ public void UpdateTeams() {
     for (int i = 0; i < g_NumT; i++) {
         int client = PQ_Dequeue(g_hRankingQueue);
         if (IsValidClient(client)) {
-            SwitchPlayerTeam(client, CS_TEAM_T);
             ts.Push(client);
+        }
+    }
+
+    for (int i = 0; i < g_NumCT; i++) {
+        int client = PQ_Dequeue(g_hRankingQueue);
+        if (IsValidClient(client)) {
+            cts.Push(client);
+        }
+    }
+
+    Call_StartForward(g_hOnTeamsSet);
+    Call_PushCell(ts);
+    Call_PushCell(cts);
+    Call_PushCell(g_Bombsite);
+    Call_Finish();
+
+    for (int i = 0; i < GetArraySize(ts); i++) {
+        int client = GetArrayCell(ts, i);
+        if (IsValidClient(client)) {
+            SwitchPlayerTeam(client, CS_TEAM_T);
             g_Team[client] = CS_TEAM_T;
             g_PlayerPrimary[client] = "weapon_ak47";
             g_PlayerSecondary[client] = "weapon_glock";
@@ -618,12 +639,11 @@ public void UpdateTeams() {
         }
     }
 
-    for (int i = 0; i < g_NumCT; i++) {
-        int client = PQ_Dequeue(g_hRankingQueue);
+    for (int i = 0; i < GetArraySize(cts); i++) {
+        int client = GetArrayCell(cts, i);
         if (IsValidClient(client)) {
             SwitchPlayerTeam(client, CS_TEAM_CT);
             g_Team[client] = CS_TEAM_CT;
-            cts.Push(client);
             g_PlayerPrimary[client] = "weapon_m4a1";
             g_PlayerSecondary[client] = "weapon_hkp2000";
             g_PlayerNades[client] = "";
@@ -634,6 +654,7 @@ public void UpdateTeams() {
         }
     }
 
+    // if somebody didn't get put in, put them back into the waiting queue
     while (!PQ_IsEmpty(g_hRankingQueue)) {
         int client = PQ_Dequeue(g_hRankingQueue);
         if (IsPlayer(client)) {
