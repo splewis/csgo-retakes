@@ -9,15 +9,19 @@ public Handle PQ_Init() {
 
 /**
  * Adds a player and a value to the queue.
- * If the player is already in the queue, their score is updatd.
+ * If the player is already in the queue, their score is updated in place.
  */
 public void PQ_Enqueue(Handle queueHandle, int client, value) {
-    if (PQ_FindClient(queueHandle, client) != -1)
-        PQ_DropFromQueue(queueHandle, client);
+    int index = PQ_FindClient(queueHandle, client);
 
-    int index = GetArraySize(queueHandle);
-    PushArrayCell(queueHandle, client);
-    SetArrayCell(queueHandle, index, client, 0);
+    // if they're not already in, put them at the end
+    if (index == -1) {
+        index = GetArraySize(queueHandle);
+        PushArrayCell(queueHandle, client);
+        SetArrayCell(queueHandle, index, client, 0);
+    }
+
+    // set their value
     SetArrayCell(queueHandle, index, value, 1);
 }
 
