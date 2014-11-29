@@ -226,9 +226,8 @@ public Action OnPlayerRunCmd(int client, &buttons, &impulse, Float:vel[3], Float
 /**
  * Returns an appropriate spawn index for a player.
  */
-public int SelectSpawn(int client, bool bombSpawn) {
+public int SelectSpawn(int team, bool bombSpawn) {
     ArrayList potentialSpawns = ArrayList();
-    int team = g_Team[client];
     for (int i = 0; i < g_NumSpawns; i++) {
         if (g_SpawnTeams[i] == team && !g_SpawnTaken[i] && g_Bombsite == g_SpawnSites[i]) {
             if (!bombSpawn || InsideBombSite(i))
@@ -241,9 +240,9 @@ public int SelectSpawn(int client, bool bombSpawn) {
         GetCurrentMap(mapName, sizeof(mapName));
         if (bombSpawn) {
             LogError("Had to resort to fallback spawn on %s, site=%d", mapName, g_Bombsite);
-            return SelectSpawn(client, false);
+            return SelectSpawn(team, false);
         } else {
-            LogError("Failed to get any spawn on %s, site=%d, team=%d", mapName, g_Bombsite, GetClientTeam(client));
+            LogError("Failed to get any spawn on %s, site=%d, team=%d", mapName, g_Bombsite, team);
             return -1;
         }
     }

@@ -343,12 +343,12 @@ public Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast) {
 
     if (!g_RoundSpawnsDecided) {
         if (IsPlayer(g_BombOwner)) {
-            g_SpawnIndices[g_BombOwner] = SelectSpawn(g_BombOwner, true);
+            g_SpawnIndices[g_BombOwner] = SelectSpawn(CS_TEAM_T, true);
         }
 
         for (int i = 1; i <= MAXPLAYERS; i++) {
             if (IsPlayer(i) && IsOnTeam(i) && i != g_BombOwner) {
-                g_SpawnIndices[i] = SelectSpawn(i, false);
+                g_SpawnIndices[i] = SelectSpawn(g_Team[i], false);
             }
         }
         g_RoundSpawnsDecided = true;
