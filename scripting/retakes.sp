@@ -177,8 +177,8 @@ public OnPluginStart() {
 
     g_helmetOffset = FindSendPropOffs("CCSPlayer", "m_bHasHelmet");
 
-    g_SiteMins = ArrayList(3);
-    g_SiteMaxs = ArrayList(3);
+    g_SiteMins = new ArrayList(3);
+    g_SiteMaxs = new ArrayList(3);
 }
 
 public OnMapStart() {
@@ -433,7 +433,7 @@ public Event_RoundPreStart(Handle event, const char[] name, bool dontBroadcast) 
     RoundEndUpdates();
     UpdateTeams();
 
-    ArrayList ts = ArrayList();
+    ArrayList ts = new ArrayList();
     for (int i = 1; i < MaxClients; i++) {
         if (IsValidClient(i) && IsOnTeam(i)) {
             Client_RemoveAllWeapons(i);
@@ -484,8 +484,8 @@ public Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast) {
         g_RoundCount++;
         int winner = GetEventInt(event, "winner");
 
-        ArrayList ts = ArrayList();
-        ArrayList cts = ArrayList();
+        ArrayList ts = new ArrayList();
+        ArrayList cts = new ArrayList();
 
         for (int i = 1; i <= MaxClients; i++) {
             if (IsPlayer(i)) {
@@ -601,8 +601,8 @@ public void UpdateTeams() {
         g_ScrambleSignal = false;
     }
 
-    ArrayList ts = ArrayList();
-    ArrayList cts = ArrayList();
+    ArrayList ts = new ArrayList();
+    ArrayList cts = new ArrayList();
 
     for (int i = 0; i < g_NumT; i++) {
         int client = PQ_Dequeue(g_hRankingQueue);

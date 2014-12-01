@@ -38,7 +38,7 @@ public int ParseSpawns() {
         return 0;
     }
 
-    KeyValues kv = KeyValues("Spawns");
+    KeyValues kv = new KeyValues("Spawns");
     if (!kv.ImportFromFile(configFile) || !kv.GotoFirstSubKey()) {
         LogError("The retakes config file was empty");
         delete kv;
@@ -87,7 +87,7 @@ public int ParseSpawns() {
  * Writes the stored scenario structures back to the config file.
  */
 public void WriteSpawns() {
-    KeyValues kv = KeyValues("Spawns");
+    KeyValues kv = new KeyValues("Spawns");
     int output_index = 0;
 
     for (int spawn = 0; spawn < g_NumSpawns; spawn++) {
@@ -227,7 +227,7 @@ public Action OnPlayerRunCmd(int client, &buttons, &impulse, Float:vel[3], Float
  * Returns an appropriate spawn index for a player.
  */
 public int SelectSpawn(int team, bool bombSpawn) {
-    ArrayList potentialSpawns = ArrayList();
+    ArrayList potentialSpawns = new ArrayList();
     for (int i = 0; i < g_NumSpawns; i++) {
         if (g_SpawnTeams[i] == team && !g_SpawnTaken[i] && g_Bombsite == g_SpawnSites[i]) {
             if (!bombSpawn || InsideBombSite(i))
