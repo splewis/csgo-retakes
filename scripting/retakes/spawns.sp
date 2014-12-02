@@ -236,6 +236,7 @@ public int SelectSpawn(int team, bool bombSpawn) {
     }
 
     if (potentialSpawns.Length == 0) {
+        delete potentialSpawns;
         char mapName[128];
         GetCurrentMap(mapName, sizeof(mapName));
         if (bombSpawn) {
@@ -245,10 +246,11 @@ public int SelectSpawn(int team, bool bombSpawn) {
             LogError("Failed to get any spawn on %s, site=%d, team=%d", mapName, g_Bombsite, team);
             return -1;
         }
+    } else {
+        int choice = RandomElement(potentialSpawns);
+        g_SpawnTaken[choice] = true;
+        delete potentialSpawns;
+        return choice;
     }
 
-    int choice = RandomElement(potentialSpawns);
-    g_SpawnTaken[choice] = true;
-    delete potentialSpawns;
-    return choice;
 }
