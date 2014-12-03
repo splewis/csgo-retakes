@@ -69,10 +69,19 @@ public RifleAllocator(Handle tPlayers, Handle ctPlayers, Bombsite bombsite) {
     bool helmet = true;
     bool kit = true;
 
+    bool giveTAwp = true;
+    bool giveCTAwp = true;
+
     for (int i = 0; i < tCount; i++) {
         int client = GetArrayCell(tPlayers, i);
 
-        primary = "weapon_ak47";
+        if (giveTAwp && g_AwpChoice[client]) {
+            primary = "weapon_awp";
+            giveTAwp = false;
+        } else {
+            primary = "weapon_ak47";
+        }
+
         secondary = "weapon_glock";
         health = 100;
         kevlar = 100;
@@ -85,7 +94,15 @@ public RifleAllocator(Handle tPlayers, Handle ctPlayers, Bombsite bombsite) {
     for (int i = 0; i < ctCount; i++) {
         int client = GetArrayCell(ctPlayers, i);
 
-        primary = "weapon_m4a1";
+        if (giveCTAwp && g_AwpChoice[client]) {
+            primary = "weapon_awp";
+            giveCTAwp = false;
+        } else if (g_SilencedM4[client]) {
+            primary = "weapon_m4a1_silencer";
+        } else {
+            primary = "weapon_m4a1";
+        }
+
         secondary = "weapon_hkp2000";
         nades = "";
         kit = true;
