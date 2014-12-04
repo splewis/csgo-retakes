@@ -1,3 +1,8 @@
+#if defined _priorityqueue_included
+  #endinput
+#endif
+#define _priorityqueue_included
+
 /**
  * Initializes the queue and returns a handle to it that must be closed.
  */

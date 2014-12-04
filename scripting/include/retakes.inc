@@ -1,7 +1,7 @@
-#if defined __retakes_included__
+#if defined _retakes_included
   #endinput
 #endif
-#define __retakes_included__
+#define _retakes_included
 
 enum Bombsite {
     BombsiteA,

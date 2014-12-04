@@ -1,3 +1,8 @@
+#if defined _queue_included
+  #endinput
+#endif
+#define _queue_included
+
 /**
  * Initializes the queue and returns a new handle to it that must be closed.
  */
