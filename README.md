@@ -71,3 +71,7 @@ Guidelines
 - Favor readability and correctness over all else
 - For a moderately advanced feature, it may be simpler to write it as a plugin that uses the retakes natives from [retakes.inc](scripting/include/retakes.inc)
 - **Keep it simple, stupid**
+
+For adding translations, you can either use git and follow the instructions above, or use the [SourceMod translator](http://translator.mitchdempsey.com/sourcemod_plugins/152). I'd prefer you use git & GitHub, but using the sourcmeod translator is probably easier for most people.
+
+
