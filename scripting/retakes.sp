@@ -208,7 +208,9 @@ public OnMapStart() {
 }
 
 public OnMapEnd() {
-    WriteSpawns();
+    if (GetConVarInt(g_hEditorEnabled) != 0)
+        WriteSpawns();
+
     Queue_Destroy(g_hWaitingQueue);
 }
 
