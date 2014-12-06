@@ -58,7 +58,7 @@ public Native_RetakeMessageToAll(Handle plugin, numParams) {
     int bytesWritten = 0;
 
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsPlayer(i)) {
+        if (IsClientConnected(i)) {
             SetGlobalTransTarget(i);
             FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
             Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
