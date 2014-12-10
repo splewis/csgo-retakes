@@ -220,11 +220,7 @@ public OnClientConnected(client) {
 
 public OnClientDisconnect(client) {
     ResetClientVariables(client);
-    int tHumanCount=0, ctHumanCount=0;
-    GetTeamsClientCounts(tHumanCount, ctHumanCount);
-    if (tHumanCount == 0 || ctHumanCount == 0) {
-        CS_TerminateRound(1.0, CSRoundEnd_TerroristWin);
-    }
+    CheckRoundDone();
 }
 
 /**
@@ -276,6 +272,10 @@ public Action Command_TeamJoin(int client, const char[] command, argc) {
             // voluntarily joining spectator will not put you in the queue
             SwitchPlayerTeam(client, CS_TEAM_SPECTATOR);
             Queue_Drop(g_hWaitingQueue, client);
+
+            // check if a team is now empty
+            CheckRoundDone();
+
             return Plugin_Handled;
 
         } else {
@@ -717,4 +717,12 @@ public void CounterTerroristsWon() {
     }
 
     g_WinStreak = 0;
+}
+
+void CheckRoundDone() {
+    int tHumanCount=0, ctHumanCount=0;
+    GetTeamsClientCounts(tHumanCount, ctHumanCount);
+    if (tHumanCount == 0 || ctHumanCount == 0) {
+        CS_TerminateRound(1.0, CSRoundEnd_TerroristWin);
+    }
 }
