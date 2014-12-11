@@ -37,8 +37,8 @@ public Native_IsInQueue(Handle plugin, numParams) {
 
 public Native_RetakeMessage(Handle plugin, numParams) {
     int client = GetNativeCell(1);
-    if (!IsPlayer(client))
-        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not a player", client);
+    if (!IsValidClient(client))
+        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not valid", client);
 
     SetGlobalTransTarget(client);
     char buffer[1024];
@@ -58,7 +58,7 @@ public Native_RetakeMessageToAll(Handle plugin, numParams) {
     int bytesWritten = 0;
 
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsClientConnected(i)) {
+        if (IsValidClient(i)) {
             SetGlobalTransTarget(i);
             FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
             Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
