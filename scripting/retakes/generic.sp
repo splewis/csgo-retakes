@@ -1,4 +1,8 @@
-#define PLUGIN_VERSION "0.8.0"
+#tryinclude "../include/retakes_version.inc"
+#if !defined PLUGIN_VERSION
+#define PLUGIN_VERSION "0.8.0-dev"
+#endif
+
 #define INTEGER_STRING_LENGTH 20 // max number of digits a 64-bit integer can use up as a string
                                  // this is for converting ints to strings when setting menu values/cookies
 
