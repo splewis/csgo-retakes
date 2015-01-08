@@ -25,14 +25,14 @@ public Action Command_Site(int client, args) {
         if (StrEqual(arg, "a", false)) {
             g_forceSite = true;
             g_pickedSite = BombsiteA;
-            Retakes_Message(client, "Now only using bombsite A");
+            Retakes_MessageToAll("Now only using bombsite A");
         } else  if (StrEqual(arg, "b", false)) {
             g_forceSite = true;
             g_pickedSite = BombsiteB;
-            Retakes_Message(client, "Now only using bombsite B");
+            Retakes_MessageToAll("Now only using bombsite B");
         } else {
             g_forceSite = false;
-            Retakes_Message(client, "Now using all bombsites");
+            Retakes_MessageToAll("Now using all bombsites");
         }
     } else {
         Retakes_Message(client, "Usage: sm_site [a|b|any]");
