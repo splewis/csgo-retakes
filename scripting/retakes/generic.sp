@@ -83,6 +83,10 @@ stock bool IsOnTeam(int client) {
     return (team == CS_TEAM_CT) || (team == CS_TEAM_T);
 }
 
+stock bool IsConnected(int client) {
+    return client > 0 && client <= MaxClients && IsClientConnected(client) && !IsFakeClient(client);
+}
+
 /**
  * Function to identify if a client is valid and in game.
  */

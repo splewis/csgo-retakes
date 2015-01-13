@@ -1,5 +1,7 @@
 #define MESSAGE_PREFIX "[\x05Retakes\x01]"
 
+#define CHECK_CONNECTED(%1) if (!IsClientConnected(%1)) ThrowNativeError(SP_ERROR_PARAM, "Client %d is not connected", %1)
+
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max) {
     CreateNative("Retakes_IsJoined", Native_IsJoined);
     CreateNative("Retakes_IsInQueue", Native_IsInQueue);
@@ -37,8 +39,7 @@ public Native_IsInQueue(Handle plugin, numParams) {
 
 public Native_RetakeMessage(Handle plugin, numParams) {
     int client = GetNativeCell(1);
-    if (!IsValidClient(client))
-        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not valid", client);
+    CHECK_CONNECTED(client);
 
     SetGlobalTransTarget(client);
     char buffer[1024];
@@ -58,7 +59,7 @@ public Native_RetakeMessageToAll(Handle plugin, numParams) {
     int bytesWritten = 0;
 
     for (int i = 1; i <= MaxClients; i++) {
-        if (IsValidClient(i)) {
+        if (IsClientConnected(i)) {
             SetGlobalTransTarget(i);
             FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
             Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
@@ -87,35 +88,27 @@ public Native_GetCurrrentBombsite(Handle plugin, numParams) {
 
 public Native_GetRoundPoints(Handle plugin, numParams) {
     int client = GetNativeCell(1);
-    if (client <= 0)
-        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not a player", client);
-
+    CHECK_CONNECTED(client);
     return g_RoundPoints[client];
 }
 
 public Native_SetRoundPoints(Handle plugin, numParams) {
     int client = GetNativeCell(1);
-    if (client <= 0)
-        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not a player", client);
-
+    CHECK_CONNECTED(client);
     int points = GetNativeCell(2);
     g_RoundPoints[client] = points;
 }
 
 public Native_ChangeRoundPoints(Handle plugin, numParams) {
     int client = GetNativeCell(1);
-    if (client <= 0)
-        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not a player", client);
-
+    CHECK_CONNECTED(client);
     int dp = GetNativeCell(2);
     g_RoundPoints[client] += dp;
 }
 
 public Native_GetPlayerInfo(Handle plugin, numParams) {
     int client = GetNativeCell(1);
-    if (client <= 0)
-        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not a player", client);
-
+    CHECK_CONNECTED(client);
     SetNativeString(2, g_PlayerPrimary[client], WEAPON_STRING_LENGTH);
     SetNativeString(3, g_PlayerSecondary[client], WEAPON_STRING_LENGTH);
     SetNativeString(4, g_PlayerNades[client], NADE_STRING_LENGTH);
@@ -128,8 +121,7 @@ public Native_GetPlayerInfo(Handle plugin, numParams) {
 
 public Native_SetPlayerInfo(Handle plugin, numParams) {
     int client = GetNativeCell(1);
-    if (client <= 0)
-        ThrowNativeError(SP_ERROR_PARAM, "Client %d is not a player", client);
+    CHECK_CONNECTED(client);
 
     GetNativeString(2, g_PlayerPrimary[client], WEAPON_STRING_LENGTH);
     GetNativeString(3, g_PlayerSecondary[client], WEAPON_STRING_LENGTH);
