@@ -122,7 +122,7 @@ public Plugin:myinfo = {
     url = "https://github.com/splewis/csgo-retakes"
 };
 
-public OnPluginStart() {
+public void OnPluginStart() {
     LoadTranslations("common.phrases");
     LoadTranslations("retakes.phrases");
 
@@ -181,7 +181,7 @@ public OnPluginStart() {
     g_SiteMaxs = new ArrayList(3);
 }
 
-public OnMapStart() {
+public void OnMapStart() {
     g_ScrambleSignal = false;
     g_WinStreak = 0;
     g_RoundCount = 0;
@@ -207,18 +207,18 @@ public OnMapStart() {
     ServerCommand("mp_warmup_start");
 }
 
-public OnMapEnd() {
+public void OnMapEnd() {
     if (GetConVarInt(g_hEditorEnabled) != 0)
         WriteSpawns();
 
     Queue_Destroy(g_hWaitingQueue);
 }
 
-public OnClientConnected(client) {
+public void OnClientConnected(int client) {
     ResetClientVariables(client);
 }
 
-public OnClientDisconnect(client) {
+public void OnClientDisconnect(int client) {
     ResetClientVariables(client);
     CheckRoundDone();
 }
@@ -226,7 +226,7 @@ public OnClientDisconnect(client) {
 /**
  * Helper functions that resets client variables when they join or leave.
  */
-ResetClientVariables(client) {
+public void ResetClientVariables(int client) {
     if (client == g_BombOwner)
         g_BombOwner = -1;
     Queue_Drop(g_hWaitingQueue, client);
@@ -243,7 +243,7 @@ ResetClientVariables(client) {
  *                     *
  ***********************/
 
-public Action Command_TeamJoin(int client, const char[] command, argc) {
+public Action Command_TeamJoin(int client, const char[] command, int argc) {
     if (!IsValidClient(client) || argc < 1)
         return Plugin_Handled;
 
@@ -331,7 +331,7 @@ public Action Event_PlayerTeam(Handle event, const char[] name, bool dontBroadca
  * if a player does not select a team but leaves their mouse over one, they are
  * put on that team and spawned, so we can't allow that.
  */
-public Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
 }
@@ -340,7 +340,7 @@ public Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadca
  * Called when a player spawns.
  * Gives default weapons. (better than mp_ct_default_primary since it gives the player the correct skin)
  */
-public Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast) {
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     if (!IsValidClient(client) || !IsOnTeam(client) || g_EditMode || Retakes_InWarmup())
         return;
@@ -364,7 +364,7 @@ public Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast) {
 /**
  * Called when a player dies - gives points to killer, and does database stuff with the kill.
  */
-public Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast) {
     if (Retakes_InWarmup())
         return;
 
@@ -405,7 +405,7 @@ public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadc
 /**
  * Called when the bomb explodes or is defuser, gives ponts to the one that planted/defused it.
  */
-public Event_BombPlant(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcast) {
     g_bombPlanted = true;
     g_bombPlantSignal = false;
 }
@@ -413,7 +413,7 @@ public Event_BombPlant(Handle event, const char[] name, bool dontBroadcast) {
 /**
  * Called when the bomb explodes or is defused, gives ponts to the one that planted/defused it.
  */
-public Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
     if (Retakes_InWarmup())
         return;
 
@@ -427,7 +427,7 @@ public Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
  * Called before any other round start events. This is the best place to change teams
  * since it should happen before respawns.
  */
-public Event_RoundPreStart(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_RoundPreStart(Handle event, const char[] name, bool dontBroadcast) {
     if (Retakes_InWarmup())
         return;
 
@@ -452,7 +452,7 @@ public Event_RoundPreStart(Handle event, const char[] name, bool dontBroadcast) 
     delete ts;
 }
 
-public Event_RoundPostStart(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_RoundPostStart(Handle event, const char[] name, bool dontBroadcast) {
     if (Retakes_InWarmup())
         return;
 
@@ -469,7 +469,7 @@ public Event_RoundPostStart(Handle event, const char[] name, bool dontBroadcast)
 /**
  * Round freezetime end, resets the round points and unfreezes the players.
  */
-public Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroadcast) {
     for (int i = 1; i <= MaxClients; i++) {
         g_RoundPoints[i] = 0;
     }
@@ -478,7 +478,7 @@ public Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBroadcast)
 /**
  * Round end event, calls the appropriate winner (T/CT) unction and sets the scores.
  */
-public Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast) {
+public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast) {
     if (Retakes_InWarmup())
         return;
 

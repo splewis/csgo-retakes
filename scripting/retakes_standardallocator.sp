@@ -25,7 +25,7 @@ public void OnPluginStart() {
     g_hAwpChoiceCookie = RegClientCookie("retakes_awpchoice", "", CookieAccess_Private);
 }
 
-public void OnClientConnected(client) {
+public void OnClientConnected(int client) {
     g_SilencedM4[client] = false;
     g_AwpChoice[client] = false;
 }
@@ -67,7 +67,7 @@ static void SetNades(char nades[NADE_STRING_LENGTH]) {
     }
 }
 
-public RifleAllocator(Handle tPlayers, Handle ctPlayers, Bombsite bombsite) {
+public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) {
     int tCount = GetArraySize(tPlayers);
     int ctCount = GetArraySize(ctPlayers);
 
@@ -125,7 +125,7 @@ public RifleAllocator(Handle tPlayers, Handle ctPlayers, Bombsite bombsite) {
     }
 }
 
-public GiveRifleMenu(int client) {
+public void GiveRifleMenu(int client) {
     Handle menu = CreateMenu(MenuHandler_M4);
     SetMenuTitle(menu, "Select a CT rifle:");
     AddMenuBool(menu, false, "M4A4");
@@ -133,7 +133,7 @@ public GiveRifleMenu(int client) {
     DisplayMenu(menu, client, MENU_TIME_LENGTH);
 }
 
-public MenuHandler_M4(Handle menu, MenuAction action, param1, param2) {
+public int MenuHandler_M4(Handle menu, MenuAction action, param1, param2) {
     if (action == MenuAction_Select) {
         int client = param1;
         bool useSilenced = GetMenuBool(menu, param2);
@@ -153,7 +153,7 @@ public void GiveAwpMenu(int client) {
     DisplayMenu(menu, client, MENU_TIME_LENGTH);
 }
 
-public MenuHandler_AWP(Handle menu, MenuAction action, param1, param2) {
+public int MenuHandler_AWP(Handle menu, MenuAction action, param1, param2) {
     if (action == MenuAction_Select) {
         int client = param1;
         bool allowAwps = GetMenuBool(menu, param2);
