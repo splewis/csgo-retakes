@@ -279,3 +279,9 @@ stock void Colorize(char[] msg, int size) {
         ReplaceString(msg, size, g_ColorNames[i], g_ColorCodes[i]);
     }
 }
+
+stock void StripColors(char[] msg, int size) {
+    for (new i = 0; i < sizeof(g_ColorNames); i ++) {
+        ReplaceString(msg, size, g_ColorNames[i], "");
+    }
+}
