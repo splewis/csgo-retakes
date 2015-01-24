@@ -57,6 +57,16 @@ public OnClientCookiesCached(client) {
     g_AwpChoice[client] = GetCookieBool(client, g_hAwpChoiceCookie);
 }
 
+static void SetNades(char nades[NADE_STRING_LENGTH]) {
+    int rand = GetRandomInt(0, 3);
+    switch(rand) {
+        case 0: nades = "";
+        case 1: nades = "s";
+        case 2: nades = "f";
+        case 3: nades = "h";
+    }
+}
+
 public RifleAllocator(Handle tPlayers, Handle ctPlayers, Bombsite bombsite) {
     int tCount = GetArraySize(tPlayers);
     int ctCount = GetArraySize(ctPlayers);
@@ -87,6 +97,7 @@ public RifleAllocator(Handle tPlayers, Handle ctPlayers, Bombsite bombsite) {
         kevlar = 100;
         helmet = true;
         kit = false;
+        SetNades(nades);
 
         Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
     }
@@ -104,11 +115,11 @@ public RifleAllocator(Handle tPlayers, Handle ctPlayers, Bombsite bombsite) {
         }
 
         secondary = "weapon_hkp2000";
-        nades = "";
         kit = true;
         health = 100;
         kevlar = 100;
         helmet = true;
+        SetNades(nades);
 
         Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
     }
