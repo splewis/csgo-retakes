@@ -186,7 +186,7 @@ public void GiveWeapons(int client) {
     }
 }
 
-public Action Timer_StartPlant(Handle timer, any:client) {
+public Action Timer_StartPlant(Handle timer, int client) {
     if (IsPlayer(client)) {
         g_bombPlantSignal = true;
     }
@@ -214,7 +214,8 @@ public bool InsideBombSite(int spawnIndex) {
     return false;
 }
 
-public Action OnPlayerRunCmd(int client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon, &subtype, &cmdnum, &tickcount, &seed, mouse[2]) {
+public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3], float angles[3],
+                             int& weapon, int& subtype, int& cmdnum, int& tickcount, int& seed, int mouse[2]) {
     if (g_bombPlantSignal && !g_bombPlanted && client == g_BombOwner) {
         buttons |= IN_USE;
         g_bombPlantSignal = false;

@@ -3,7 +3,7 @@ int g_iHaloSprite = 0;
 Bombsite g_ShowingSite = BombsiteA;
 bool g_ShowingBombSpawns = false;
 
-public Action Command_Bomb(int client, args) {
+public Action Command_Bomb(int client, int args) {
     if (GetConVarInt(g_hEditorEnabled) == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
@@ -18,7 +18,7 @@ public Action Command_Bomb(int client, args) {
     return Plugin_Handled;
 }
 
-public Action Command_EditSpawns(int client, args) {
+public Action Command_EditSpawns(int client, int args) {
     if (GetConVarInt(g_hEditorEnabled) == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
@@ -41,7 +41,7 @@ public Action Command_EditSpawns(int client, args) {
     return Plugin_Handled;
 }
 
-public Action Command_AddPlayer(int client, args) {
+public Action Command_AddPlayer(int client, int args) {
     if (GetConVarInt(g_hEditorEnabled) == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
@@ -83,7 +83,7 @@ public Action Command_AddPlayer(int client, args) {
     return Plugin_Handled;
 }
 
-public Action Command_Show(int client, args) {
+public Action Command_Show(int client, int args) {
     if (GetConVarInt(g_hEditorEnabled) == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
@@ -126,7 +126,7 @@ public Action Command_Show(int client, args) {
     return Plugin_Continue;
 }
 
-public Action Command_NoBomb(int client, args) {
+public Action Command_NoBomb(int client, int args) {
     if (GetConVarInt(g_hEditorEnabled) == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
@@ -140,7 +140,7 @@ public Action Command_NoBomb(int client, args) {
     return Plugin_Handled;
 }
 
-public Action Command_DeleteSpawn(int client, args) {
+public Action Command_DeleteSpawn(int client, int args) {
     if (GetConVarInt(g_hEditorEnabled) == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
@@ -187,7 +187,7 @@ public void TeamMenu(int client) {
     DisplayMenu(menu, client, MENU_TIME_FOREVER);
 }
 
-public TeamHandler(Handle menu, MenuAction action, param1, param2) {
+public int TeamHandler(Handle menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         g_PlayerBeingEdited = g_NumSpawns;
         int client = param1;
@@ -210,7 +210,7 @@ public void BombsiteMenu(int client) {
     DisplayMenu(menu, client, MENU_TIME_FOREVER);
 }
 
-public BombsiteHandler(Handle menu, MenuAction action, param1, param2) {
+public int BombsiteHandler(Handle menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         bool aSite = GetMenuBool(menu, param2);
         g_SpawnSites[g_PlayerBeingEdited] = aSite ? BombsiteA : BombsiteB;
@@ -222,9 +222,9 @@ public BombsiteHandler(Handle menu, MenuAction action, param1, param2) {
 
 public void FinishSpawn() {
     g_NumSpawns++;
-    decl String:bombsite[4];
+    char bombsite[4];
     bombsite = (g_SpawnSites[g_PlayerBeingEdited] == BombsiteA) ? "A" : "B";
-    decl String:team[4];
+    char team[4];
     team = (g_SpawnTeams[g_PlayerBeingEdited] == CS_TEAM_CT) ? "CT" : "T";
     Retakes_MessageToAll("Finished adding %s spawn for %s.", team, bombsite);
 }

@@ -1,13 +1,15 @@
-#pragma semicolon 1
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
 #include <cstrike>
 #include <smlib>
+
 #include "include/retakes.inc"
 #include "include/priorityqueue.inc"
 #include "include/queue.inc"
 
+#pragma semicolon 1
+#pragma newdecls required
 
 
 /***********************
@@ -114,7 +116,7 @@ Handle g_hOnTeamsSet = INVALID_HANDLE;
  *                     *
  ***********************/
 
-public Plugin:myinfo = {
+public Plugin myinfo = {
     name = "CS:GO Retakes",
     author = "splewis",
     description = "CS:GO Retake practice",

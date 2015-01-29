@@ -2,7 +2,7 @@
 
 #define CHECK_CONNECTED(%1) if (!IsClientConnected(%1)) ThrowNativeError(SP_ERROR_PARAM, "Client %d is not connected", %1)
 
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max) {
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
     CreateNative("Retakes_IsJoined", Native_IsJoined);
     CreateNative("Retakes_IsInQueue", Native_IsInQueue);
     CreateNative("Retakes_Message", Native_RetakeMessage);
@@ -23,21 +23,21 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, err_max) {
     return APLRes_Success;
 }
 
-public Native_IsJoined(Handle plugin, numParams) {
+public int Native_IsJoined(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     if (!IsPlayer(client))
         return false;
     return GetClientTeam(client) == CS_TEAM_T || GetClientTeam(client) == CS_TEAM_CT || Queue_Find(g_hWaitingQueue, client) != -1;
 }
 
-public Native_IsInQueue(Handle plugin, numParams) {
+public int Native_IsInQueue(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     if (!IsPlayer(client))
         return false;
     return Queue_Find(g_hWaitingQueue, client) != -1;
 }
 
-public Native_RetakeMessage(Handle plugin, numParams) {
+public int Native_RetakeMessage(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     CHECK_CONNECTED(client);
 
@@ -53,7 +53,7 @@ public Native_RetakeMessage(Handle plugin, numParams) {
     PrintToChat(client, finalMsg);
 }
 
-public Native_RetakeMessageToAll(Handle plugin, numParams) {
+public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
     char buffer[1024];
     char finalMsg[1024];
     int bytesWritten = 0;
@@ -70,43 +70,43 @@ public Native_RetakeMessageToAll(Handle plugin, numParams) {
     }
 }
 
-public Native_GetNumActiveTs(Handle plugin, numParams) {
+public int Native_GetNumActiveTs(Handle plugin, int numParams) {
     return g_NumT;
 }
 
-public Native_GetNumActiveCTs(Handle plugin, numParams) {
+public int Native_GetNumActiveCTs(Handle plugin, int numParams) {
     return g_NumCT;
 }
 
-public Native_GetNumActivePlayers(Handle plugin, numParams) {
+public int Native_GetNumActivePlayers(Handle plugin, int numParams) {
     return g_NumT + g_NumCT;
 }
 
-public Native_GetCurrrentBombsite(Handle plugin, numParams) {
-    return _:g_Bombsite;
+public int Native_GetCurrrentBombsite(Handle plugin, int numParams) {
+    return view_as<int>(g_Bombsite);
 }
 
-public Native_GetRoundPoints(Handle plugin, numParams) {
+public int Native_GetRoundPoints(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     CHECK_CONNECTED(client);
     return g_RoundPoints[client];
 }
 
-public Native_SetRoundPoints(Handle plugin, numParams) {
+public int Native_SetRoundPoints(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     CHECK_CONNECTED(client);
     int points = GetNativeCell(2);
     g_RoundPoints[client] = points;
 }
 
-public Native_ChangeRoundPoints(Handle plugin, numParams) {
+public int Native_ChangeRoundPoints(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     CHECK_CONNECTED(client);
     int dp = GetNativeCell(2);
     g_RoundPoints[client] += dp;
 }
 
-public Native_GetPlayerInfo(Handle plugin, numParams) {
+public int Native_GetPlayerInfo(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     CHECK_CONNECTED(client);
     SetNativeString(2, g_PlayerPrimary[client], WEAPON_STRING_LENGTH);
@@ -119,7 +119,7 @@ public Native_GetPlayerInfo(Handle plugin, numParams) {
     SetNativeCellRef(8, g_PlayerKit[client]);
 }
 
-public Native_SetPlayerInfo(Handle plugin, numParams) {
+public int Native_SetPlayerInfo(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
     CHECK_CONNECTED(client);
 
@@ -133,14 +133,14 @@ public Native_SetPlayerInfo(Handle plugin, numParams) {
     g_PlayerKit[client] = GetNativeCell(8);
 }
 
-public Native_GetRetakeRoundsPlayed(Handle plugin, numParams) {
+public int Native_GetRetakeRoundsPlayed(Handle plugin, int numParams) {
     return g_RoundCount;
 }
 
-public Native_InWarmup(Handle plugin, numParams) {
+public int Native_InWarmup(Handle plugin, int numParams) {
     return GameRules_GetProp("m_bWarmupPeriod");
 }
 
-public Native_GetMaxPlayers(Handle plugin, numParams) {
+public int Native_GetMaxPlayers(Handle plugin, int numParams) {
     return GetConVarInt(g_hMaxPlayers);
 }

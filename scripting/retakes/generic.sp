@@ -79,7 +79,7 @@ stock int GetActivePlayerCount() {
  * Returns if a player is on an active/player team.
  */
 stock bool IsOnTeam(int client) {
-    new team = GetClientTeam(client);
+    int team = GetClientTeam(client);
     return (team == CS_TEAM_CT) || (team == CS_TEAM_T);
 }
 
@@ -124,7 +124,7 @@ stock void AddMenuInt2(Handle menu, int value) {
 /**
  * Gets an integer to a menu from a string choice.
  */
-stock int GetMenuInt(Handle menu, any:param2) {
+stock int GetMenuInt(Handle menu, int param2) {
     char choice[INTEGER_STRING_LENGTH];
     GetMenuItem(menu, param2, choice, sizeof(choice));
     return StringToInt(choice);
@@ -141,7 +141,7 @@ stock void AddMenuBool(Handle menu, bool value, const char[] display) {
 /**
  * Gets a boolean to a menu from a string choice.
  */
-stock bool GetMenuBool(Handle menu, any:param2) {
+stock bool GetMenuBool(Handle menu, int param2) {
     return GetMenuInt(menu, param2) != 0;
 }
 
@@ -149,7 +149,7 @@ stock bool GetMenuBool(Handle menu, any:param2) {
  * Returns a random index from an array.
  */
 stock int RandomIndex(Handle array) {
-    new len = GetArraySize(array);
+    int len = GetArraySize(array);
     if (len == 0)
         ThrowError("Can't get random index from empty array");
     return GetRandomInt(0, len - 1);
@@ -158,7 +158,7 @@ stock int RandomIndex(Handle array) {
 /**
  * Returns a random element from an array.
  */
-stock any:RandomElement(Handle array) {
+stock int RandomElement(Handle array) {
     return GetArrayCell(array, RandomIndex(array));
 }
 
@@ -275,13 +275,13 @@ stock void GetCleanMapName(char[] buffer, int size) {
  * Applies colorized characters across a string to replace color tags.
  */
 stock void Colorize(char[] msg, int size) {
-    for (new i = 0; i < sizeof(g_ColorNames); i ++) {
+    for (int i = 0; i < sizeof(g_ColorNames); i ++) {
         ReplaceString(msg, size, g_ColorNames[i], g_ColorCodes[i]);
     }
 }
 
 stock void StripColors(char[] msg, int size) {
-    for (new i = 0; i < sizeof(g_ColorNames); i ++) {
+    for (int i = 0; i < sizeof(g_ColorNames); i ++) {
         ReplaceString(msg, size, g_ColorNames[i], "");
     }
 }
