@@ -123,7 +123,7 @@ public Action Command_Show(int client, int args) {
     } else {
         ReplyToCommand(client, "Usage: sm_show <site>");
     }
-    return Plugin_Continue;
+    return Plugin_Handled;
 }
 
 public Action Command_NoBomb(int client, int args) {
