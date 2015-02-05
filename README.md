@@ -19,7 +19,6 @@ Here are some examples of what could be done using those natives:
 ## Download
 Stable releases are in the [GitHub Releases](https://github.com/splewis/csgo-retakes/releases) section.
 
-There is no stable release yet.
 
 You may download the [latest development build](http://ci.splewis.net/job/csgo-retakes/lastSuccessfulBuild/) if you wish. If you report any bugs from these, make sure to include the build number (when typing ``sm plugins list`` into the server console, the build number will be displayed with the plugin version).
 
@@ -75,5 +74,4 @@ Guidelines
 - **Keep it simple, stupid**
 
 For adding translations, you can either use git and follow the instructions above, or use the [SourceMod translator](http://translator.mitchdempsey.com/sourcemod_plugins/152). I'd prefer you use git & GitHub, but using the sourcmeod translator is probably easier for most people.
-
 
