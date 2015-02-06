@@ -1,6 +1,6 @@
 #tryinclude "../include/retakes_version.inc"
 #if !defined PLUGIN_VERSION
-#define PLUGIN_VERSION "0.1.0"
+#define PLUGIN_VERSION "0.2.0-dev"
 #endif
 
 #define INTEGER_STRING_LENGTH 20 // max number of digits a 64-bit integer can use up as a string
