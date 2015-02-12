@@ -65,6 +65,8 @@ Here is how to operate the spawn editor:
 First, check the [issue tracker](https://github.com/splewis/csgo-multi-1v1/issues?state=open) to ask questions or make a suggestion.
 If you have a suggestion you can mark it as an enhancement.
 
+**Style/gameplay design choices that don't have to made here, should not be made here**. Spawns can be edited by anyone running a server. How weapons are given can be set by the natives and forwards provided. Please don't submit requests to change these, since everyone will want something different.
+
 Guidelines
 - Create a fork on github, clone that, then create a branch to work on ``git checkout -b mybranchname``
 - Follow the code-style already used as much as you can
@@ -72,6 +74,3 @@ Guidelines
 - Favor readability and correctness over all else
 - For a moderately advanced feature, it may be simpler to write it as a plugin that uses the retakes natives from [retakes.inc](scripting/include/retakes.inc)
 - **Keep it simple, stupid**
-
-For adding translations, you can either use git and follow the instructions above, or use the [SourceMod translator](http://translator.mitchdempsey.com/sourcemod_plugins/152). I'd prefer you use git & GitHub, but using the sourcmeod translator is probably easier for most people.
-
