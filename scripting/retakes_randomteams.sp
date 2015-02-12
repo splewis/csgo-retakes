@@ -1,10 +1,12 @@
-#pragma semicolon 1
 #include <sourcemod>
 #include "include/retakes.inc"
 #include "include/priorityqueue.inc"
 #include "retakes/generic.sp"
 
-public Plugin:myinfo = {
+#pragma semicolon 1
+#pragma newdecls required
+
+public Plugin myinfo = {
     name = "CS:GO Retakes: random teams",
     author = "splewis",
     description = "Makes the teams fully random every round",

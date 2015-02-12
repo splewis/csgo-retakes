@@ -1,9 +1,11 @@
-#pragma semicolon 1
 #include <sourcemod>
 #include "include/retakes.inc"
 #include "retakes/generic.sp"
 
-public Plugin:myinfo = {
+#pragma semicolon 1
+#pragma newdecls required
+
+public Plugin myinfo = {
     name = "CS:GO Retakes: site picker",
     author = "splewis",
     description = "Adds admin commands to pick the bombsite being used",
@@ -19,7 +21,7 @@ public void OnPluginStart() {
     RegAdminCmd("sm_site", Command_Site, ADMFLAG_CHANGEMAP);
 }
 
-public Action Command_Site(int client, args) {
+public Action Command_Site(int client, int args) {
     char arg[32];
     if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
         if (StrEqual(arg, "a", false)) {

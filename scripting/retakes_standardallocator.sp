@@ -1,9 +1,11 @@
-#pragma semicolon 1
 #include <sourcemod>
 #include <cstrike>
 #include <clientprefs>
 #include "include/retakes.inc"
 #include "retakes/generic.sp"
+
+#pragma semicolon 1
+#pragma newdecls required
 
 #define MENU_TIME_LENGTH 15
 
@@ -12,7 +14,7 @@ bool g_AwpChoice[MAXPLAYERS+1];
 Handle g_hM4ChoiceCookie = INVALID_HANDLE;
 Handle g_hAwpChoiceCookie = INVALID_HANDLE;
 
-public Plugin:myinfo = {
+public Plugin myinfo = {
     name = "CS:GO Retakes: standard weapon allocator",
     author = "splewis",
     description = "Defines a simple weapon allocation policy and lets players set weapon preferences",
@@ -49,7 +51,7 @@ public void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, 
 /**
  * Updates client weapon settings according to their cookies.
  */
-public OnClientCookiesCached(client) {
+public int OnClientCookiesCached(int client) {
     if (IsFakeClient(client))
         return;
 
@@ -133,7 +135,7 @@ public void GiveRifleMenu(int client) {
     DisplayMenu(menu, client, MENU_TIME_LENGTH);
 }
 
-public int MenuHandler_M4(Handle menu, MenuAction action, param1, param2) {
+public int MenuHandler_M4(Handle menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         int client = param1;
         bool useSilenced = GetMenuBool(menu, param2);
@@ -153,7 +155,7 @@ public void GiveAwpMenu(int client) {
     DisplayMenu(menu, client, MENU_TIME_LENGTH);
 }
 
-public int MenuHandler_AWP(Handle menu, MenuAction action, param1, param2) {
+public int MenuHandler_AWP(Handle menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         int client = param1;
         bool allowAwps = GetMenuBool(menu, param2);
