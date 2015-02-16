@@ -9,34 +9,38 @@
 
 #define MENU_TIME_LENGTH 15
 
+int  g_Gunchoice[MAXPLAYERS+1];
 bool g_SilencedM4[MAXPLAYERS+1];
 bool g_AwpChoice[MAXPLAYERS+1];
+Handle g_hGUNChoiceCookie = INVALID_HANDLE;
 Handle g_hM4ChoiceCookie = INVALID_HANDLE;
 Handle g_hAwpChoiceCookie = INVALID_HANDLE;
 
 public Plugin myinfo = {
     name = "CS:GO Retakes: standard weapon allocator",
-    author = "splewis",
+    author = "BatMen",
     description = "Defines a simple weapon allocation policy and lets players set weapon preferences",
     version = PLUGIN_VERSION,
-    url = "https://github.com/splewis/csgo-retakes"
+    url = "https://github.com/BatMen/csgo-retakes"
 };
 
 public void OnPluginStart() {
-    g_hM4ChoiceCookie = RegClientCookie("retakes_m4choice", "", CookieAccess_Private);
+    g_hGUNChoiceCookie = RegClientCookie("retakes_gunchoice", "", CookieAccess_Private);
+    g_hM4ChoiceCookie  = RegClientCookie("retakes_m4choice", "", CookieAccess_Private);
     g_hAwpChoiceCookie = RegClientCookie("retakes_awpchoice", "", CookieAccess_Private);
 }
 
 public void OnClientConnected(int client) {
+    g_Gunchoice[client] = 1;
     g_SilencedM4[client] = false;
     g_AwpChoice[client] = false;
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
-    char gunsChatCommands[][] = { "gun", "guns", ".gun", ".guns", ".setup", "!gun", "!guns", "gnus" };
+    char gunsChatCommands[][] = { "/gun", "/guns", "gun", "guns", ".gun", ".guns", ".setup", "!gun", "!guns", "gnus" };
     for (int i = 0; i < sizeof(gunsChatCommands); i++) {
         if (strcmp(args[0], gunsChatCommands[i], false) == 0) {
-            GiveRifleMenu(client);
+            GiveGunMenu(client);
             break;
         }
     }
@@ -55,17 +59,26 @@ public int OnClientCookiesCached(int client) {
     if (IsFakeClient(client))
         return;
 
+    g_Gunchoice[client]  = GetCookieInt (client, g_hGUNChoiceCookie);
     g_SilencedM4[client] = GetCookieBool(client, g_hM4ChoiceCookie);
-    g_AwpChoice[client] = GetCookieBool(client, g_hAwpChoiceCookie);
+    g_AwpChoice[client]  = GetCookieBool(client, g_hAwpChoiceCookie);
 }
 
-static void SetNades(char nades[NADE_STRING_LENGTH]) {
-    int rand = GetRandomInt(0, 3);
+static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist) {
+    int rand = GetRandomInt(0, 4);
+    /* JUST TO REMEMBER
+        case 'h': weapon = "weapon_hegrenade";
+        case 'f': weapon = "weapon_flashbang";
+        case 'm': weapon = "weapon_molotov";
+        case 'i': weapon = "weapon_incgrenade";
+        case 's': weapon = "weapon_smokegrenade";
+    */
     switch(rand) {
         case 0: nades = "";
-        case 1: nades = "s";
-        case 2: nades = "f";
-        case 3: nades = "h";
+        case 1: nades = "h";
+        case 2: nades = terrorist ? "s" : "f";
+        case 3: nades = "f";
+        case 4: nades = terrorist ? "m" : "i";
     }
 }
 
@@ -87,19 +100,30 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
     for (int i = 0; i < tCount; i++) {
         int client = GetArrayCell(tPlayers, i);
 
-        if (giveTAwp && g_AwpChoice[client]) {
-            primary = "weapon_awp";
-            giveTAwp = false;
-        } else {
-            primary = "weapon_ak47";
+        primary = "";
+        if (Retakes_GetRetakeRoundsPlayed() > 5)
+        {
+            int randGiveAwp = GetRandomInt(0, 1);
+
+            if (giveTAwp && g_AwpChoice[client] && randGiveAwp == 1) {
+                primary = "weapon_awp";
+                giveTAwp = false;
+            } else {
+                primary = "weapon_ak47";
+            }
         }
 
-        secondary = "weapon_glock";
+        if (g_Gunchoice[client] == 2)
+            secondary = "weapon_p250";
+        else if (g_Gunchoice[client] == 3)
+            secondary = "weapon_tec9";
+        else
+            secondary = "weapon_glock";
         health = 100;
         kevlar = 100;
         helmet = true;
         kit = false;
-        SetNades(nades);
+        SetNades(nades, false);
 
         Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
     }
@@ -107,23 +131,55 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
     for (int i = 0; i < ctCount; i++) {
         int client = GetArrayCell(ctPlayers, i);
 
-        if (giveCTAwp && g_AwpChoice[client]) {
-            primary = "weapon_awp";
-            giveCTAwp = false;
-        } else if (g_SilencedM4[client]) {
-            primary = "weapon_m4a1_silencer";
-        } else {
-            primary = "weapon_m4a1";
+        int randGiveAwp = GetRandomInt(0, 1);
+
+        primary = "";
+        if (Retakes_GetRetakeRoundsPlayed() > 5)
+        {
+            if (giveCTAwp && g_AwpChoice[client] && randGiveAwp == 1) {
+                primary = "weapon_awp";
+                giveCTAwp = false;
+            } else if (g_SilencedM4[client]) {
+                primary = "weapon_m4a1_silencer";
+            } else {
+                primary = "weapon_m4a1";
+            }
         }
 
-        secondary = "weapon_hkp2000";
-        kit = true;
+        if (g_Gunchoice[client] == 2)
+            secondary = "weapon_p250";
+        else if (g_Gunchoice[client] == 3)
+            secondary = "weapon_fiveseven";
+        else
+            secondary = "weapon_hkp2000";
         health = 100;
         kevlar = 100;
         helmet = true;
-        SetNades(nades);
+        kit = true;
+        SetNades(nades, true);
 
         Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
+    }
+}
+
+public void GiveGunMenu(int client) {
+    Handle menu = CreateMenu(MenuHandler_GUN);
+    SetMenuTitle(menu, "Select a gun slot :");
+    AddMenuInt(menu, 1, "Glock/Hkp2000/Usp)");
+    AddMenuInt(menu, 2, "P250");
+    AddMenuInt(menu, 3, "Fiveseven/CZ/Tec9");
+    DisplayMenu(menu, client, MENU_TIME_LENGTH);
+}
+
+public int MenuHandler_GUN(Handle menu, MenuAction action, int param1, int param2) {
+    if (action == MenuAction_Select) {
+        int client = param1;
+        int gunchoice = GetMenuInt(menu, param2);
+        g_Gunchoice[client] = gunchoice;
+        SetCookieInt(client, g_hGUNChoiceCookie, gunchoice);
+        GiveRifleMenu(client);
+    } else if (action == MenuAction_End) {
+        CloseHandle(menu);
     }
 }
 
