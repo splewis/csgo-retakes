@@ -25,6 +25,7 @@ public Plugin myinfo = {
 public void OnPluginStart() {
     g_hM4ChoiceCookie = RegClientCookie("retakes_m4choice", "", CookieAccess_Private);
     g_hAwpChoiceCookie = RegClientCookie("retakes_awpchoice", "", CookieAccess_Private);
+    RegConsoleCmd("sm_guns", Command_GunsMenu, "Opens the retakes weapons menu");
 }
 
 public void OnClientConnected(int client) {
@@ -32,11 +33,16 @@ public void OnClientConnected(int client) {
     g_AwpChoice[client] = false;
 }
 
+public Action Command_GunsMenu(int client, int args) {
+    GiveWeaponsMenu(client);
+    return Plugin_Handled;
+}
+
 public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
-    char gunsChatCommands[][] = { "gun", "guns", ".gun", ".guns", ".setup", "!gun", "!guns", "gnus" };
+    char gunsChatCommands[][] = { "gun", "guns", ".gun", ".guns", ".setup", "!gun", "gnus" };
     for (int i = 0; i < sizeof(gunsChatCommands); i++) {
         if (strcmp(args[0], gunsChatCommands[i], false) == 0) {
-            GiveRifleMenu(client);
+            GiveWeaponsMenu(client);
             break;
         }
     }
@@ -45,7 +51,7 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
 }
 
 public void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) {
-    RifleAllocator(tPlayers, ctPlayers, bombsite);
+    WeaponAllocator(tPlayers, ctPlayers, bombsite);
 }
 
 /**
@@ -69,7 +75,7 @@ static void SetNades(char nades[NADE_STRING_LENGTH]) {
     }
 }
 
-public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) {
+public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) {
     int tCount = GetArraySize(tPlayers);
     int ctCount = GetArraySize(ctPlayers);
 
@@ -127,7 +133,7 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
     }
 }
 
-public void GiveRifleMenu(int client) {
+public void GiveWeaponsMenu(int client) {
     Handle menu = CreateMenu(MenuHandler_M4);
     SetMenuTitle(menu, "Select a CT rifle:");
     AddMenuBool(menu, false, "M4A4");
