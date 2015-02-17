@@ -212,7 +212,7 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
         kevlar = 100;
         helmet = true;
         kit = false;
-        SetNades(nades, false);
+        SetNades(nades, true);
 
         Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
     }
@@ -249,7 +249,7 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
         kevlar = 100;
         helmet = true;
         kit = true;
-        SetNades(nades, true);
+        SetNades(nades, false);
 
         Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
     }
