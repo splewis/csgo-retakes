@@ -117,6 +117,8 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
             secondary = "weapon_p250";
         else if (g_Gunchoice[client] == 3)
             secondary = "weapon_tec9";
+	else if (g_Gunchoice[client] == 4)
+	    secondary = "weapon_cz75a";
         else
             secondary = "weapon_glock";
         health = 100;
@@ -150,6 +152,8 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
             secondary = "weapon_p250";
         else if (g_Gunchoice[client] == 3)
             secondary = "weapon_fiveseven";
+        else if (g_Gunchoice[client] == 4)
+            secondary = "weapon_cz75a";
         else
             secondary = "weapon_hkp2000";
         health = 100;
@@ -167,7 +171,8 @@ public void GiveGunMenu(int client) {
     SetMenuTitle(menu, "Select a gun slot :");
     AddMenuInt(menu, 1, "Glock/Hkp2000/Usp)");
     AddMenuInt(menu, 2, "P250");
-    AddMenuInt(menu, 3, "Fiveseven/CZ/Tec9");
+    AddMenuInt(menu, 3, "Fiveseven/Tec9");
+    AddMenuInt(menu, 4, "CZ");
     DisplayMenu(menu, client, MENU_TIME_LENGTH);
 }
 
