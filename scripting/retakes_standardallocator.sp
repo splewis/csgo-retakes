@@ -64,7 +64,7 @@ public void OnPluginStart() {
     g_h_sm_retakes_weapon_helmet_enabled = CreateConVar("sm_retakes_weapon_helmet_enabled", "1", "Whether the players have helmet");
     g_h_sm_retakes_weapon_kevlar_enabled = CreateConVar("sm_retakes_weapon_kevlar_enabled", "1", "Whether the players have kevlar");
     g_h_sm_retakes_weapon_awp_enabled = CreateConVar("sm_retakes_weapon_awp_enabled", "1", "Whether the players can have AWP");
-    g_h_sm_retakes_weapon_gunrounds = CreateConVar("sm_retakes_weapon_gunrounds", "1", "The number of gun rounds (0 = no gun round)");
+    g_h_sm_retakes_weapon_gunrounds = CreateConVar("sm_retakes_weapon_gunrounds", "5", "The number of gun rounds (0 = no gun round)");
     g_h_sm_retakes_weapon_deagle_enabled = CreateConVar("sm_retakes_weapon_deagle_enabled", "1", "Whether the players can choose deagle");
     g_h_sm_retakes_weapon_cz_enabled = CreateConVar("sm_retakes_weapon_cz_enabled", "1", "Whether the playres can choose CZ");
     g_h_sm_retakes_weapon_p250_enabled = CreateConVar("sm_retakes_weapon_p250_enabled", "1", "Whether the players can choose P250");
@@ -186,7 +186,7 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
         int client = GetArrayCell(tPlayers, i);
 
         primary = "";
-        if (Retakes_GetRetakeRoundsPlayed() > GetConVarInt(g_h_sm_retakes_weapon_gunrounds) )
+        if (GetConVarInt(g_h_sm_retakes_weapon_primary_enabled) == 1 && Retakes_GetRetakeRoundsPlayed() > GetConVarInt(g_h_sm_retakes_weapon_gunrounds) )
         {
             int randGiveAwp = GetRandomInt(0, 1);
 
@@ -223,7 +223,7 @@ public void RifleAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bom
         int randGiveAwp = GetRandomInt(0, 1);
 
         primary = "";
-        if (Retakes_GetRetakeRoundsPlayed() > 5)
+        if (GetConVarInt(g_h_sm_retakes_weapon_primary_enabled) == 1 && Retakes_GetRetakeRoundsPlayed() > GetConVarInt(g_h_sm_retakes_weapon_gunrounds))
         {
             if (giveCTAwp && g_AwpChoice[client] && randGiveAwp == 1) {
                 primary = "weapon_awp";
