@@ -11,4 +11,7 @@ Package(name='retakes-release',
         extends=['retakes-base'],
         plugins=['retakes_sitepicker', 'retakes_standardallocator', 'retakes_randomteams'],
         disabled_plugins=['retakes_sitepicker', 'retakes_standardallocator', 'retakes_randomteams'],
+        filegroups={
+            '.': ['LICENSE', 'README.md'],
+        },
 )
