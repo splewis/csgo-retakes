@@ -7,20 +7,22 @@ This is a CS:GO [Sourcemod](http://www.sourcemod.net) plugin that creates a comp
 
 **Note that this plugin is currently unreleased. There is no stable release. Expect bugs.**
 
+
 ## For plugin developers
 
 My goal is to keep the base retakes plugin as simple as possible. See [retakes.inc](scripting/include/retakes.inc) for how to extend the plugin.
 
 Here are some examples of what could be done using those natives:
 - different weapon allocation policies (by default, everyone gets an AK/M4, armor/helmet, and a kit)
-- change how players get put into teams by changing their "round points" or the team ratios, or by changing who is in the waiting queue if the game is full
+- change how players get put into teams by changing their "round points", the team ratios, or by changing who is in the waiting queue if the game is full
 - change how the bombsite is chosen each round (by default one is randomly picked each round)
+
 
 ## Download
 Stable releases are in the [GitHub Releases](https://github.com/splewis/csgo-retakes/releases) section.
 
-
 You may download the [latest development build](http://ci.splewis.net/job/csgo-retakes/lastSuccessfulBuild/) if you wish. If you report any bugs from these, make sure to include the build number (when typing ``sm plugins list`` into the server console, the build number will be displayed with the plugin version).
+
 
 ## Installation
 
@@ -43,6 +45,9 @@ Here are a few important cvars that are in ``cfg/sourcemod/retakes/retakes.cfg``
 - ``sm_retakes_maxplayers``: maximum number of players allowed in the game at once
 - ``sm_retakes_ratio_constant``: what percentage of players go on the T team
 
+You can enable optional addon plugins for more features, read the [Addon Plugins](#addon-plugins) section for more information.
+
+
 ## Building
 The build process is managed by my [smbuilder](https://github.com/splewis/sm-builder) project. You can still compile retakes.sp without it in the normal fashion, however.
 
@@ -50,6 +55,7 @@ To compile, you will need:
 - [SMLib](https://github.com/bcserv/smlib)
 
 You should make sure you have a relatively recent version of smlib - some changes were made to accommodate sourcemod 1.7 changes.
+
 
 ## Creating and Editing Spawns
 
@@ -60,6 +66,18 @@ Here is how to operate the spawn editor:
 - use ``sm_deletespawn`` to delete the nearest spawn. Example: ``!deletespawn`` in chat.
 - use ``sm_bomb`` to toggle whether to display all spawns or potential bomb-carrier spawns. Example: ``!bomb`` in chat
 - use ``sm_nobomb`` to mark a spawn as unavailable to a bomb carrier. (by default, all spawns within the xy plane of a bombsite are available for a bomb carrier). Example: ``!nobomb`` in chat while standing on top of the spawn you want to edit.
+
+## Addon plugins
+
+
+The following plugins are optional and disabled by default. To enable them move them up from the ``addons/sourcemod/plugins/disabled`` directory to ``addons/sourcemod/plugins``.
+
+#### retakes_sitepicker
+This plugin adds a simple admin command sm_site to let an admin pick between bombsites being used. For example, then can type: "!site a" or "!site any".
+
+#### retakes_standardallocator
+This plugin provides a simple ``sm_guns`` (!guns in chat) command that lets users choose between regular and silenced M4's and whether they want to ever recieve an AWP. It also randomly gives out a small amount of grenades.
+
 
 ## Contribution and Suggestions
 First, check the [issue tracker](https://github.com/splewis/csgo-multi-1v1/issues?state=open) to ask questions or make a suggestion.
