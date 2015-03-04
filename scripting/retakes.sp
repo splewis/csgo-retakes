@@ -697,7 +697,7 @@ public void UpdateTeams() {
 }
 
 static bool ScramblesEnabled() {
-    return GetConVarInt(g_hRoundsToScramble) >= 1;
+    return GetConVarInt(g_hRoundsToScramble) >= 1 && GetConVarInt(g_hUseRandomTeams) != 0;
 }
 
 public void TerroristsWon() {
@@ -712,7 +712,7 @@ public void TerroristsWon() {
         g_WinStreak = 0;
     } else if (g_WinStreak >= toScramble - 3 && ScramblesEnabled()) {
         Retakes_MessageToAll("%t", "WinStreakAlmostToScramble", g_WinStreak, toScramble - g_WinStreak);
-    } else if (g_WinStreak >= 3 && ScramblesEnabled()) {
+    } else if (g_WinStreak >= 3) {
         Retakes_MessageToAll("%t", "WinStreak", g_WinStreak);
     }
 }
