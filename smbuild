@@ -1,5 +1,4 @@
 Plugin(source='scripting/retakes.sp')
-Plugin(source='scripting/retakes_randomteams.sp', deps=['retakes'])
 Plugin(source='scripting/retakes_sitepicker.sp', deps=['retakes'])
 Plugin(source='scripting/retakes_standardallocator.sp', deps=['retakes'])
 
@@ -9,8 +8,8 @@ Package(name='retakes-base',
 
 Package(name='retakes-release',
         extends=['retakes-base'],
-        plugins=['retakes_sitepicker', 'retakes_standardallocator', 'retakes_randomteams'],
-        disabled_plugins=['retakes_sitepicker', 'retakes_standardallocator', 'retakes_randomteams'],
+        plugins=['retakes_sitepicker', 'retakes_standardallocator'],
+        disabled_plugins=['retakes_sitepicker', 'retakes_standardallocator'],
         filegroups={
             '.': ['LICENSE', 'README.md'],
         },
