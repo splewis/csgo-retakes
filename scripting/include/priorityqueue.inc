@@ -16,7 +16,7 @@ stock Handle PQ_Init() {
  * Adds a player and a value to the queue.
  * If the player is already in the queue, their score is updated in place.
  */
-stock void PQ_Enqueue(Handle queueHandle, int client, value) {
+stock void PQ_Enqueue(Handle queueHandle, int client, int value) {
     int index = PQ_FindClient(queueHandle, client);
 
     // if they're not already in, put them at the end
@@ -91,6 +91,6 @@ stock bool PQ_IsEmpty(Handle queueHandle) {
 /**
  * Clears the Handle for a queue.
  */
-stock PQ_Destroy(Handle queueHandle) {
+stock void PQ_Destroy(Handle queueHandle) {
     CloseHandle(queueHandle);
 }

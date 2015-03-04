@@ -4,8 +4,8 @@
 #define _retakes_included
 
 enum Bombsite {
-    BombsiteA,
-    BombsiteB
+    BombsiteA = 0,
+    BombsiteB = 1,
 };
 
 /**
@@ -211,7 +211,7 @@ stock void GetSiteString(Bombsite site, char[] buffer, int length) {
     }
 }
 
-public SharedPlugin:__pl_retakes = {
+public SharedPlugin __pl_retakes = {
     name = "retakes",
     file = "retakes.smx",
 #if defined REQUIRE_PLUGIN

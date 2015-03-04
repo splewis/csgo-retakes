@@ -43,7 +43,7 @@ stock int Queue_Find(Handle queueHandle, int client) {
  * Drops a client from the Queue.
  */
 stock void Queue_Drop(Handle queueHandle, int client) {
-    new index = Queue_Find(queueHandle, client);
+    int index = Queue_Find(queueHandle, client);
     if (index != -1)
         RemoveFromArray(queueHandle, index);
 }
