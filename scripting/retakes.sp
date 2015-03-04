@@ -45,6 +45,7 @@ Handle g_hMaxPlayers = INVALID_HANDLE;
 Handle g_hRatioConstant = INVALID_HANDLE;
 Handle g_hRoundsToScramble = INVALID_HANDLE;
 Handle g_hRoundTime = INVALID_HANDLE;
+Handle g_hUseRandomTeams = INVALID_HANDLE;
 
 /** Editing global variables **/
 bool g_EditMode = false;
@@ -134,6 +135,7 @@ public void OnPluginStart() {
     g_hRatioConstant = CreateConVar("sm_retakes_ratio_constant", "0.425", "Ratio constant for team sizes.");
     g_hRoundsToScramble = CreateConVar("sm_retakes_scramble_rounds", "10", "Consecutive terrorist wins to cause a team scramble.");
     g_hRoundTime = CreateConVar("sm_retakes_round_time", "12", "Round time left in seconds.");
+    g_hUseRandomTeams = CreateConVar("sm_retakes_random_teams", "0", "If set to 1, this will randomize the teams every round.");
 
     /** Create/Execute retakes cvars **/
     AutoExecConfig(true, "retakes", "sourcemod/retakes");
@@ -543,16 +545,25 @@ public void RoundEndUpdates() {
     Call_PushCell(g_hWaitingQueue);
     Call_Finish();
 
-    for (int i = 1; i <= MaxClients; i++) {
-        if (IsPlayer(i) && IsOnTeam(i)) {
-            PQ_Enqueue(g_hRankingQueue, i, g_RoundPoints[i]);
+    bool randomTeams = GetConVarInt(g_hUseRandomTeams) != 0;
+    int randomMax = 1000;
+
+    for (int client = 1; client <= MaxClients; client++) {
+        if (IsPlayer(client) && IsOnTeam(client)) {
+            if (randomTeams)
+                PQ_Enqueue(g_hRankingQueue, client, GetRandomInt(0, randomMax));
+            else
+                PQ_Enqueue(g_hRankingQueue, client, g_RoundPoints[client]);
         }
     }
 
     while (!Queue_IsEmpty(g_hWaitingQueue) && PQ_GetSize(g_hRankingQueue) < GetConVarInt(g_hMaxPlayers)) {
         int client = Queue_Dequeue(g_hWaitingQueue);
         if (IsPlayer(client)) {
-            PQ_Enqueue(g_hRankingQueue, client, -POINTS_LOSS);
+            if (randomTeams)
+                PQ_Enqueue(g_hRankingQueue, client, GetRandomInt(0, randomMax));
+            else
+                PQ_Enqueue(g_hRankingQueue, client, -POINTS_LOSS);
         } else {
             break;
         }
