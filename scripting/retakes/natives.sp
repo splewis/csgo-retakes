@@ -142,5 +142,5 @@ public int Native_InWarmup(Handle plugin, int numParams) {
 }
 
 public int Native_GetMaxPlayers(Handle plugin, int numParams) {
-    return GetConVarInt(g_hMaxPlayers);
+    return g_hMaxPlayers.IntValue;
 }

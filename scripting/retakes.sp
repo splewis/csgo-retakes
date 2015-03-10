@@ -39,13 +39,13 @@ Handle g_hWaitingQueue = INVALID_HANDLE;
 Handle g_hRankingQueue = INVALID_HANDLE;
 
 /** ConVar handles **/
-Handle g_hCvarVersion = INVALID_HANDLE;
-Handle g_hEditorEnabled = INVALID_HANDLE;
-Handle g_hMaxPlayers = INVALID_HANDLE;
-Handle g_hRatioConstant = INVALID_HANDLE;
-Handle g_hRoundsToScramble = INVALID_HANDLE;
-Handle g_hRoundTime = INVALID_HANDLE;
-Handle g_hUseRandomTeams = INVALID_HANDLE;
+ConVar g_hCvarVersion;
+ConVar g_hEditorEnabled;
+ConVar g_hMaxPlayers;
+ConVar g_hRatioConstant;
+ConVar g_hRoundsToScramble;
+ConVar g_hRoundTime;
+ConVar g_hUseRandomTeams;
 
 /** Editing global variables **/
 bool g_EditMode = false;
@@ -141,7 +141,7 @@ public void OnPluginStart() {
     AutoExecConfig(true, "retakes", "sourcemod/retakes");
 
     g_hCvarVersion = CreateConVar("sm_retakes_version", PLUGIN_VERSION, "Current retakes version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
-    SetConVarString(g_hCvarVersion, PLUGIN_VERSION);
+    g_hCvarVersion.SetString(PLUGIN_VERSION);
 
     /** Command hooks **/
     AddCommandListener(Command_TeamJoin, "jointeam");
@@ -212,7 +212,7 @@ public void OnMapStart() {
 }
 
 public void OnMapEnd() {
-    if (GetConVarInt(g_hEditorEnabled) != 0)
+    if (g_hEditorEnabled.IntValue != 0)
         WriteSpawns();
 
     Queue_Destroy(g_hWaitingQueue);
@@ -296,7 +296,7 @@ public Action PlacePlayer(int client) {
     GetTeamsClientCounts(tHumanCount, ctHumanCount);
     nPlayers = tHumanCount + ctHumanCount;
 
-    if (Retakes_InWarmup() && nPlayers < GetConVarInt(g_hMaxPlayers)) {
+    if (Retakes_InWarmup() && nPlayers < g_hMaxPlayers.IntValue) {
         return Plugin_Continue;
     }
 
@@ -461,7 +461,7 @@ public Action Event_RoundPostStart(Handle event, const char[] name, bool dontBro
         return;
 
     if (!g_EditMode) {
-        GameRules_SetProp("m_iRoundTime", GetConVarInt(g_hRoundTime), 4, 0, true);
+        GameRules_SetProp("m_iRoundTime", g_hRoundTime.IntValue, 4, 0, true);
         char bombsite[4];
         GetSiteString(g_Bombsite, bombsite, sizeof(bombsite));
         Retakes_MessageToAll("%t", "RetakeSiteMessage", bombsite, g_NumT, g_NumCT);
@@ -545,7 +545,7 @@ public void RoundEndUpdates() {
     Call_PushCell(g_hWaitingQueue);
     Call_Finish();
 
-    bool randomTeams = GetConVarInt(g_hUseRandomTeams) != 0;
+    bool randomTeams = g_hUseRandomTeams.IntValue != 0;
     int randomMax = 1000;
 
     for (int client = 1; client <= MaxClients; client++) {
@@ -557,7 +557,7 @@ public void RoundEndUpdates() {
         }
     }
 
-    while (!Queue_IsEmpty(g_hWaitingQueue) && PQ_GetSize(g_hRankingQueue) < GetConVarInt(g_hMaxPlayers)) {
+    while (!Queue_IsEmpty(g_hWaitingQueue) && PQ_GetSize(g_hRankingQueue) < g_hMaxPlayers.IntValue) {
         int client = Queue_Dequeue(g_hWaitingQueue);
         if (IsPlayer(client)) {
             if (randomTeams)
@@ -582,7 +582,7 @@ public void UpdateTeams() {
     for (int i = 0; i < MAX_SPAWNS; i++)
         g_SpawnTaken[i] = false;
 
-    if (g_NumSpawns < GetConVarInt(g_hMaxPlayers)) {
+    if (g_NumSpawns < g_hMaxPlayers.IntValue) {
         LogError("This map does not have enough spawns!");
         return;
     }
@@ -593,10 +593,10 @@ public void UpdateTeams() {
     Call_Finish();
 
     g_ActivePlayers = PQ_GetSize(g_hRankingQueue);
-    if (g_ActivePlayers > GetConVarInt(g_hMaxPlayers))
-        g_ActivePlayers = GetConVarInt(g_hMaxPlayers);
+    if (g_ActivePlayers > g_hMaxPlayers.IntValue)
+        g_ActivePlayers = g_hMaxPlayers.IntValue;
 
-    g_NumT = RoundToNearest(GetConVarFloat(g_hRatioConstant) * float(g_ActivePlayers));
+    g_NumT = RoundToNearest(g_hRatioConstant.FloatValue * float(g_ActivePlayers));
     if (g_NumT < 1)
         g_NumT = 1;
 
@@ -687,7 +687,7 @@ public void UpdateTeams() {
     for (int i = 0; i < length; i++) {
         int client = GetArrayCell(g_hWaitingQueue, i);
         if (IsValidClient(client)) {
-            Retakes_Message(client, "%t", "WaitingQueueMessage", GetConVarInt(g_hMaxPlayers));
+            Retakes_Message(client, "%t", "WaitingQueueMessage", g_hMaxPlayers.IntValue);
         }
     }
 
@@ -697,11 +697,11 @@ public void UpdateTeams() {
 }
 
 static bool ScramblesEnabled() {
-    return GetConVarInt(g_hRoundsToScramble) >= 1 && GetConVarInt(g_hUseRandomTeams) != 0;
+    return g_hRoundsToScramble.IntValue >= 1 && g_hUseRandomTeams.IntValue != 0;
 }
 
 public void TerroristsWon() {
-    int toScramble = GetConVarInt(g_hRoundsToScramble);
+    int toScramble = g_hRoundsToScramble.IntValue;
     g_WinStreak++;
 
     if (g_WinStreak >= toScramble) {

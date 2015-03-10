@@ -4,7 +4,7 @@ Bombsite g_ShowingSite = BombsiteA;
 bool g_ShowingBombSpawns = false;
 
 public Action Command_Bomb(int client, int args) {
-    if (GetConVarInt(g_hEditorEnabled) == 0) {
+    if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
     }
@@ -19,7 +19,7 @@ public Action Command_Bomb(int client, int args) {
 }
 
 public Action Command_EditSpawns(int client, int args) {
-    if (GetConVarInt(g_hEditorEnabled) == 0) {
+    if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
     }
@@ -42,7 +42,7 @@ public Action Command_EditSpawns(int client, int args) {
 }
 
 public Action Command_AddPlayer(int client, int args) {
-    if (GetConVarInt(g_hEditorEnabled) == 0) {
+    if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
     }
@@ -84,7 +84,7 @@ public Action Command_AddPlayer(int client, int args) {
 }
 
 public Action Command_Show(int client, int args) {
-    if (GetConVarInt(g_hEditorEnabled) == 0) {
+    if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
     }
@@ -127,7 +127,7 @@ public Action Command_Show(int client, int args) {
 }
 
 public Action Command_NoBomb(int client, int args) {
-    if (GetConVarInt(g_hEditorEnabled) == 0) {
+    if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
     }
@@ -141,7 +141,7 @@ public Action Command_NoBomb(int client, int args) {
 }
 
 public Action Command_DeleteSpawn(int client, int args) {
-    if (GetConVarInt(g_hEditorEnabled) == 0) {
+    if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
     }
@@ -151,7 +151,7 @@ public Action Command_DeleteSpawn(int client, int args) {
 }
 
 public Action Timer_ShowSpawns(Handle timer) {
-    if (!g_ShowingSpawns || GetConVarInt(g_hEditorEnabled) == 0)
+    if (!g_ShowingSpawns || g_hEditorEnabled.IntValue == 0)
         return Plugin_Continue;
 
     g_iBeamSprite = PrecacheModel("sprites/laserbeam.vmt", true);
