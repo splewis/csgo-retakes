@@ -3,42 +3,35 @@
 	"JoinedQueueMessage"
 	{
 		"en"			"You have been placed in the waiting queue."
-		"sv"			"Du är placerad i kön."
 	}
 	"WaitingQueueMessage"
 	{
 		"#format"		"{1:i}"
 		"en"			"The game is currently full with {GREEN}{1} {NORMAL}players. You are in the waiting queue."
-		"sv"			"Matchen är just nu full med {GREEN}{1} {NORMAL} spelare. Du är i kö."
 	}
 	"RetakeSiteMessage"
 	{
 		"#format"		"{1:s},{2:d},{3:d}"
 		"en"			"Retake {GREEN}{1}: {LIGHT_RED}{2} Ts {NORMAL}vs {PURPLE}{3} CTs"
-		"sv"			"Retake {GREEN}{1}: {LIGHT_RED}{2} Terrorister{NORMAL}vs  {PURPLE}{3} Anti-terrorister."
 	}
 	"ScrambleMessage"
 	{
 		"#format"		"{1:d}"
 		"en"			"The terrorists won {GREEN}{1}{NORMAL} rounds in a row. {PURPLE}Teams are being scrambled!"
-		"sv"			"Terroristerna har vunnit {GREEN}{1}{NORMAL} rundor i rad. {PURPLE}Blandar om lagen!"
 	}
 	"WinStreakAlmostToScramble"
 	{
 		"#format"		"{1:d},{2:d}"
 		"en"			"The terrorists have won {GREEN}{1}{NORMAL} rounds in a row - if they win {GREEN}{2} more, {PURPLE}teams will be scrambled."
-		"sv"			"Terroristerna har vunnit {GREEN}{1}{NORMAL} rundor i rad - vinner dom {GREEN}{2} mer, {PURPLE}så blandas lagen om."
 	}
 	"WinStreak"
 	{
 		"#format"		"{1:d}"
 		"en"			"The terrorists have won {GREEN}{1}{NORMAL} rounds in a row!"
-		"sv"			"Terroristerna har vunnit {GREEN}{1}{NORMAL} rundor i rad!"
 	}
 	"WinStreakOver"
 	{
 		"#format"		"{1:d}"
 		"en"			"The CTs have ended a {GREEN}{1}{NORMAL}-round long win streak!"
-		"sv"			"Anti-terroristerna har avbrutit terroristernas {GREEN}{1}{NORMAL} raka vinster!"
 	}
 }
