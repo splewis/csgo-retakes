@@ -24,6 +24,8 @@ public Action Command_EditSpawns(int client, int args) {
         return Plugin_Handled;
     }
 
+
+    g_DirtySpawns = true;
     ServerCommand("mp_warmup_start");
     ServerCommand("mp_warmup_time 120");
     ServerCommand("mp_warmup_pausetimer 1");

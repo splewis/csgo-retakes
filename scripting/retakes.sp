@@ -51,6 +51,7 @@ ConVar g_hUseRandomTeams;
 bool g_EditMode = false;
 int g_PlayerBeingEdited = -1;
 bool g_ShowingSpawns = false;
+bool g_DirtySpawns = false; // whether the spawns have been edited since loading from the file
 
 /** Win-streak data **/
 bool g_ScrambleSignal = false;
@@ -212,7 +213,7 @@ public void OnMapStart() {
 }
 
 public void OnMapEnd() {
-    if (g_hEditorEnabled.IntValue != 0)
+    if (g_hEditorEnabled.IntValue != 0 && g_DirtySpawns)
         WriteSpawns();
 
     Queue_Destroy(g_hWaitingQueue);

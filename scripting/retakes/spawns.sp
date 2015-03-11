@@ -30,6 +30,7 @@ public void FindSites() {
  * Reads the scenario keyvalues config file and sets up the global scenario and player arrays.
  */
 public int ParseSpawns() {
+    g_DirtySpawns = false;
     char configFile[PLATFORM_MAX_PATH];
     GetConfigFileName(configFile, sizeof(configFile));
 
