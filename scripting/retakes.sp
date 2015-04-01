@@ -148,13 +148,14 @@ public void OnPluginStart() {
     AddCommandListener(Command_TeamJoin, "jointeam");
 
     /** Admin commands **/
-    RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the spawn editor mode");
     RegAdminCmd("sm_spawns", Command_EditSpawns, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_new", Command_AddPlayer, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_player", Command_AddPlayer, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_deleteallspawns", Command_DeleteAllSpawns, ADMFLAG_KICK);
+    RegAdminCmd("sm_new", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Creates a new spawn");
+    RegAdminCmd("sm_player", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Creates a new spawn");
+    RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP, "Shows all spawns in a bombsite");
+    RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest spawn");
+    RegAdminCmd("sm_deleteallspawns", Command_DeleteAllSpawns, ADMFLAG_KICK, "Deletes all spawns for the current map");
+    RegAdminCmd("sm_deletemapspawns", Command_DeleteAllSpawns, ADMFLAG_KICK, "Deletes all spawns for the current map");
     RegAdminCmd("sm_bomb", Command_Bomb, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_nobomb", Command_NoBomb, ADMFLAG_CHANGEMAP);
 
