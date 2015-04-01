@@ -69,6 +69,8 @@ public int ParseSpawns() {
 
         g_SpawnNoBomb[spawn] = (kv.GetNum("nobomb", 0) != 0);
 
+        g_SpawnOnlyBomb[spawn] = (kv.GetNum("nobomb", 0) != 0);
+
         g_SpawnDeleted[spawn] = false;
 
         spawn++;
@@ -122,6 +124,10 @@ public void WriteSpawns() {
 
         if (g_SpawnNoBomb[spawn]) {
             kv.SetNum("nobomb", 1);
+        }
+
+        if (g_SpawnOnlyBomb[spawn]) {
+            kv.SetNum("onlybomb", 1);
         }
 
         kv.GoBack();
@@ -207,7 +213,7 @@ public bool InsideBombSite(int spawnIndex) {
         bool in_x = (min[0] <= spawn[0] && spawn[0] <= max[0]) || (max[0] <= spawn[0] && spawn[0] <= min[0]);
         bool in_y = (min[1] <= spawn[1] && spawn[1] <= max[1]) || (max[1] <= spawn[1] && spawn[1] <= min[1]);
 
-        if (in_x && in_y && !g_SpawnNoBomb[spawnIndex]) {
+        if (in_x && in_y) {
             return true;
         }
 
@@ -232,8 +238,13 @@ public int SelectSpawn(int team, bool bombSpawn) {
     ArrayList potentialSpawns = new ArrayList();
     for (int i = 0; i < g_NumSpawns; i++) {
         if (g_SpawnTeams[i] == team && !g_SpawnTaken[i] && g_Bombsite == g_SpawnSites[i]) {
-            if (!bombSpawn || InsideBombSite(i))
+
+            bool bomberViable = !g_SpawnNoBomb[i] && InsideBombSite(i);
+            bool regularPlayerViable = !g_SpawnOnlyBomb[i];
+            if ((bombSpawn && bomberViable) || (!bombSpawn && regularPlayerViable)) {
                 potentialSpawns.Push(i);
+            }
+
         }
     }
 

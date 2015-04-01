@@ -71,6 +71,7 @@ float g_SpawnAngles[MAX_SPAWNS][3];
 Bombsite g_SpawnSites[MAX_SPAWNS];
 int g_SpawnTeams[MAX_SPAWNS];
 bool g_SpawnNoBomb[MAX_SPAWNS];
+bool g_SpawnOnlyBomb[MAX_SPAWNS];
 
 /** Bomb-site stuff read from the map **/
 ArrayList g_SiteMins = null;
@@ -165,6 +166,7 @@ public void OnPluginStart() {
     RegAdminCmd("sm_deletemapspawns", Command_DeleteAllSpawns, ADMFLAG_KICK, "Deletes all spawns for the current map");
     RegAdminCmd("sm_bomb", Command_Bomb, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_nobomb", Command_NoBomb, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_onlybomb", Command_OnlyBomb, ADMFLAG_CHANGEMAP);
 
     /** Event hooks **/
     HookEvent("player_connect_full", Event_PlayerConnectFull);

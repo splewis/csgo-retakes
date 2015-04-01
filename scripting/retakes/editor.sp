@@ -132,10 +132,23 @@ public Action Command_NoBomb(int client, int args) {
         return Plugin_Handled;
     }
 
-    int closest = FindClosestSpawn(client);
+    int closest = FindClosestSpawn(client, CS_TEAM_T);
     if (closest >= 0) {
-        Retakes_MessageToAll("Swapping bomb-holder status for spawn %d.", closest);
+        Retakes_MessageToAll("Swapping nobomb status for spawn %d.", closest);
         g_SpawnNoBomb[closest] = !g_SpawnNoBomb[closest];
+    }
+    return Plugin_Handled;
+}
+public Action Command_OnlyBomb(int client, int args) {
+    if (g_hEditorEnabled.IntValue == 0) {
+        Retakes_Message(client, "The editor is currently disabled.");
+        return Plugin_Handled;
+    }
+
+    int closest = FindClosestSpawn(client, CS_TEAM_T);
+    if (closest >= 0) {
+        Retakes_MessageToAll("Swapping onlybomb status for spawn %d.", closest);
+        g_SpawnOnlyBomb[closest] = !g_SpawnOnlyBomb[closest];
     }
     return Plugin_Handled;
 }
@@ -188,8 +201,12 @@ public Action Timer_ShowSpawns(Handle timer) {
     return Plugin_Continue;
 }
 
-public bool SpawnFilter(int i) {
-    return !g_SpawnDeleted[i] && g_ShowingSite == g_SpawnSites[i] && (!g_ShowingBombSpawns || InsideBombSite(i));
+stock bool SpawnFilter(int i, int teamFilter=1) {
+    bool showing = !g_SpawnDeleted[i] && g_ShowingSite == g_SpawnSites[i] && (!g_ShowingBombSpawns || InsideBombSite(i));
+    if (teamFilter == -1)
+        return showing;
+    else
+        return showing && g_SpawnTeams[i] == teamFilter;
 }
 
 public void TeamMenu(int client) {
@@ -239,6 +256,8 @@ public void FinishSpawn() {
     char team[4];
     team = (g_SpawnTeams[g_NumSpawns] == CS_TEAM_CT) ? "CT" : "T";
     g_SpawnDeleted[g_NumSpawns] = false;
+    g_SpawnOnlyBomb[g_NumSpawns] = false;
+    g_SpawnNoBomb[g_NumSpawns] = false;
     g_NumSpawns++;
     Retakes_MessageToAll("Finished adding %s spawn for %s.", team, bombsite);
 }
@@ -305,11 +324,11 @@ public void DisplaySpawnPoint(int client, const float position[3], const float a
     TE_SendToClient(client);
 }
 
-public int FindClosestSpawn(int client) {
+stock int FindClosestSpawn(int client, int teamFilter=-1) {
     int closest = -1;
     float minDist = 0.0;
     for (int i = 0; i < g_NumSpawns; i++) {
-        if (!SpawnFilter(i))
+        if (!SpawnFilter(i, teamFilter))
             continue;
 
         float origin[3];
