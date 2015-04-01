@@ -243,7 +243,7 @@ public void FinishSpawn() {
     Retakes_MessageToAll("Finished adding %s spawn for %s.", team, bombsite);
 }
 
-public void DisplaySpawnPoint(int client, float position[3], float angles[3], float size, bool ct) {
+public void DisplaySpawnPoint(int client, const float position[3], const float angles[3], float size, bool ct) {
     float direction[3];
 
     GetAngleVectors(angles, direction, NULL_VECTOR, NULL_VECTOR);
