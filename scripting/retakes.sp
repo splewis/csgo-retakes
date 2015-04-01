@@ -49,7 +49,6 @@ ConVar g_hUseRandomTeams;
 
 /** Editing global variables **/
 bool g_EditMode = false;
-int g_PlayerBeingEdited = -1;
 bool g_ShowingSpawns = false;
 bool g_DirtySpawns = false; // whether the spawns have been edited since loading from the file
 

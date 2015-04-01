@@ -32,7 +32,6 @@ public Action Command_EditSpawns(int client, int args) {
     ServerCommand("mp_ignore_round_win_conditions 1");
 
     g_EditMode = true;
-    g_PlayerBeingEdited = -1;
     for (int i = 1; i <= MaxClients; i++) {
         if (IsValidClient(i) && !IsFakeClient(i)) {
             SwitchPlayerTeam(i, CS_TEAM_CT);
@@ -72,11 +71,10 @@ public Action Command_AddPlayer(int client, int args) {
             return Plugin_Handled;
         }
 
-        g_PlayerBeingEdited = g_NumSpawns;
-        g_SpawnTeams[g_PlayerBeingEdited] = team;
-        g_SpawnSites[g_PlayerBeingEdited] = site;
-        GetClientAbsOrigin(client, g_SpawnPoints[g_PlayerBeingEdited]);
-        GetClientEyeAngles(client, g_SpawnAngles[g_PlayerBeingEdited]);
+        g_SpawnTeams[g_NumSpawns] = team;
+        g_SpawnSites[g_NumSpawns] = site;
+        GetClientAbsOrigin(client, g_SpawnPoints[g_NumSpawns]);
+        GetClientEyeAngles(client, g_SpawnAngles[g_NumSpawns]);
         FinishSpawn();
     } else {
         TeamMenu(client);
@@ -162,7 +160,8 @@ public Action Command_DeleteAllSpawns(int client, int args) {
         g_SpawnDeleted[i] = true;
     }
 
-    Retakes_MessageToAll("All spawns have been deleted");
+    Retakes_MessageToAll("All spawns for this map have been deleted");
+    return Plugin_Handled;
 }
 
 public Action Timer_ShowSpawns(Handle timer) {
@@ -204,12 +203,11 @@ public void TeamMenu(int client) {
 
 public int TeamHandler(Handle menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
-        g_PlayerBeingEdited = g_NumSpawns;
         int client = param1;
         bool ct = GetMenuBool(menu, param2);
-        g_SpawnTeams[g_PlayerBeingEdited] = ct ? CS_TEAM_CT : CS_TEAM_T;
-        GetClientAbsOrigin(client, g_SpawnPoints[g_PlayerBeingEdited]);
-        GetClientEyeAngles(client, g_SpawnAngles[g_PlayerBeingEdited]);
+        g_SpawnTeams[g_NumSpawns] = ct ? CS_TEAM_CT : CS_TEAM_T;
+        GetClientAbsOrigin(client, g_SpawnPoints[g_NumSpawns]);
+        GetClientEyeAngles(client, g_SpawnAngles[g_NumSpawns]);
         BombsiteMenu(client);
     } else if (action == MenuAction_End) {
         CloseHandle(menu);
@@ -228,7 +226,7 @@ public void BombsiteMenu(int client) {
 public int BombsiteHandler(Handle menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         bool aSite = GetMenuBool(menu, param2);
-        g_SpawnSites[g_PlayerBeingEdited] = aSite ? BombsiteA : BombsiteB;
+        g_SpawnSites[g_NumSpawns] = aSite ? BombsiteA : BombsiteB;
         FinishSpawn();
     } else if (action == MenuAction_End) {
         CloseHandle(menu);
@@ -236,11 +234,12 @@ public int BombsiteHandler(Handle menu, MenuAction action, int param1, int param
 }
 
 public void FinishSpawn() {
-    g_NumSpawns++;
     char bombsite[4];
-    bombsite = (g_SpawnSites[g_PlayerBeingEdited] == BombsiteA) ? "A" : "B";
+    bombsite = (g_SpawnSites[g_NumSpawns] == BombsiteA) ? "A" : "B";
     char team[4];
-    team = (g_SpawnTeams[g_PlayerBeingEdited] == CS_TEAM_CT) ? "CT" : "T";
+    team = (g_SpawnTeams[g_NumSpawns] == CS_TEAM_CT) ? "CT" : "T";
+    g_SpawnDeleted[g_NumSpawns] = false;
+    g_NumSpawns++;
     Retakes_MessageToAll("Finished adding %s spawn for %s.", team, bombsite);
 }
 
