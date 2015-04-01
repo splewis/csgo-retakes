@@ -202,7 +202,7 @@ public Action Timer_ShowSpawns(Handle timer) {
 }
 
 stock bool SpawnFilter(int i, int teamFilter=-1) {
-    bool showing = !g_SpawnDeleted[i] && g_ShowingSite == g_SpawnSites[i] && (!g_ShowingBombSpawns || InsideBombSite(i));
+    bool showing = !g_SpawnDeleted[i] && g_ShowingSite == g_SpawnSites[i] && (!g_ShowingBombSpawns || CanBombCarrierSpawn(i));
     if (teamFilter == -1)
         return showing;
     else

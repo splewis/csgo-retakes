@@ -122,11 +122,11 @@ public void WriteSpawns() {
             kv.SetString("team", "T");
         }
 
-        if (g_SpawnNoBomb[spawn]) {
+        if (g_SpawnNoBomb[spawn] && g_SpawnTeams[spawn] == CS_TEAM_T) {
             kv.SetNum("nobomb", 1);
         }
 
-        if (g_SpawnOnlyBomb[spawn]) {
+        if (g_SpawnOnlyBomb[spawn] && g_SpawnTeams[spawn] == CS_TEAM_T) {
             kv.SetNum("onlybomb", 1);
         }
 
@@ -231,6 +231,18 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     return Plugin_Continue;
 }
 
+public bool CanBombCarrierSpawn(int spawn) {
+    if (g_SpawnTeams[spawn] == CS_TEAM_CT)
+        return true;
+    return !g_SpawnNoBomb[spawn] && InsideBombSite(spawn);
+}
+
+public bool CanRegularPlayerSpawn(int spawn) {
+    if (g_SpawnTeams[spawn] == CS_TEAM_CT)
+        return true;
+    return !g_SpawnOnlyBomb[spawn];
+}
+
 /**
  * Returns an appropriate spawn index for a player.
  */
@@ -238,13 +250,9 @@ public int SelectSpawn(int team, bool bombSpawn) {
     ArrayList potentialSpawns = new ArrayList();
     for (int i = 0; i < g_NumSpawns; i++) {
         if (g_SpawnTeams[i] == team && !g_SpawnTaken[i] && g_Bombsite == g_SpawnSites[i]) {
-
-            bool bomberViable = !g_SpawnNoBomb[i] && InsideBombSite(i);
-            bool regularPlayerViable = !g_SpawnOnlyBomb[i];
-            if ((bombSpawn && bomberViable) || (!bombSpawn && regularPlayerViable)) {
+            if ((bombSpawn && CanBombCarrierSpawn(i)) || (!bombSpawn && CanRegularPlayerSpawn(i))) {
                 potentialSpawns.Push(i);
             }
-
         }
     }
 
