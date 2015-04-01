@@ -201,7 +201,7 @@ public Action Timer_ShowSpawns(Handle timer) {
     return Plugin_Continue;
 }
 
-stock bool SpawnFilter(int i, int teamFilter=1) {
+stock bool SpawnFilter(int i, int teamFilter=-1) {
     bool showing = !g_SpawnDeleted[i] && g_ShowingSite == g_SpawnSites[i] && (!g_ShowingBombSpawns || InsideBombSite(i));
     if (teamFilter == -1)
         return showing;
