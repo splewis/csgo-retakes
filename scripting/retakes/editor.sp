@@ -152,6 +152,19 @@ public Action Command_DeleteSpawn(int client, int args) {
     return Plugin_Continue;
 }
 
+public Action Command_DeleteAllSpawns(int client, int args) {
+    if (g_hEditorEnabled.IntValue == 0) {
+        Retakes_Message(client, "The editor is currently disabled.");
+        return Plugin_Handled;
+    }
+
+    for (int i = 0; i < g_NumSpawns; i++) {
+        g_SpawnDeleted[i] = true;
+    }
+
+    Retakes_MessageToAll("All spawns have been deleted");
+}
+
 public Action Timer_ShowSpawns(Handle timer) {
     if (!g_ShowingSpawns || g_hEditorEnabled.IntValue == 0)
         return Plugin_Continue;

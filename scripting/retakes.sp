@@ -154,6 +154,7 @@ public void OnPluginStart() {
     RegAdminCmd("sm_player", Command_AddPlayer, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_deleteallspawns", Command_DeleteAllSpawns, ADMFLAG_KICK);
     RegAdminCmd("sm_bomb", Command_Bomb, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_nobomb", Command_NoBomb, ADMFLAG_CHANGEMAP);
 
