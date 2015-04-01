@@ -430,7 +430,7 @@ public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadc
  * Called when a player dies - gives points to killer, and does database stuff with the kill.
  */
 public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_Live())
+    if (!Retakes_Live())
         return;
 
     int victim = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -482,7 +482,7 @@ public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcas
  * Called when the bomb explodes or is defused, gives ponts to the one that planted/defused it.
  */
 public Action Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_Live())
+    if (!Retakes_Live())
         return;
 
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -521,7 +521,7 @@ public Action Event_RoundPreStart(Handle event, const char[] name, bool dontBroa
 }
 
 public Action Event_RoundPostStart(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_Live())
+    if (!Retakes_Live())
         return;
 
     if (!g_EditMode) {
@@ -547,7 +547,7 @@ public Action Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBro
  * Round end event, calls the appropriate winner (T/CT) unction and sets the scores.
  */
 public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_Live())
+    if (!Retakes_Live())
         return;
 
     if (g_ActivePlayers >= 2) {
