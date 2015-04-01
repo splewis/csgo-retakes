@@ -89,6 +89,13 @@ stock bool PQ_IsEmpty(Handle queueHandle) {
 }
 
 /**
+ * Clears all entires in a queue.
+ */
+stock void PQ_Clear(Handle queueHandle) {
+    ClearArray(queueHandle);
+}
+
+/**
  * Clears the Handle for a queue.
  */
 stock void PQ_Destroy(Handle queueHandle) {

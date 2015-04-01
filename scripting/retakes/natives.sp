@@ -18,6 +18,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Retakes_SetPlayerInfo", Native_SetPlayerInfo);
     CreateNative("Retakes_GetRetakeRoundsPlayed", Native_GetRetakeRoundsPlayed);
     CreateNative("Retakes_InWarmup", Native_InWarmup);
+    CreateNative("Retakes_Enabled", Native_Enabled);
     CreateNative("Retakes_GetMaxPlayers", Native_GetMaxPlayers);
     RegPluginLibrary("retakes");
     return APLRes_Success;
@@ -139,6 +140,10 @@ public int Native_GetRetakeRoundsPlayed(Handle plugin, int numParams) {
 
 public int Native_InWarmup(Handle plugin, int numParams) {
     return GameRules_GetProp("m_bWarmupPeriod");
+}
+
+public int Native_Enabled(Handle plugin, int numParams) {
+    return g_Enabled;
 }
 
 public int Native_GetMaxPlayers(Handle plugin, int numParams) {

@@ -199,6 +199,18 @@ native int Retakes_GetRetakeRoundsPlayed();
 native bool Retakes_InWarmup();
 
 /**
+ * Returns if the plugin is enabled.
+ */
+native bool Retakes_Enabled();
+
+/**
+ * Returns if the plugin is enabled and not in warmup.
+ */
+stock bool Retakes_Live() {
+    return Retakes_Enabled() && !Retakes_InWarmup();
+}
+
+/**
  * Returns the maximum number of players allowed into the game.
  */
 native int Retakes_GetMaxPlayers();
@@ -238,6 +250,7 @@ public __pl_retakes_SetNTVOptional() {
     MarkNativeAsOptional("Retakes_GetPlayerInfo");
     MarkNativeAsOptional("Retakes_GetRetakeRoundsPlayed");
     MarkNativeAsOptional("Retakes_InWarmup");
+    MarkNativeAsOptional("Retakes_Enabled");
     MarkNativeAsOptional("Retakes_GetMaxPlayers");
 }
 #endif

@@ -4,9 +4,10 @@
 #include <cstrike>
 #include <smlib>
 
-#include "include/retakes.inc"
 #include "include/priorityqueue.inc"
 #include "include/queue.inc"
+#include "include/restorecvars.inc"
+#include "include/retakes.inc"
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -28,6 +29,9 @@
 #define POINTS_BOMB 150
 #define POINTS_LOSS 2000
 
+bool g_Enabled = true;
+Handle g_SavedCvars = INVALID_HANDLE;
+
 /** Client variable arrays **/
 int g_SpawnIndices[MAXPLAYERS+1] = 0;
 int g_RoundPoints[MAXPLAYERS+1] = 0;
@@ -41,6 +45,7 @@ Handle g_hRankingQueue = INVALID_HANDLE;
 /** ConVar handles **/
 ConVar g_hCvarVersion;
 ConVar g_hEditorEnabled;
+ConVar g_EnabledCvar;
 ConVar g_hMaxPlayers;
 ConVar g_hRatioConstant;
 ConVar g_hRoundsToScramble;
@@ -131,11 +136,14 @@ public void OnPluginStart() {
 
     /** ConVars **/
     g_hEditorEnabled = CreateConVar("sm_retakes_editor_enabled", "1", "Whether the editor can be launched by admins");
+    g_EnabledCvar = CreateConVar("sm_retakes_enabled", "1", "Whether the plugin is enabled");
     g_hMaxPlayers = CreateConVar("sm_retakes_maxplayers", "9", "Maximum number of players allowed in the game at once.", _, true, 2.0);
     g_hRatioConstant = CreateConVar("sm_retakes_ratio_constant", "0.425", "Ratio constant for team sizes.");
     g_hRoundsToScramble = CreateConVar("sm_retakes_scramble_rounds", "10", "Consecutive terrorist wins to cause a team scramble.");
     g_hRoundTime = CreateConVar("sm_retakes_round_time", "12", "Round time left in seconds.");
     g_hUseRandomTeams = CreateConVar("sm_retakes_random_teams", "0", "If set to 1, this will randomize the teams every round.");
+
+    HookConVarChange(g_EnabledCvar, EnabledChanged);
 
     /** Create/Execute retakes cvars **/
     AutoExecConfig(true, "retakes", "sourcemod/retakes");
@@ -144,7 +152,7 @@ public void OnPluginStart() {
     g_hCvarVersion.SetString(PLUGIN_VERSION);
 
     /** Command hooks **/
-    AddCommandListener(Command_TeamJoin, "jointeam");
+    AddCommandListener(Command_JoinTeam, "jointeam");
 
     /** Admin commands **/
     RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the spawn editor mode");
@@ -185,9 +193,13 @@ public void OnPluginStart() {
 
     g_SiteMins = new ArrayList(3);
     g_SiteMaxs = new ArrayList(3);
+    g_hWaitingQueue = Queue_Init();
+    g_hRankingQueue = PQ_Init();
 }
 
 public void OnMapStart() {
+    PQ_Clear(g_hRankingQueue);
+    PQ_Clear(g_hWaitingQueue);
     g_ScrambleSignal = false;
     g_WinStreak = 0;
     g_RoundCount = 0;
@@ -203,8 +215,10 @@ public void OnMapStart() {
     FindSites();
     g_NumSpawns = ParseSpawns();
 
-    g_hWaitingQueue = Queue_Init();
-    ServerCommand("exec sourcemod/retakes/retakes_game.cfg");
+    if (!g_Enabled)
+        return;
+
+    ExecConfigs();
 
     /** begin insane warmup hacks **/
     ServerCommand("mp_do_warmup_period 1");
@@ -214,10 +228,42 @@ public void OnMapStart() {
 }
 
 public void OnMapEnd() {
+    if (!g_Enabled)
+        return;
+
     if (g_hEditorEnabled.IntValue != 0 && g_DirtySpawns)
         WriteSpawns();
+}
 
-    Queue_Destroy(g_hWaitingQueue);
+public int EnabledChanged(Handle cvar, const char[] oldValue, const char[] newValue) {
+    bool wasEnabled = !StrEqual(oldValue, "0");
+    g_Enabled = !StrEqual(newValue, "0");
+
+    if (wasEnabled && !g_Enabled) {
+        if (g_SavedCvars != INVALID_HANDLE)
+            RestoreCvars(g_SavedCvars, true);
+
+    } else if (!wasEnabled && g_Enabled) {
+        Queue_Clear(g_hWaitingQueue);
+        ExecConfigs();
+        for (int i = 1; i <= MaxClients; i++)  {
+            if (IsClientConnected(i) && !IsFakeClient(i)) {
+                OnClientConnected(i);
+                if (IsClientInGame(i) && IsOnTeam(i)) {
+                    SwitchPlayerTeam(i, CS_TEAM_SPECTATOR);
+                    Queue_Enqueue(g_hWaitingQueue, i);
+                    FakeClientCommand(i, "jointeam 2");
+                }
+            }
+        }
+    }
+}
+
+public void ExecConfigs() {
+    if (g_SavedCvars != INVALID_HANDLE) {
+        CloseCvarStorage(g_SavedCvars);
+    }
+    g_SavedCvars = ExecuteAndSaveCvars("sourcemod/retakes/retakes_game.cfg");
 }
 
 public void OnClientConnected(int client) {
@@ -249,7 +295,10 @@ public void ResetClientVariables(int client) {
  *                     *
  ***********************/
 
-public Action Command_TeamJoin(int client, const char[] command, int argc) {
+public Action Command_JoinTeam(int client, const char[] command, int argc) {
+    if (!g_Enabled)
+        return Plugin_Continue;
+
     if (!IsValidClient(client) || argc < 1)
         return Plugin_Handled;
 
@@ -283,7 +332,6 @@ public Action Command_TeamJoin(int client, const char[] command, int argc) {
             CheckRoundDone();
 
             return Plugin_Handled;
-
         } else {
             return PlacePlayer(client);
         }
@@ -327,6 +375,9 @@ public Action PlacePlayer(int client) {
  * Called when a player joins a team, silences team join events
  */
 public Action Event_PlayerTeam(Handle event, const char[] name, bool dontBroadcast)  {
+    if (!g_Enabled)
+        return Plugin_Continue;
+
     dontBroadcast = true;
     return Plugin_Changed;
 }
@@ -338,6 +389,9 @@ public Action Event_PlayerTeam(Handle event, const char[] name, bool dontBroadca
  * put on that team and spawned, so we can't allow that.
  */
 public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
+    if (!g_Enabled)
+        return;
+
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
 }
@@ -347,6 +401,9 @@ public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dont
  * Gives default weapons. (better than mp_ct_default_primary since it gives the player the correct skin)
  */
 public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast) {
+    if (!g_Enabled)
+        return;
+
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     if (!IsValidClient(client) || !IsOnTeam(client) || g_EditMode || Retakes_InWarmup())
         return;
@@ -371,7 +428,7 @@ public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadc
  * Called when a player dies - gives points to killer, and does database stuff with the kill.
  */
 public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_InWarmup())
+    if (Retakes_Live())
         return;
 
     int victim = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -393,7 +450,7 @@ public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadc
  * Called when a player deals damage to another player - ads round points if needed.
  */
 public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_InWarmup())
+    if (!Retakes_Live())
         return Plugin_Continue;
 
     int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
@@ -412,6 +469,9 @@ public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadc
  * Called when the bomb explodes or is defuser, gives ponts to the one that planted/defused it.
  */
 public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcast) {
+    if (!g_Enabled)
+        return;
+
     g_bombPlanted = true;
     g_bombPlantSignal = false;
 }
@@ -420,7 +480,7 @@ public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcas
  * Called when the bomb explodes or is defused, gives ponts to the one that planted/defused it.
  */
 public Action Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_InWarmup())
+    if (Retakes_Live())
         return;
 
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -434,7 +494,7 @@ public Action Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
  * since it should happen before respawns.
  */
 public Action Event_RoundPreStart(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_InWarmup())
+    if (!Retakes_Live())
         return;
 
     g_RoundSpawnsDecided = false;
@@ -459,7 +519,7 @@ public Action Event_RoundPreStart(Handle event, const char[] name, bool dontBroa
 }
 
 public Action Event_RoundPostStart(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_InWarmup())
+    if (Retakes_Live())
         return;
 
     if (!g_EditMode) {
@@ -485,7 +545,7 @@ public Action Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBro
  * Round end event, calls the appropriate winner (T/CT) unction and sets the scores.
  */
 public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast) {
-    if (Retakes_InWarmup())
+    if (Retakes_Live())
         return;
 
     if (g_ActivePlayers >= 2) {
@@ -540,7 +600,7 @@ public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast
  * their score for placing them next round.
  */
 public void RoundEndUpdates() {
-    g_hRankingQueue = PQ_Init();
+    PQ_Clear(g_hRankingQueue);
 
     Call_StartForward(g_hOnPreRoundEnqueue);
     Call_PushCell(g_hRankingQueue);
@@ -695,7 +755,6 @@ public void UpdateTeams() {
 
     delete ts;
     delete cts;
-    PQ_Destroy(g_hRankingQueue);
 }
 
 static bool ScramblesEnabled() {
@@ -738,6 +797,6 @@ void CheckRoundDone() {
     int tHumanCount=0, ctHumanCount=0;
     GetTeamsClientCounts(tHumanCount, ctHumanCount);
     if (tHumanCount == 0 || ctHumanCount == 0) {
-        CS_TerminateRound(1.0, CSRoundEnd_TerroristWin);
+        CS_TerminateRound(0.1, CSRoundEnd_TerroristWin);
     }
 }

@@ -79,6 +79,13 @@ stock int Queue_Dequeue(Handle queueHandle) {
 }
 
 /**
+ * Clears all entires in a queue.
+ */
+stock void Queue_Clear(Handle queueHandle) {
+    ClearArray(queueHandle);
+}
+
+/**
  * Closes the handle for the queue.
  */
 stock void Queue_Destroy(Handle queueHandle) {
