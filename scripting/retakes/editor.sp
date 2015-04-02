@@ -29,7 +29,6 @@ public Action Command_EditSpawns(int client, int args) {
     ServerCommand("mp_warmup_start");
     ServerCommand("mp_warmup_time 120");
     ServerCommand("mp_warmup_pausetimer 1");
-    ServerCommand("mp_ignore_round_win_conditions 1");
 
     g_EditMode = true;
     for (int i = 1; i <= MaxClients; i++) {
