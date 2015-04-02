@@ -156,6 +156,7 @@ public void OnPluginStart() {
     AddCommandListener(Command_JoinTeam, "jointeam");
 
     /** Admin commands **/
+    RegAdminCmd("sm_goto", Command_GotoSpawn, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the spawn editor mode");
     RegAdminCmd("sm_spawns", Command_EditSpawns, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_new", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Creates a new spawn");
@@ -167,6 +168,7 @@ public void OnPluginStart() {
     RegAdminCmd("sm_bomb", Command_Bomb, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_nobomb", Command_NoBomb, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_onlybomb", Command_OnlyBomb, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_iteratespawns", Command_IterateSpawns, ADMFLAG_CHANGEMAP);
 
     /** Event hooks **/
     HookEvent("player_connect_full", Event_PlayerConnectFull);

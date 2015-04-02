@@ -160,7 +160,7 @@ public Action Command_DeleteSpawn(int client, int args) {
     }
 
     DeleteClosestSpawn(client);
-    return Plugin_Continue;
+    return Plugin_Handled;
 }
 
 public Action Command_DeleteAllSpawns(int client, int args) {
@@ -174,6 +174,79 @@ public Action Command_DeleteAllSpawns(int client, int args) {
     }
 
     Retakes_MessageToAll("All spawns for this map have been deleted");
+    return Plugin_Handled;
+}
+
+public Action Command_IterateSpawns(int client, int args) {
+    if (g_hEditorEnabled.IntValue == 0) {
+        Retakes_Message(client, "The editor is currently disabled.");
+        return Plugin_Handled;
+    }
+
+    int startIndex = 0;
+    char buf[32];
+    if (args >= 1 && GetCmdArg(1, buf, sizeof(buf))) {
+        startIndex = StringToInt(buf);
+    }
+
+    DataPack pack = new DataPack();
+    pack.WriteCell(GetClientSerial(client));
+    pack.WriteCell(startIndex);
+    CreateTimer(2.0, Timer_IterateSpawns, pack);
+    return Plugin_Handled;
+}
+
+public Action Timer_IterateSpawns(Handle timer, Handle data) {
+    DataPack pack = view_as<DataPack>(data);
+    pack.Reset();
+    int serial = pack.ReadCell();
+    int spawnIndex = pack.ReadCell();
+    int client = GetClientFromSerial(serial);
+    delete pack;
+
+    if (!IsPlayer(client))
+        return Plugin_Handled;
+
+    FakeClientCommand(client, "sm_goto %d", spawnIndex);
+
+    spawnIndex++;
+    while (g_SpawnDeleted[spawnIndex] && spawnIndex < g_NumSpawns) {
+        spawnIndex++;
+    }
+
+    if (!g_SpawnDeleted[spawnIndex] && !g_SpawnDeleted[spawnIndex]) {
+        pack = new DataPack();
+        pack.WriteCell(serial);
+        pack.WriteCell(spawnIndex);
+        CreateTimer(2.0, Timer_IterateSpawns, pack);
+    }
+
+    return Plugin_Handled;
+}
+
+public Action Command_GotoSpawn(int client, int args) {
+    if (g_hEditorEnabled.IntValue == 0) {
+        Retakes_Message(client, "The editor is currently disabled.");
+        return Plugin_Handled;
+    }
+
+    char buf[32];
+    if (args >= 1 && GetCmdArg(1, buf, sizeof(buf))) {
+        int index = StringToInt(buf);
+        if (index < g_NumSpawns && !g_SpawnDeleted[index]) {
+            char teamStr[4] = "CT";
+            char siteStr[4];
+            GetSiteString(g_SpawnSites[index], siteStr, sizeof(siteStr));
+            if (g_SpawnTeams[index] == CS_TEAM_T)
+                teamStr = "T";
+
+            Retakes_Message(client, "Teleporting to spawn {GREEN}%d", index);
+            Retakes_Message(client, "   Team: \x05%s", teamStr);
+            Retakes_Message(client, "   Site: \x05%s", siteStr);
+            MoveToSpawn(client, index);
+        }
+    }
+
     return Plugin_Handled;
 }
 

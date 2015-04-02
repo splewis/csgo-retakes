@@ -150,8 +150,12 @@ public void SetupPlayer(int client) {
         return;
 
     SwitchPlayerTeam(client, g_Team[client]);
-    TeleportEntity(client, g_SpawnPoints[spawnIndex], g_SpawnAngles[spawnIndex], NULL_VECTOR);
+    MoveToSpawn(client, spawnIndex);
     GiveWeapons(client);
+}
+
+public void MoveToSpawn(int client, int spawnIndex) {
+    TeleportEntity(client, g_SpawnPoints[spawnIndex], g_SpawnAngles[spawnIndex], NULL_VECTOR);
 }
 
 public void GiveWeapons(int client) {
