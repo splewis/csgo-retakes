@@ -65,10 +65,14 @@ Here is how to operate the spawn editor:
 - use ``sm_show`` to show the spawns for a site. Example: ``!show a`` in chat will show all spawns for bombsite A.
 - use ``sm_deletespawn`` to delete the nearest spawn. Example: ``!deletespawn`` in chat.
 - use ``sm_bomb`` to toggle whether to display all spawns or potential bomb-carrier spawns. Example: ``!bomb`` in chat
-- use ``sm_nobomb`` to mark a spawn as unavailable to a bomb carrier. (by default, all spawns within the xy plane of a bombsite are available for a bomb carrier). Example: ``!nobomb`` in chat while standing on top of the spawn you want to edit.
+- use ``sm_nobomb`` to mark a T spawn as unavailable to a bomb carrier. (by default, only spawns within the xy plane of a bombsite are available for a bomb carrier). Example: ``!nobomb`` in chat while standing on top of the spawn you want to edit.
+- use ``sm_onlybomb`` to mark a T spawn as unavaliable to players without the bomb (by default, a T spawn is avaliable to all Ts). Example: ``!onlybomb`` in chat while standing on top of the spawn you want to edit.
+- use ``sm_goto`` to go to a spawn. Spawns are indexed from 0 upwards. Example: ``!goto 10`` to go to spawn 10.
+- use ``sm_iteratespawns`` to fake ``sm_goto`` commands every few seconds to visit every spawn in the map.
+- use ``sm_deletemapspawns`` to delete all spawns for the current map
+
 
 ## Addon plugins
-
 
 The following plugins are optional and disabled by default. To enable them move them up from the ``addons/sourcemod/plugins/disabled`` directory to ``addons/sourcemod/plugins``.
 
