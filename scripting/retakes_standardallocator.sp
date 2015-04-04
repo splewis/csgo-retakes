@@ -5,7 +5,7 @@
 #include "retakes/generic.sp"
 
 #pragma semicolon 1
-#pragma newdecls required
+// #pragma newdecls required
 
 #define MENU_TIME_LENGTH 15
 
@@ -57,7 +57,7 @@ public void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, 
 /**
  * Updates client weapon settings according to their cookies.
  */
-public int OnClientCookiesCached(int client) {
+public OnClientCookiesCached(int client) {
     if (IsFakeClient(client))
         return;
 
