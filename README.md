@@ -71,6 +71,8 @@ Here is how to operate the spawn editor:
 - use ``sm_iteratespawns`` to fake ``sm_goto`` commands every few seconds to visit every spawn in the map.
 - use ``sm_deletemapspawns`` to delete all spawns for the current map
 
+Note: the plugin automatically saves the changed spawns on map ends to a file in addons/sourcemod/configs/retakes.
+
 
 ## Addon plugins
 

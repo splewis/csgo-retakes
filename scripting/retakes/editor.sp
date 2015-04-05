@@ -3,6 +3,18 @@ int g_iHaloSprite = 0;
 Bombsite g_ShowingSite = BombsiteA;
 bool g_ShowingBombSpawns = false;
 
+public Action Command_ReloadSpawns(int client, int args) {
+    g_NumSpawns = ParseSpawns();
+    Retakes_Message(client, "Imported %d map spawns.", g_NumSpawns);
+    return Plugin_Handled;
+}
+
+public Action Command_SaveSpawns(int client, int args) {
+    WriteSpawns();
+    Retakes_Message(client, "Map spawns saved.");
+    return Plugin_Handled;
+}
+
 public Action Command_Bomb(int client, int args) {
     if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");

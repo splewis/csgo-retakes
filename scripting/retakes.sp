@@ -163,12 +163,14 @@ public void OnPluginStart() {
     RegAdminCmd("sm_player", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Creates a new spawn");
     RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP, "Shows all spawns in a bombsite");
     RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest spawn");
-    RegAdminCmd("sm_deleteallspawns", Command_DeleteAllSpawns, ADMFLAG_KICK, "Deletes all spawns for the current map");
-    RegAdminCmd("sm_deletemapspawns", Command_DeleteAllSpawns, ADMFLAG_KICK, "Deletes all spawns for the current map");
+    RegAdminCmd("sm_deleteallspawns", Command_DeleteAllSpawns, ADMFLAG_CHANGEMAP, "Deletes all spawns for the current map");
+    RegAdminCmd("sm_deletemapspawns", Command_DeleteAllSpawns, ADMFLAG_CHANGEMAP, "Deletes all spawns for the current map");
     RegAdminCmd("sm_bomb", Command_Bomb, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_nobomb", Command_NoBomb, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_onlybomb", Command_OnlyBomb, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_iteratespawns", Command_IterateSpawns, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_reloadspawns", Command_ReloadSpawns, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_savespawns", Command_SaveSpawns, ADMFLAG_CHANGEMAP);
 
     /** Event hooks **/
     HookEvent("player_connect_full", Event_PlayerConnectFull);
