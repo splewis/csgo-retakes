@@ -86,7 +86,7 @@ This plugin provides a simple ``sm_guns`` (!guns in chat) command that lets user
 
 
 ## Contribution and Suggestions
-First, check the [issue tracker](https://github.com/splewis/csgo-multi-1v1/issues?state=open) to ask questions or make a suggestion.
+First, check the [issue tracker](https://github.com/splewis/csgo-retakes/issues?state=open) to ask questions or make a suggestion.
 If you have a suggestion you can mark it as an enhancement.
 
 **Style/gameplay design choices that don't have to made here, should not be made here**. Spawns can be edited by anyone running a server. How weapons are given can be set by the natives and forwards provided. Please don't submit requests to change these, since everyone will want something different.
