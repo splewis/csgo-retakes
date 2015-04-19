@@ -57,7 +57,7 @@ public void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, 
 /**
  * Updates client weapon settings according to their cookies.
  */
-public int OnClientCookiesCached(int client) {
+public void OnClientCookiesCached(int client) {
     if (IsFakeClient(client))
         return;
 
