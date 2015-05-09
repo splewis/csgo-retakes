@@ -34,4 +34,9 @@
 		"#format"		"{1:d}"
 		"en"			"The CTs have ended a {GREEN}{1}{NORMAL}-round long win streak!"
 	}
+	"FailedToPlant"
+	{
+		"#format"		"{1:N}"
+		"en"		"{PURPLE}{1} {NORMAL}failed to plant..."
+	}
 }

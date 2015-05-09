@@ -786,7 +786,7 @@ public void TerroristsWon() {
 
 public void CounterTerroristsWon() {
     if (!g_bombPlanted && IsValidClient(g_BombOwner) && g_RoundCount >= 3) {
-        Retakes_MessageToAll("\x03%N \x01failed to plant...", g_BombOwner);
+        Retakes_MessageToAll("%t", "FailedToPlant", g_BombOwner);
         Call_StartForward(g_OnFailToPlant);
         Call_PushCell(g_BombOwner);
         Call_Finish();
