@@ -173,6 +173,9 @@ public void OnPluginStart() {
     RegAdminCmd("sm_reloadspawns", Command_ReloadSpawns, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_savespawns", Command_SaveSpawns, ADMFLAG_CHANGEMAP);
 
+    /** Player commands **/
+    RegConsoleCmd("sm_guns", Command_Guns);
+
     /** Event hooks **/
     HookEvent("player_connect_full", Event_PlayerConnectFull);
     HookEvent("player_team", Event_PlayerTeam, EventHookMode_Pre);
@@ -293,6 +296,12 @@ public void ResetClientVariables(int client) {
     g_Team[client] = CS_TEAM_SPECTATOR;
     g_PluginTeamSwitch[client] = false;
     g_RoundPoints[client] = -POINTS_LOSS;
+}
+
+public Action Command_Guns(int client, int args) {
+    Call_StartForward(g_hOnGunsCommand);
+    Call_PushCell(client);
+    Call_Finish();
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
