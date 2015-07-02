@@ -21,4 +21,4 @@ before_script:
     - cd ../../../..
 
 script:
-    - smbuilder
+    - smbuilder --flags="-E"
