@@ -25,7 +25,6 @@ public Plugin myinfo = {
 public void OnPluginStart() {
     g_hM4ChoiceCookie = RegClientCookie("retakes_m4choice", "", CookieAccess_Private);
     g_hAwpChoiceCookie = RegClientCookie("retakes_awpchoice", "", CookieAccess_Private);
-    RegConsoleCmd("sm_guns", Command_GunsMenu, "Opens the retakes weapons menu");
 }
 
 public void OnClientConnected(int client) {
@@ -33,21 +32,8 @@ public void OnClientConnected(int client) {
     g_AwpChoice[client] = false;
 }
 
-public Action Command_GunsMenu(int client, int args) {
+public void Retakes_OnGunsCommand(int client) {
     GiveWeaponsMenu(client);
-    return Plugin_Handled;
-}
-
-public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
-    char gunsChatCommands[][] = { "gun", "guns", ".gun", ".guns", ".setup", "!gun", "gnus" };
-    for (int i = 0; i < sizeof(gunsChatCommands); i++) {
-        if (strcmp(args[0], gunsChatCommands[i], false) == 0) {
-            GiveWeaponsMenu(client);
-            break;
-        }
-    }
-
-    return Plugin_Continue;
 }
 
 public void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) {

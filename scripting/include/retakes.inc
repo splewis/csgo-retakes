@@ -95,6 +95,10 @@ forward void Retakes_OnTeamsSet(ArrayList tPlayers, ArrayList ctPlayers, Bombsit
  */
 forward void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite);
 
+/**
+ * Called when a client issues a command to bring up a "guns" menu.
+ */
+forward void Retakes_OnGunsCommand(int client);
 
 /**
  * Returns if a player has joined the game, i.e., if they are on T/Ct or in the waiting queue.

@@ -1,6 +1,4 @@
-Plugin(source='scripting/retakes.sp')
-Plugin(source='scripting/retakes_sitepicker.sp', deps=['retakes'])
-Plugin(source='scripting/retakes_standardallocator.sp', deps=['retakes'])
+GlobPlugins('scripting/*.sp')
 
 Package(name='retakes-base',
         plugins=['retakes'],
@@ -8,8 +6,8 @@ Package(name='retakes-base',
 
 Package(name='retakes-release',
         extends=['retakes-base'],
-        plugins=['retakes_sitepicker', 'retakes_standardallocator'],
-        disabled_plugins=['retakes_sitepicker', 'retakes_standardallocator'],
+        plugins=Plugins('retakes*'),
+        disabled_plugins=['retakes_sitepicker', 'retakes_standardallocator', 'retakes_pistolallocator'],
         filegroups={
             '.': ['LICENSE', 'README.md'],
         },

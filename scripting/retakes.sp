@@ -101,14 +101,15 @@ int g_ActivePlayers = 0;
 bool g_RoundSpawnsDecided = false; // spawns are lazily decided on the first player spawn event
 
 /** Forwards **/
+Handle g_hOnGunsCommand = INVALID_HANDLE;
+Handle g_hOnPostRoundEnqueue = INVALID_HANDLE;
+Handle g_hOnPreRoundEnqueue = INVALID_HANDLE;
+Handle g_hOnTeamSizesSet = INVALID_HANDLE;
+Handle g_hOnTeamsSet = INVALID_HANDLE;
 Handle g_OnFailToPlant = INVALID_HANDLE;
 Handle g_OnRoundWon = INVALID_HANDLE;
 Handle g_OnSitePicked = INVALID_HANDLE;
-Handle g_hOnTeamSizesSet = INVALID_HANDLE;
 Handle g_OnWeaponsAllocated = INVALID_HANDLE;
-Handle g_hOnPreRoundEnqueue = INVALID_HANDLE;
-Handle g_hOnPostRoundEnqueue = INVALID_HANDLE;
-Handle g_hOnTeamsSet = INVALID_HANDLE;
 
 #include "retakes/editor.sp"
 #include "retakes/generic.sp"
@@ -186,14 +187,15 @@ public void OnPluginStart() {
     HookEvent("bomb_defused", Event_Bomb);
     HookEvent("round_end", Event_RoundEnd);
 
+    g_hOnGunsCommand = CreateGlobalForward("Retakes_OnGunsCommand", ET_Ignore, Param_Cell);
+    g_hOnPostRoundEnqueue = CreateGlobalForward("Retakes_OnPostRoundEnqueue", ET_Ignore, Param_Cell);
+    g_hOnPreRoundEnqueue = CreateGlobalForward("Retakes_OnPreRoundEnqueue", ET_Ignore, Param_Cell, Param_Cell);
+    g_hOnTeamSizesSet = CreateGlobalForward("Retakes_OnTeamSizesSet", ET_Ignore, Param_CellByRef, Param_CellByRef);
+    g_hOnTeamsSet = CreateGlobalForward("Retakes_OnTeamsSet", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
     g_OnFailToPlant = CreateGlobalForward("Retakes_OnFailToPlant", ET_Ignore, Param_Cell);
     g_OnRoundWon = CreateGlobalForward("Retakes_OnRoundWon", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
     g_OnSitePicked = CreateGlobalForward("Retakes_OnSitePicked", ET_Ignore, Param_CellByRef);
-    g_hOnTeamSizesSet = CreateGlobalForward("Retakes_OnTeamSizesSet", ET_Ignore, Param_CellByRef, Param_CellByRef);
     g_OnWeaponsAllocated = CreateGlobalForward("Retakes_OnWeaponsAllocated", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
-    g_hOnPreRoundEnqueue = CreateGlobalForward("Retakes_OnPreRoundEnqueue", ET_Ignore, Param_Cell, Param_Cell);
-    g_hOnPostRoundEnqueue = CreateGlobalForward("Retakes_OnPostRoundEnqueue", ET_Ignore, Param_Cell);
-    g_hOnTeamsSet = CreateGlobalForward("Retakes_OnTeamsSet", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
 
     g_helmetOffset = FindSendPropOffs("CCSPlayer", "m_bHasHelmet");
 
@@ -293,6 +295,19 @@ public void ResetClientVariables(int client) {
     g_RoundPoints[client] = -POINTS_LOSS;
 }
 
+public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
+    static char gunsChatCommands[][] = { "gun", "guns", ".gun", ".guns", ".setup", "!gun", "gnus" };
+    for (int i = 0; i < sizeof(gunsChatCommands); i++) {
+        if (strcmp(args[0], gunsChatCommands[i], false) == 0) {
+            Call_StartForward(g_hOnGunsCommand);
+            Call_PushCell(client);
+            Call_Finish();
+            break;
+        }
+    }
+
+    return Plugin_Continue;
+}
 
 
 /***********************
