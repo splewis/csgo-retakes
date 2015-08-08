@@ -782,7 +782,7 @@ public void UpdateTeams() {
 }
 
 static bool ScramblesEnabled() {
-    return g_hRoundsToScramble.IntValue >= 1 && g_hUseRandomTeams.IntValue != 0;
+    return g_hRoundsToScramble.IntValue >= 1 && g_hUseRandomTeams.IntValue == 0;
 }
 
 public void TerroristsWon() {
