@@ -30,24 +30,32 @@ public Action Command_Bomb(int client, int args) {
     return Plugin_Handled;
 }
 
+public void MovePlayerToEditMode(int client) {
+    SwitchPlayerTeam(client, CS_TEAM_CT);
+    CS_RespawnPlayer(client);
+}
+
 public Action Command_EditSpawns(int client, int args) {
     if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
     }
 
-
-    g_DirtySpawns = true;
-    ServerCommand("mp_warmup_start");
-    ServerCommand("mp_warmup_time 120");
-    ServerCommand("mp_warmup_pausetimer 1");
-
-    g_EditMode = true;
-    for (int i = 1; i <= MaxClients; i++) {
-        if (IsValidClient(i) && !IsFakeClient(i)) {
-            SwitchPlayerTeam(i, CS_TEAM_CT);
-            CS_RespawnPlayer(i);
+    if (!g_EditMode) {
+        g_EditMode = true;
+        g_DirtySpawns = true;
+        StartPausedWarmup();
+        for (int i = 1; i <= MaxClients; i++) {
+            if (IsValidClient(i) && !IsFakeClient(i)) {
+                MovePlayerToEditMode(i);
+            }
         }
+
+        Retakes_MessageToAll("Edit mode launched, basic commands:");
+        Retakes_MessageToAll("!show <a/b> to display spawn points for a site");
+        Retakes_MessageToAll("!new <ct/t> <a/b> to add a spawn point");
+        Retakes_MessageToAll("!delete to delete the nearest spawn");
+        Retakes_MessageToAll("!save to save the spawn points now (otherwise done on map change)");
     }
 
     return Plugin_Handled;
