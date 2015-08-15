@@ -59,11 +59,13 @@ You should make sure you have a relatively recent version of smlib - some change
 
 ## Creating and Editing Spawns
 
+**Note: only 1 player should be actively editing spawns at a time. If multiple players are trying to create spawns at the same time their information will conflict.**
+
 Here is how to operate the spawn editor:
 - use ``sm_edit`` to launch into edit mode, this makes more spawn-editing commands avaliable (you shouldn't do this on a live, public server). Example: ``!edit`` in chat on a map whose spawns you want to edit
 - use ``sm_new`` to create a new spawn. Example: ``!new ct a`` in chat will create a new CT spawn for bombsite A where you are standing.
 - use ``sm_show`` to show the spawns for a site. Example: ``!show a`` in chat will show all spawns for bombsite A.
-- use ``sm_deletespawn`` to delete the nearest spawn. Example: ``!deletespawn`` in chat.
+- use ``sm_delete`` to delete the nearest spawn. Example: ``!deletespawn`` in chat.
 - use ``sm_bomb`` to toggle whether to display all spawns or potential bomb-carrier spawns. Example: ``!bomb`` in chat
 - use ``sm_nobomb`` to mark a T spawn as unavailable to a bomb carrier. (by default, only spawns within the xy plane of a bombsite are available for a bomb carrier). Example: ``!nobomb`` in chat while standing on top of the spawn you want to edit.
 - use ``sm_onlybomb`` to mark a T spawn as unavaliable to players without the bomb (by default, a T spawn is avaliable to all Ts). Example: ``!onlybomb`` in chat while standing on top of the spawn you want to edit.

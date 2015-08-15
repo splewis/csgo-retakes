@@ -29,6 +29,9 @@
 #define POINTS_BOMB 150
 #define POINTS_LOSS 2000
 
+#define SITESTRING(%1) ((%1) == BombsiteA ? "A" : "B")
+#define TEAMSTRING(%1) ((%1) == CS_TEAM_CT ? "CT" : "T")
+
 bool g_Enabled = true;
 Handle g_SavedCvars = INVALID_HANDLE;
 
@@ -108,8 +111,10 @@ Handle g_OnRoundWon = INVALID_HANDLE;
 Handle g_OnSitePicked = INVALID_HANDLE;
 Handle g_OnWeaponsAllocated = INVALID_HANDLE;
 
-#include "retakes/editor.sp"
 #include "retakes/generic.sp"
+#include "retakes/editor.sp"
+#include "retakes/editor_commands.sp"
+#include "retakes/editor_menus.sp"
 #include "retakes/natives.sp"
 #include "retakes/spawns.sp"
 
@@ -153,19 +158,22 @@ public void OnPluginStart() {
     /** Command hooks **/
     AddCommandListener(Command_JoinTeam, "jointeam");
 
-    /** Admin commands **/
-    RegAdminCmd("sm_goto", Command_GotoSpawn, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the spawn editor mode");
-    RegAdminCmd("sm_spawns", Command_EditSpawns, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_new", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Creates a new spawn");
-    RegAdminCmd("sm_player", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Creates a new spawn");
-    RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP, "Shows all spawns in a bombsite");
-    RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest spawn");
-    RegAdminCmd("sm_deleteallspawns", Command_DeleteAllSpawns, ADMFLAG_CHANGEMAP, "Deletes all spawns for the current map");
-    RegAdminCmd("sm_deletemapspawns", Command_DeleteAllSpawns, ADMFLAG_CHANGEMAP, "Deletes all spawns for the current map");
+    /** Admin/editor commands **/
+    RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the retakes spawn editor mode");
+    RegAdminCmd("sm_spawns", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the retakes spawn editor mode");
+
+    RegAdminCmd("sm_new", Command_AddSpawn, ADMFLAG_CHANGEMAP, "Creates a new retakes spawn");
+    RegAdminCmd("sm_newspawn", Command_AddSpawn, ADMFLAG_CHANGEMAP, "Creates a new retakes spawn");
+    RegAdminCmd("sm_delete", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest retakes spawn");
+    RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest retakes spawn");\
+    RegAdminCmd("sm_deletemapspawns", Command_DeleteMapSpawns, ADMFLAG_CHANGEMAP, "Deletes all retakes spawns for the current map");
+
+    RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP, "Shows all retakes spawns in a bombsite");
+    RegAdminCmd("sm_goto", Command_GotoSpawn, ADMFLAG_CHANGEMAP, "Goes to a retakes spawn");
+
     RegAdminCmd("sm_iteratespawns", Command_IterateSpawns, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_reloadspawns", Command_ReloadSpawns, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_savespawns", Command_SaveSpawns, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_reloadspawns", Command_ReloadSpawns, ADMFLAG_CHANGEMAP, "Reloads retakes spawns for the current map, discarding changes");
+    RegAdminCmd("sm_savespawns", Command_SaveSpawns, ADMFLAG_CHANGEMAP, "Saves retakes spawns for the current map");
 
     // TODO: these commands need a better names/a better interface. They're far too confusingly named.
     RegAdminCmd("sm_bomb", Command_Bomb, ADMFLAG_CHANGEMAP);
@@ -548,9 +556,7 @@ public Action Event_RoundPostStart(Handle event, const char[] name, bool dontBro
 
     if (!g_EditMode) {
         GameRules_SetProp("m_iRoundTime", g_hRoundTime.IntValue, 4, 0, true);
-        char bombsite[4];
-        GetSiteString(g_Bombsite, bombsite, sizeof(bombsite));
-        Retakes_MessageToAll("%t", "RetakeSiteMessage", bombsite, g_NumT, g_NumCT);
+        Retakes_MessageToAll("%t", "RetakeSiteMessage", SITESTRING(g_Bombsite), g_NumT, g_NumCT);
     }
 
     g_bombPlanted = false;
@@ -823,4 +829,12 @@ void CheckRoundDone() {
     if (tHumanCount == 0 || ctHumanCount == 0) {
         CS_TerminateRound(0.1, CSRoundEnd_TerroristWin);
     }
+}
+
+public int GetOtherTeam(int team) {
+    return (team == CS_TEAM_CT) ? CS_TEAM_T : CS_TEAM_CT;
+}
+
+public Bombsite GetOtherSite(Bombsite site) {
+    return (site == BombsiteA) ? BombsiteB : BombsiteA;
 }

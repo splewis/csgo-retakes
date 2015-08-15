@@ -103,6 +103,12 @@ stock bool IsPlayer(int client) {
     return IsValidClient(client) && !IsFakeClient(client);
 }
 
+stock void AddMenuOption(Menu menu, const char[] info, const char[] display, any:...) {
+    char formattedDisplay[128];
+    VFormat(formattedDisplay, sizeof(formattedDisplay), display, 4);
+    menu.AddItem(info, formattedDisplay);
+}
+
 /**
  * Adds an integer to a menu as a string choice.
  */
@@ -260,7 +266,7 @@ stock void SQL_UpdatePrimaryKey(Handle db_connection, const char[] table_name, c
  * Example: de_dust2 instead of workshop/125351616/de_dust2
  */
 stock void GetCleanMapName(char[] buffer, int size) {
-    char mapName[128];
+    char mapName[PLATFORM_MAX_PATH+1];
     GetCurrentMap(mapName, sizeof(mapName));
     int last_slash = 0;
     int len = strlen(mapName);
@@ -299,4 +305,3 @@ stock void StartTimedWarmup(int time) {
     ServerCommand("mp_warmup_start");
     ServerCommand("mp_warmup_start"); // don't ask.
 }
-
