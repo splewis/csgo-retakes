@@ -1,15 +1,34 @@
 int g_iBeamSprite = 0;
 int g_iHaloSprite = 0;
+SpawnType g_DisplaySpawnMode = SpawnType_Normal;
 Bombsite g_ShowingSite = BombsiteA;
-bool g_ShowingBombSpawns = false;
 
 public void MovePlayerToEditMode(int client) {
     SwitchPlayerTeam(client, CS_TEAM_CT);
     CS_RespawnPlayer(client);
 }
 
+public void ShowSpawns(Bombsite site) {
+    g_ShowingSite = site;
+    Retakes_MessageToAll("Showing spawns for bombsite \x04%s.", SITESTRING(site));
+
+    int ct_count = 0;
+    int t_count = 0;
+    for (int i = 0; i < g_NumSpawns; i++) {
+        if (!g_SpawnDeleted[i] && g_SpawnSites[i] == g_ShowingSite) {
+            if (g_SpawnTeams[i] == CS_TEAM_CT) {
+                ct_count++;
+            } else {
+                t_count++;
+            }
+        }
+    }
+    Retakes_MessageToAll("Found %d CT spawns.", ct_count);
+    Retakes_MessageToAll("Found %d T spawns.", t_count);
+}
+
 public Action Timer_ShowSpawns(Handle timer) {
-    if (!g_ShowingSpawns || g_hEditorEnabled.IntValue == 0)
+    if (!g_EditMode || g_hEditorEnabled.IntValue == 0)
         return Plugin_Continue;
 
     g_iBeamSprite = PrecacheModel("sprites/laserbeam.vmt", true);
@@ -32,30 +51,39 @@ public Action Timer_ShowSpawns(Handle timer) {
     return Plugin_Continue;
 }
 
-stock bool SpawnFilter(int spawn, int teamFilter=-1) {
-    bool showing = !g_SpawnDeleted[spawn] &&
-                    g_ShowingSite == g_SpawnSites[spawn] &&
-                    (!g_ShowingBombSpawns || CanBombCarrierSpawn(spawn));
+stock bool SpawnFilter(int spawn) {
+    if (!IsValidSpawn(spawn)) {
+        return false;
+    }
 
-    if (teamFilter == -1)
-        return showing;
-    else
-        return showing && g_SpawnTeams[spawn] == teamFilter;
+    if (g_SpawnSites[spawn] != g_ShowingSite) {
+        return false;
+    }
+
+    if (g_SpawnTeams[spawn] == CS_TEAM_T) {
+        if (g_DisplaySpawnMode == SpawnType_OnlyWithBomb && !CanBombCarrierSpawn(spawn)) {
+            return false;
+        }
+        if (g_DisplaySpawnMode == SpawnType_NeverWithBomb && CanBombCarrierSpawn(spawn)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 public void FinishSpawn() {
+    if (g_NumSpawns + 1 >= MAX_SPAWNS) {
+        Retakes_MessageToAll("{DARK_RED}WARNING: {NORMAL}the maximum number of spawns has been reached.");
+        LogError("Maximum number of spawns reached");
+        return;
+    }
+
     g_SpawnDeleted[g_NumSpawns] = false;
-    g_SpawnOnlyBomb[g_NumSpawns] = false;
-    g_SpawnNoBomb[g_NumSpawns] = false;
     g_NumSpawns++;
-    Retakes_MessageToAll("Finished adding %s spawn for %s.",
+    Retakes_MessageToAll("Added %s spawn for %s.",
                          TEAMSTRING(g_SpawnTeams[g_NumSpawns]),
                          SITESTRING(g_SpawnSites[g_NumSpawns]));
-
-    if (g_NumSpawns == MAX_SPAWNS) {
-        Retakes_MessageToAll("{DARK_RED}WARNING: {NORMAL}the maximum number of spawns has been reached. {LIGHT_RED}New spawns will override old ones.");
-        LogError("Maximum number of spawns reached");
-    }
 }
 
 public void DisplaySpawnPoint(int client, const float position[3], const float angles[3], float size, bool ct) {
@@ -120,11 +148,11 @@ public void DisplaySpawnPoint(int client, const float position[3], const float a
     TE_SendToClient(client);
 }
 
-stock int FindClosestSpawn(int client, int teamFilter=-1) {
+stock int FindClosestSpawn(int client) {
     int closest = -1;
     float minDist = 0.0;
     for (int i = 0; i < g_NumSpawns; i++) {
-        if (!SpawnFilter(i, teamFilter))
+        if (!SpawnFilter(i))
             continue;
 
         float origin[3];
@@ -158,4 +186,11 @@ public void SaveSpawns() {
 public void ReloadSpawns() {
     g_NumSpawns = ParseSpawns();
     Retakes_MessageToAll("Imported %d map spawns.", g_NumSpawns);
+}
+
+public void DeleteMapSpawns() {
+    for (int i = 0; i < g_NumSpawns; i++) {
+        g_SpawnDeleted[i] = true;
+    }
+    Retakes_MessageToAll("All spawns for this map have been deleted");
 }

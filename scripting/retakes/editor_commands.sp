@@ -1,28 +1,3 @@
-public Action Command_ReloadSpawns(int client, int args) {
-    ReloadSpawns();
-    return Plugin_Handled;
-}
-
-public Action Command_SaveSpawns(int client, int args) {
-    SaveSpawns();
-    return Plugin_Handled;
-}
-
-public Action Command_Bomb(int client, int args) {
-    if (g_hEditorEnabled.IntValue == 0) {
-        Retakes_Message(client, "The editor is currently disabled.");
-        return Plugin_Handled;
-    }
-
-    g_ShowingBombSpawns = !g_ShowingBombSpawns;
-    if (g_ShowingBombSpawns)
-        Retakes_MessageToAll("Now showing only bomb-site spawns");
-    else
-        Retakes_MessageToAll("Now showing all spawns");
-
-    return Plugin_Handled;
-}
-
 public Action Command_EditSpawns(int client, int args) {
     if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
@@ -44,11 +19,29 @@ public Action Command_EditSpawns(int client, int args) {
         Retakes_MessageToAll("!show <a/b> to display spawn points for a site");
         Retakes_MessageToAll("!new <ct/t> <a/b> to add a spawn point");
         Retakes_MessageToAll("!delete to delete the nearest spawn");
-        Retakes_MessageToAll("!save to save the spawn points now (otherwise done on map change)");
     }
 
     GiveEditorMenu(client);
+    return Plugin_Handled;
+}
 
+public Action Command_ReloadSpawns(int client, int args) {
+    if (g_hEditorEnabled.IntValue == 0) {
+        Retakes_Message(client, "The editor is currently disabled.");
+        return Plugin_Handled;
+    }
+
+    ReloadSpawns();
+    return Plugin_Handled;
+}
+
+public Action Command_SaveSpawns(int client, int args) {
+    if (g_hEditorEnabled.IntValue == 0) {
+        Retakes_Message(client, "The editor is currently disabled.");
+        return Plugin_Handled;
+    }
+
+    SaveSpawns();
     return Plugin_Handled;
 }
 
@@ -56,6 +49,10 @@ public Action Command_AddSpawn(int client, int args) {
     if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
+    }
+
+    if (!g_EditMode) {
+        Retakes_Message(client, "You are not in edit mode.");
     }
 
     char arg1[32];
@@ -87,7 +84,7 @@ public Action Command_AddSpawn(int client, int args) {
         GetClientEyeAngles(client, g_SpawnAngles[g_NumSpawns]);
         FinishSpawn();
     } else {
-        NewSpawnMenu(client);
+        GiveNewSpawnMenu(client);
     }
 
     return Plugin_Handled;
@@ -100,8 +97,7 @@ public Action Command_Show(int client, int args) {
     }
 
     if (!g_EditMode) {
-        Retakes_Message(client, "You aren't in edit mode!");
-        return Plugin_Handled;
+        Retakes_Message(client, "You are not in edit mode.");
     }
 
     char arg1[32];
@@ -118,47 +114,19 @@ public Action Command_Show(int client, int args) {
         int t_count = 0;
         for (int i = 0; i < g_NumSpawns; i++) {
             if (!g_SpawnDeleted[i] && g_SpawnSites[i] == g_ShowingSite) {
-                if (g_SpawnTeams[i] == CS_TEAM_CT)
+                if (g_SpawnTeams[i] == CS_TEAM_CT) {
                     ct_count++;
-                else
+                } else {
                     t_count++;
+                }
             }
         }
         Retakes_MessageToAll("Found %d CT spawns.", ct_count);
         Retakes_MessageToAll("Found %d T spawns.", t_count);
-
-        g_ShowingBombSpawns = false;
         g_EditMode = true;
-        g_ShowingSpawns = true;
+
     } else {
         ReplyToCommand(client, "Usage: sm_show <site>");
-    }
-    return Plugin_Handled;
-}
-
-public Action Command_NoBomb(int client, int args) {
-    if (g_hEditorEnabled.IntValue == 0) {
-        Retakes_Message(client, "The editor is currently disabled.");
-        return Plugin_Handled;
-    }
-
-    int closest = FindClosestSpawn(client, CS_TEAM_T);
-    if (closest >= 0) {
-        Retakes_MessageToAll("Swapping nobomb status for spawn %d.", closest);
-        g_SpawnNoBomb[closest] = !g_SpawnNoBomb[closest];
-    }
-    return Plugin_Handled;
-}
-public Action Command_OnlyBomb(int client, int args) {
-    if (g_hEditorEnabled.IntValue == 0) {
-        Retakes_Message(client, "The editor is currently disabled.");
-        return Plugin_Handled;
-    }
-
-    int closest = FindClosestSpawn(client, CS_TEAM_T);
-    if (closest >= 0) {
-        Retakes_MessageToAll("Swapping onlybomb status for spawn %d.", closest);
-        g_SpawnOnlyBomb[closest] = !g_SpawnOnlyBomb[closest];
     }
     return Plugin_Handled;
 }
@@ -167,6 +135,10 @@ public Action Command_DeleteSpawn(int client, int args) {
     if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
+    }
+
+    if (!g_EditMode) {
+        Retakes_Message(client, "You are not in edit mode.");
     }
 
     DeleteClosestSpawn(client);
@@ -179,11 +151,7 @@ public Action Command_DeleteMapSpawns(int client, int args) {
         return Plugin_Handled;
     }
 
-    for (int i = 0; i < g_NumSpawns; i++) {
-        g_SpawnDeleted[i] = true;
-    }
-
-    Retakes_MessageToAll("All spawns for this map have been deleted");
+    DeleteMapSpawns();
     return Plugin_Handled;
 }
 
@@ -191,6 +159,10 @@ public Action Command_IterateSpawns(int client, int args) {
     if (g_hEditorEnabled.IntValue == 0) {
         Retakes_Message(client, "The editor is currently disabled.");
         return Plugin_Handled;
+    }
+
+    if (!g_EditMode) {
+        Retakes_Message(client, "You are not in edit mode.");
     }
 
     int startIndex = 0;
@@ -240,15 +212,40 @@ public Action Command_GotoSpawn(int client, int args) {
         return Plugin_Handled;
     }
 
-    char buf[32];
-    if (args >= 1 && GetCmdArg(1, buf, sizeof(buf))) {
-        int index = StringToInt(buf);
-        if (index < g_NumSpawns && !g_SpawnDeleted[index]) {
-            Retakes_Message(client, "Teleporting to spawn {GREEN}%d", index);
-            Retakes_Message(client, "   Team: {MOSS_GREEN}%s", TEAMSTRING(g_SpawnTeams[index]));
-            Retakes_Message(client, "   Site: {MOSS_GREEN}%s", SITESTRING(g_SpawnSites[index]));
-            MoveToSpawn(client, index);
+    if (!g_EditMode) {
+        Retakes_Message(client, "You are not in edit mode.");
+    }
+
+    char buffer[32];
+    if (args >= 1 && GetCmdArg(1, buffer, sizeof(buffer))) {
+        int spawn = StringToInt(buffer);
+        if (IsValidSpawn(spawn)) {
+            Retakes_Message(client, "Teleporting to spawn {GREEN}%d", spawn);
+            Retakes_Message(client, "   Team: {MOSS_GREEN}%s", TEAMSTRING(g_SpawnTeams[spawn]));
+            Retakes_Message(client, "   Site: {MOSS_GREEN}%s", SITESTRING(g_SpawnSites[spawn]));
+            MoveToSpawn(client, spawn);
         }
+    }
+
+    return Plugin_Handled;
+}
+
+public Action Command_GotoNearestSpawn(int client, int args) {
+    if (g_hEditorEnabled.IntValue == 0) {
+        Retakes_Message(client, "The editor is currently disabled.");
+        return Plugin_Handled;
+    }
+
+    if (!g_EditMode) {
+        Retakes_Message(client, "You are not in edit mode.");
+    }
+
+    int spawn = FindClosestSpawn(client);
+    if (IsValidSpawn(spawn)) {
+        Retakes_Message(client, "Teleporting to spawn {GREEN}%d", spawn);
+        Retakes_Message(client, "   Team: {MOSS_GREEN}%s", TEAMSTRING(g_SpawnTeams[spawn]));
+        Retakes_Message(client, "   Site: {MOSS_GREEN}%s", SITESTRING(g_SpawnSites[spawn]));
+        MoveToSpawn(client, spawn);
     }
 
     return Plugin_Handled;

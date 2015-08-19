@@ -57,7 +57,6 @@ ConVar g_hUseRandomTeams;
 
 /** Editing global variables **/
 bool g_EditMode = false;
-bool g_ShowingSpawns = false;
 bool g_DirtySpawns = false; // whether the spawns have been edited since loading from the file
 
 /** Win-streak data **/
@@ -73,8 +72,7 @@ float g_SpawnPoints[MAX_SPAWNS][3];
 float g_SpawnAngles[MAX_SPAWNS][3];
 Bombsite g_SpawnSites[MAX_SPAWNS];
 int g_SpawnTeams[MAX_SPAWNS];
-bool g_SpawnNoBomb[MAX_SPAWNS];
-bool g_SpawnOnlyBomb[MAX_SPAWNS];
+SpawnType g_SpawnTypes[MAX_SPAWNS];
 
 /** Bomb-site stuff read from the map **/
 ArrayList g_SiteMins = null;
@@ -170,15 +168,11 @@ public void OnPluginStart() {
 
     RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP, "Shows all retakes spawns in a bombsite");
     RegAdminCmd("sm_goto", Command_GotoSpawn, ADMFLAG_CHANGEMAP, "Goes to a retakes spawn");
+    RegAdminCmd("sm_nearest", Command_GotoNearestSpawn, ADMFLAG_CHANGEMAP, "Goes to nearest retakes spawn");
 
     RegAdminCmd("sm_iteratespawns", Command_IterateSpawns, ADMFLAG_CHANGEMAP);
     RegAdminCmd("sm_reloadspawns", Command_ReloadSpawns, ADMFLAG_CHANGEMAP, "Reloads retakes spawns for the current map, discarding changes");
     RegAdminCmd("sm_savespawns", Command_SaveSpawns, ADMFLAG_CHANGEMAP, "Saves retakes spawns for the current map");
-
-    // TODO: these commands need a better names/a better interface. They're far too confusingly named.
-    RegAdminCmd("sm_bomb", Command_Bomb, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_nobomb", Command_NoBomb, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_onlybomb", Command_OnlyBomb, ADMFLAG_CHANGEMAP);
 
     /** Player commands **/
     RegConsoleCmd("sm_guns", Command_Guns);
@@ -211,6 +205,11 @@ public void OnPluginStart() {
     g_SiteMaxs = new ArrayList(3);
     g_hWaitingQueue = Queue_Init();
     g_hRankingQueue = PQ_Init();
+
+    // Set inital spawn types.
+    for (int i = 0; i < MAX_SPAWNS; i++) {
+        g_SpawnTypes[i] = SpawnType_Normal;
+    }
 }
 
 public void OnMapStart() {
@@ -224,7 +223,6 @@ public void OnMapStart() {
     g_bombPlanted = false;
     g_bombPlantSignal = false;
 
-    g_ShowingSpawns = false;
     g_EditMode = false;
     CreateTimer(1.0, Timer_ShowSpawns, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 

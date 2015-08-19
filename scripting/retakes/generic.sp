@@ -109,6 +109,12 @@ stock void AddMenuOption(Menu menu, const char[] info, const char[] display, any
     menu.AddItem(info, formattedDisplay);
 }
 
+stock void AddMenuOptionDisabled(Menu menu, const char[] info, const char[] display, any:...) {
+    char formattedDisplay[128];
+    VFormat(formattedDisplay, sizeof(formattedDisplay), display, 4);
+    menu.AddItem(info, formattedDisplay, ITEMDRAW_DISABLED);
+}
+
 /**
  * Adds an integer to a menu as a string choice.
  */

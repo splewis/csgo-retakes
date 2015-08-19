@@ -8,6 +8,17 @@ enum Bombsite {
     BombsiteB = 1,
 };
 
+// Spawn types. These only apply to T-side spawns, all
+// CT-spawns are considered SpawnType_Normal since they have no bomb.
+enum SpawnType {
+    SpawnType_Normal,
+    SpawnType_OnlyWithBomb,
+    SpawnType_NeverWithBomb,
+};
+
+#define SITESTRING(%1) ((%1) == BombsiteA ? "A" : "B")
+#define TEAMSTRING(%1) ((%1) == CS_TEAM_CT ? "CT" : "T")
+
 /**
  * Maxmimum length of a nade string. Example: "hfs" is a hegrenade, flashbang, and smoke.
  */
@@ -218,14 +229,6 @@ stock bool Retakes_Live() {
  * Returns the maximum number of players allowed into the game.
  */
 native int Retakes_GetMaxPlayers();
-
-stock void GetSiteString(Bombsite site, char[] buffer, int length) {
-    switch (site) {
-        case BombsiteA: Format(buffer, length, "A");
-        case BombsiteB: Format(buffer, length, "B");
-        default: Format(buffer, length, "Unknown");
-    }
-}
 
 public SharedPlugin __pl_retakes = {
     name = "retakes",
