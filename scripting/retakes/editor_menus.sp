@@ -143,7 +143,7 @@ public int ShowSpawnsMenuHandler(Menu menu, MenuAction action, int param1, int p
         } else if (StrEqual(choice, "back")) {
             GiveEditorMenu(client);
         } else if (StrEqual(choice, "type")) {
-            g_DisplaySpawnMode = NextSpawnType(g_DisplaySpawnMode);
+            ShowSpawnType(NextSpawnType(g_DisplaySpawnMode));
             GiveShowSpawnsMenu(client);
         } else {
             LogError("[ShowSpawnsMenuHandler]: unknown info string = %s", choice);

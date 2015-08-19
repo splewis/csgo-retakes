@@ -27,6 +27,21 @@ public void ShowSpawns(Bombsite site) {
     Retakes_MessageToAll("Found %d T spawns.", t_count);
 }
 
+public void ShowSpawnType(SpawnType type) {
+    g_DisplaySpawnMode = type;
+
+    char typeString[128];
+    if (type == SpawnType_Normal) {
+        Format(typeString, sizeof(typeString), "all spawns");
+    } else if (type == SpawnType_OnlyWithBomb) {
+        Format(typeString, sizeof(typeString), "only bomb-carrier spawns");
+    } else {
+        Format(typeString, sizeof(typeString), "never bomb-carrier spawns");
+    }
+
+    Retakes_MessageToAll("Now showing T spawn type: %s", typeString);
+}
+
 public Action Timer_ShowSpawns(Handle timer) {
     if (!g_EditMode || g_hEditorEnabled.IntValue == 0)
         return Plugin_Continue;
