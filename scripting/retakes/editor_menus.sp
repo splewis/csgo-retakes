@@ -76,7 +76,7 @@ public void GiveNewSpawnMenu(int client) {
         Format(typeString, sizeof(typeString), "Never bomb-carrier");
     }
     if (g_SpawnTeams[g_NumSpawns] == CS_TEAM_CT) {
-        AddMenuOptionDisabled(menu, "type", "T spawn type: %s", typeString);
+        AddMenuOptionDisabled(menu, "type", "Spawn type: %s", typeString);
     } else {
         AddMenuOption(menu, "type", "T spawn type: %s", typeString);
     }
@@ -100,7 +100,7 @@ public int GiveNewSpawnMenuHandler(Menu menu, MenuAction action, int param1, int
             g_SpawnSites[g_NumSpawns] = GetOtherSite(g_SpawnSites[g_NumSpawns]);
             GiveNewSpawnMenu(client);
         } else if (StrEqual(choice, "type")) {
-            g_SpawnTypes[g_NumSpawns] = NextSpawnType(g_DisplaySpawnMode);
+            g_SpawnTypes[g_NumSpawns] = NextSpawnType(g_SpawnTypes[g_NumSpawns]);
             GiveNewSpawnMenu(client);
         } else if (StrEqual(choice, "back")) {
             GiveEditorMenu(client);
@@ -143,7 +143,7 @@ public int ShowSpawnsMenuHandler(Menu menu, MenuAction action, int param1, int p
         } else if (StrEqual(choice, "back")) {
             GiveEditorMenu(client);
         } else if (StrEqual(choice, "type")) {
-            g_SpawnTypes[g_NumSpawns] = NextSpawnType(g_DisplaySpawnMode);
+            g_DisplaySpawnMode = NextSpawnType(g_DisplaySpawnMode);
             GiveShowSpawnsMenu(client);
         } else {
             LogError("[ShowSpawnsMenuHandler]: unknown info string = %s", choice);

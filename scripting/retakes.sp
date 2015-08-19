@@ -223,11 +223,11 @@ public void OnMapStart() {
     g_bombPlanted = false;
     g_bombPlantSignal = false;
 
-    g_EditMode = false;
-    CreateTimer(1.0, Timer_ShowSpawns, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
-
     FindSites();
     g_NumSpawns = ParseSpawns();
+
+    g_EditMode = false;
+    CreateTimer(1.0, Timer_ShowSpawns, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 
     if (!g_Enabled)
         return;
