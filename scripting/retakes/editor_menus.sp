@@ -8,7 +8,7 @@ stock void GiveEditorMenu(int client, int menuPosition=-1) {
     AddMenuItem(menu, "delete_nearest_spawn", "Delete nearest spawn");
     AddMenuItem(menu, "save_spawns", "Save spawns");
     AddMenuItem(menu, "delete_map_spawns", "Delete all map spawns");
-    AddMenuItem(menu, "reload_spawns", "Reload map spawns (reset current changes)");
+    AddMenuItem(menu, "reload_spawns", "Reload map spawns (discared current changes)");
 
     if (menuPosition == -1) {
         DisplayMenu(menu, client, MENU_TIME_FOREVER);

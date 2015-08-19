@@ -100,31 +100,10 @@ public Action Command_Show(int client, int args) {
         Retakes_Message(client, "You are not in edit mode.");
     }
 
-    char arg1[32];
-    if (args >= 1 && GetCmdArg(1, arg1, sizeof(arg1))) {
-        if (StrEqual(arg1, "a", false)) {
-            Retakes_MessageToAll("Showing spawns for bombsite \x04A.");
-            g_ShowingSite = BombsiteA;
-        } else {
-            Retakes_MessageToAll("Showing spawns for bombsite \x04B.");
-            g_ShowingSite = BombsiteB;
-        }
-
-        int ct_count = 0;
-        int t_count = 0;
-        for (int i = 0; i < g_NumSpawns; i++) {
-            if (!g_SpawnDeleted[i] && g_SpawnSites[i] == g_ShowingSite) {
-                if (g_SpawnTeams[i] == CS_TEAM_CT) {
-                    ct_count++;
-                } else {
-                    t_count++;
-                }
-            }
-        }
-        Retakes_MessageToAll("Found %d CT spawns.", ct_count);
-        Retakes_MessageToAll("Found %d T spawns.", t_count);
-        g_EditMode = true;
-
+    char arg[32];
+    if (args >= 1 && GetCmdArg(1, arg, sizeof(arg))) {
+        Bombsite site = StrEqual(arg, "A", false) ? BombsiteA : BombsiteB;
+        ShowSpawns(site);
     } else {
         ReplyToCommand(client, "Usage: sm_show <site>");
     }

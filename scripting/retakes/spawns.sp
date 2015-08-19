@@ -160,8 +160,9 @@ public void MoveToSpawn(int client, int spawnIndex) {
 }
 
 public void GiveWeapons(int client) {
-    if (!IsValidClient(client))
+    if (!IsValidClient(client)) {
         return;
+    }
 
     Client_RemoveAllWeapons(client);
     GivePlayerItem(client, "weapon_knife");

@@ -75,8 +75,8 @@ int g_SpawnTeams[MAX_SPAWNS];
 SpawnType g_SpawnTypes[MAX_SPAWNS];
 
 /** Bomb-site stuff read from the map **/
-ArrayList g_SiteMins = null;
-ArrayList g_SiteMaxs = null;
+ArrayList g_SiteMins;
+ArrayList g_SiteMaxs;
 
 /** Data created for the current retake scenario **/
 Bombsite g_Bombsite;
@@ -240,11 +240,13 @@ public void OnMapStart() {
 }
 
 public void OnMapEnd() {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
-    if (g_hEditorEnabled.IntValue != 0 && g_DirtySpawns)
+    if (g_hEditorEnabled.IntValue != 0 && g_DirtySpawns) {
         WriteSpawns();
+    }
 }
 
 public int EnabledChanged(Handle cvar, const char[] oldValue, const char[] newValue) {
@@ -327,8 +329,9 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
  ***********************/
 
 public Action Command_JoinTeam(int client, const char[] command, int argc) {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return Plugin_Continue;
+    }
 
     if (!IsValidClient(client) || argc < 1)
         return Plugin_Handled;
@@ -405,8 +408,9 @@ public Action PlacePlayer(int client) {
  * Called when a player joins a team, silences team join events
  */
 public Action Event_PlayerTeam(Handle event, const char[] name, bool dontBroadcast)  {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return Plugin_Continue;
+    }
 
     SetEventBroadcast(event, true);
     return Plugin_Continue;
@@ -419,8 +423,9 @@ public Action Event_PlayerTeam(Handle event, const char[] name, bool dontBroadca
  * put on that team and spawned, so we can't allow that.
  */
 public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
@@ -431,8 +436,9 @@ public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dont
  * Gives default weapons. (better than mp_ct_default_primary since it gives the player the correct skin)
  */
 public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast) {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     if (!IsValidClient(client) || !IsOnTeam(client) || g_EditMode || Retakes_InWarmup())
@@ -458,8 +464,9 @@ public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadc
  * Called when a player dies - gives points to killer, and does database stuff with the kill.
  */
 public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     int victim = GetClientOfUserId(GetEventInt(event, "userid"));
     int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
@@ -480,8 +487,9 @@ public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadc
  * Called when a player deals damage to another player - ads round points if needed.
  */
 public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return Plugin_Continue;
+    }
 
     int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
     int victim = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -499,8 +507,9 @@ public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadc
  * Called when the bomb explodes or is defuser, gives ponts to the one that planted/defused it.
  */
 public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcast) {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
     g_bombPlanted = true;
     g_bombPlantSignal = false;
@@ -510,8 +519,9 @@ public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcas
  * Called when the bomb explodes or is defused, gives ponts to the one that planted/defused it.
  */
 public Action Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     if (IsValidClient(client)) {
@@ -524,8 +534,9 @@ public Action Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
  * since it should happen before respawns.
  */
 public Action Event_RoundPreStart(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     g_RoundSpawnsDecided = false;
     RoundEndUpdates();
@@ -549,8 +560,9 @@ public Action Event_RoundPreStart(Handle event, const char[] name, bool dontBroa
 }
 
 public Action Event_RoundPostStart(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     if (!g_EditMode) {
         GameRules_SetProp("m_iRoundTime", g_hRoundTime.IntValue, 4, 0, true);
@@ -573,8 +585,9 @@ public Action Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBro
  * Round end event, calls the appropriate winner (T/CT) unction and sets the scores.
  */
 public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     if (g_ActivePlayers >= 2) {
         g_RoundCount++;
@@ -669,8 +682,9 @@ public void RoundEndUpdates() {
  * This assumes the priority queue has already been built (e.g. by RoundEndUpdates).
  */
 public void UpdateTeams() {
-    for (int i = 0; i < MAX_SPAWNS; i++)
+    for (int i = 0; i < MAX_SPAWNS; i++) {
         g_SpawnTaken[i] = false;
+    }
 
     if (g_NumSpawns < g_hMaxPlayers.IntValue) {
         LogError("This map does not have enough spawns!");

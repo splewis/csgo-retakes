@@ -74,7 +74,7 @@ stock bool SpawnFilter(int spawn) {
 
 public void FinishSpawn() {
     if (g_NumSpawns + 1 >= MAX_SPAWNS) {
-        Retakes_MessageToAll("{DARK_RED}WARNING: {NORMAL}the maximum number of spawns has been reached.");
+        Retakes_MessageToAll("{DARK_RED}WARNING: {NORMAL}the maximum number of spawns has been reached. New spawns cannot be added.");
         LogError("Maximum number of spawns reached");
         return;
     }
@@ -152,8 +152,9 @@ stock int FindClosestSpawn(int client) {
     int closest = -1;
     float minDist = 0.0;
     for (int i = 0; i < g_NumSpawns; i++) {
-        if (!SpawnFilter(i))
+        if (!SpawnFilter(i)) {
             continue;
+        }
 
         float origin[3];
         origin = g_SpawnPoints[i];
@@ -189,8 +190,6 @@ public void ReloadSpawns() {
 }
 
 public void DeleteMapSpawns() {
-    for (int i = 0; i < g_NumSpawns; i++) {
-        g_SpawnDeleted[i] = true;
-    }
+    g_NumSpawns = 0;
     Retakes_MessageToAll("All spawns for this map have been deleted");
 }
