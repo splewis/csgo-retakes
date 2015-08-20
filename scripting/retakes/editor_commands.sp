@@ -6,7 +6,6 @@ public Action Command_EditSpawns(int client, int args) {
 
     if (!g_EditMode) {
         g_EditMode = true;
-        g_DirtySpawns = true;
         StartPausedWarmup();
         for (int i = 1; i <= MaxClients; i++) {
             if (IsValidClient(i) && !IsFakeClient(i)) {
@@ -80,7 +79,7 @@ public Action Command_AddSpawn(int client, int args) {
         }
 
         g_EditingSpawnTeams[client] = team;
-        g_EditingSpawnSites[client] = site;
+        g_EditingSite = site;
         g_EditingSpawnTypes[client] = SpawnType_Normal;
         AddSpawn(client);
     } else {

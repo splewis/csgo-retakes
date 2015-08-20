@@ -286,15 +286,13 @@ stock void GetCleanMapName(char[] buffer, int size) {
 /**
  * Applies colorized characters across a string to replace color tags.
  */
-stock void Colorize(char[] msg, int size) {
+stock void Colorize(char[] msg, int size, bool strip=false) {
     for (int i = 0; i < sizeof(g_ColorNames); i ++) {
-        ReplaceString(msg, size, g_ColorNames[i], g_ColorCodes[i]);
-    }
-}
-
-stock void StripColors(char[] msg, int size) {
-    for (int i = 0; i < sizeof(g_ColorNames); i ++) {
-        ReplaceString(msg, size, g_ColorNames[i], "");
+        if (strip) {
+            ReplaceString(msg, size, g_ColorNames[i], "\x01");
+        } else {
+            ReplaceString(msg, size, g_ColorNames[i], g_ColorCodes[i]);
+        }
     }
 }
 

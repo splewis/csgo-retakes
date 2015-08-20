@@ -3,7 +3,7 @@ stock void GiveEditorMenu(int client, int menuPosition=-1) {
     SetMenuExitButton(menu, true);
     SetMenuTitle(menu, "Retakes spawn editor");
     AddMenuOption(menu, "end_edit", "Exit edit mode");
-    AddMenuOption(menu, "change_site", "Showing bombsite: %s", SITESTRING(g_ShowingSite));
+    AddMenuOption(menu, "change_site", "Showing bombsite: %s", SITESTRING(g_EditingSite));
     AddMenuOption(menu, "add_spawn", "Add a spawn");
     AddMenuOption(menu, "delete_nearest_spawn", "Delete nearest spawn");
     AddMenuOption(menu, "save_spawns", "Save spawns");
@@ -33,7 +33,7 @@ public int EditorMenuHandler(Menu menu, MenuAction action, int param1, int param
             GiveNewSpawnMenu(client);
 
         } else if (StrEqual(choice, "change_site")) {
-            ShowSpawns(GetOtherSite(g_ShowingSite));
+            ShowSpawns(GetOtherSite(g_EditingSite));
             GiveEditorMenu(client, menuPosition);
 
         } else if (StrEqual(choice, "delete_nearest_spawn")) {
@@ -66,7 +66,7 @@ public void GiveNewSpawnMenu(int client) {
     SetMenuTitle(menu, "Spawn settings");
     AddMenuOption(menu, "finish", "Finish spawn");
     AddMenuOption(menu, "team", "Team: %s", TEAMSTRING(g_EditingSpawnTeams[client]));
-    AddMenuOption(menu, "site", "Bombsite: %s", SITESTRING(g_EditingSpawnSites[client]));
+    AddMenuOption(menu, "site", "Bombsite: %s", SITESTRING(g_EditingSite));
 
     char typeString[128];
     if (g_EditingSpawnTypes[client] == SpawnType_Normal) {
@@ -98,7 +98,7 @@ public int GiveNewSpawnMenuHandler(Menu menu, MenuAction action, int param1, int
             g_EditingSpawnTeams[client] = GetOtherTeam(g_EditingSpawnTeams[client]);
             GiveNewSpawnMenu(client);
         } else if (StrEqual(choice, "site")) {
-            g_EditingSpawnSites[client] = GetOtherSite(g_EditingSpawnSites[client]);
+            g_EditingSite = GetOtherSite(g_EditingSite);
             GiveNewSpawnMenu(client);
         } else if (StrEqual(choice, "type")) {
             g_EditingSpawnTypes[client] = NextSpawnType(g_EditingSpawnTypes[client]);

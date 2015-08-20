@@ -72,7 +72,7 @@ public int ParseSpawns() {
         if (kv.GetNum("nobomb") == 1) {
             g_SpawnTypes[spawn] = SpawnType_NeverWithBomb;
         } else {
-            g_SpawnTypes[spawn] = view_as<SpawnType>(kv.GetNum("type"), SpawnType_Normal);
+            g_SpawnTypes[spawn] = view_as<SpawnType>(kv.GetNum("type"));
         }
 
         g_SpawnDeleted[spawn] = false;

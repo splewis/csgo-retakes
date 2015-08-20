@@ -75,7 +75,6 @@ int g_SpawnTeams[MAX_SPAWNS];
 SpawnType g_SpawnTypes[MAX_SPAWNS];
 
 /** Spawns being edited per-client **/
-Bombsite g_EditingSpawnSites[MAXPLAYERS+1];
 int g_EditingSpawnTeams[MAXPLAYERS+1];
 SpawnType g_EditingSpawnTypes[MAXPLAYERS+1];
 

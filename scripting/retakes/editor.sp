@@ -1,6 +1,6 @@
 int g_iBeamSprite = 0;
 int g_iHaloSprite = 0;
-Bombsite g_ShowingSite = BombsiteA;
+Bombsite g_EditingSite = BombsiteA;
 
 public void MovePlayerToEditMode(int client) {
     SwitchPlayerTeam(client, CS_TEAM_CT);
@@ -8,13 +8,13 @@ public void MovePlayerToEditMode(int client) {
 }
 
 public void ShowSpawns(Bombsite site) {
-    g_ShowingSite = site;
+    g_EditingSite = site;
     Retakes_MessageToAll("Showing spawns for bombsite \x04%s.", SITESTRING(site));
 
     int ct_count = 0;
     int t_count = 0;
     for (int i = 0; i < g_NumSpawns; i++) {
-        if (!g_SpawnDeleted[i] && g_SpawnSites[i] == g_ShowingSite) {
+        if (!g_SpawnDeleted[i] && g_SpawnSites[i] == g_EditingSite) {
             if (g_SpawnTeams[i] == CS_TEAM_CT) {
                 ct_count++;
             } else {
@@ -36,14 +36,16 @@ public Action Timer_ShowSpawns(Handle timer) {
     float angle[3];
 
     for (int i = 1; i <= MaxClients; i++) {
-        if (!IsValidClient(i) || IsFakeClient(i))
+        if (!IsValidClient(i) || IsFakeClient(i)) {
             continue;
+        }
 
         for (int j = 0; j < g_NumSpawns; j++) {
             origin = g_SpawnPoints[j];
             angle = g_SpawnPoints[j];
-            if (SpawnFilter(j))
+            if (SpawnFilter(j)) {
                 DisplaySpawnPoint(i, origin, angle, 40.0, g_SpawnTeams[j] == CS_TEAM_CT, g_SpawnTypes[j]);
+            }
         }
     }
 
@@ -55,7 +57,7 @@ stock bool SpawnFilter(int spawn) {
         return false;
     }
 
-    if (g_SpawnSites[spawn] != g_ShowingSite) {
+    if (g_SpawnSites[spawn] != g_EditingSite) {
         return false;
     }
 
@@ -63,6 +65,7 @@ stock bool SpawnFilter(int spawn) {
 }
 
 public void AddSpawn(int client) {
+    g_DirtySpawns = true;
     if (g_NumSpawns + 1 >= MAX_SPAWNS) {
         Retakes_MessageToAll("{DARK_RED}WARNING: {NORMAL}the maximum number of spawns has been reached. New spawns cannot be added.");
         LogError("Maximum number of spawns reached");
@@ -71,14 +74,14 @@ public void AddSpawn(int client) {
 
     GetClientAbsOrigin(client, g_SpawnPoints[g_NumSpawns]);
     GetClientEyeAngles(client, g_SpawnAngles[g_NumSpawns]);
-    g_SpawnSites[g_NumSpawns] = g_EditingSpawnSites[client];
+    g_SpawnSites[g_NumSpawns] = g_EditingSite;
     g_SpawnTeams[g_NumSpawns] = g_EditingSpawnTeams[client];
     g_SpawnTypes[g_NumSpawns] = g_EditingSpawnTypes[client];
     g_SpawnDeleted[g_NumSpawns] = false;
 
     Retakes_MessageToAll("Added %s spawn for %s (#%d).",
                          TEAMSTRING(g_EditingSpawnTeams[client]),
-                         SITESTRING(g_EditingSpawnSites[client]),
+                         SITESTRING(g_EditingSite),
                          g_NumSpawns);
     g_NumSpawns++;
 }
@@ -181,6 +184,7 @@ stock int FindClosestSpawn(int client) {
 }
 
 public void DeleteClosestSpawn(int client) {
+    g_DirtySpawns = true;
     int closest = FindClosestSpawn(client);
     if (closest >= 0) {
         Retakes_MessageToAll("Deleted spawn #%d.", closest);
