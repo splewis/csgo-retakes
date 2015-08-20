@@ -42,6 +42,7 @@ public Action Command_SaveSpawns(int client, int args) {
     }
 
     SaveSpawns();
+    Retakes_Message(client, "Saved %d spawns.", g_NumSpawns);
     return Plugin_Handled;
 }
 
@@ -78,11 +79,10 @@ public Action Command_AddSpawn(int client, int args) {
             return Plugin_Handled;
         }
 
-        g_SpawnTeams[g_NumSpawns] = team;
-        g_SpawnSites[g_NumSpawns] = site;
-        GetClientAbsOrigin(client, g_SpawnPoints[g_NumSpawns]);
-        GetClientEyeAngles(client, g_SpawnAngles[g_NumSpawns]);
-        FinishSpawn();
+        g_EditingSpawnTeams[client] = team;
+        g_EditingSpawnSites[client] = site;
+        g_EditingSpawnTypes[client] = SpawnType_Normal;
+        AddSpawn(client);
     } else {
         GiveNewSpawnMenu(client);
     }

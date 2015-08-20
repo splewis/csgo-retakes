@@ -300,7 +300,7 @@ stock void StripColors(char[] msg, int size) {
 
 stock void StartPausedWarmup() {
     ServerCommand("mp_warmup_start");
-    ServerCommand("mp_warmup_time 120");  // this value must be greater than 6 or the warmup countdown will always start
+    ServerCommand("mp_warmuptime 120");  // this value must be greater than 6 or the warmup countdown will always start
     ServerCommand("mp_warmup_pausetimer 1");
 }
 

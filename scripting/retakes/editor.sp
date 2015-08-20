@@ -1,6 +1,5 @@
 int g_iBeamSprite = 0;
 int g_iHaloSprite = 0;
-SpawnType g_DisplaySpawnMode = SpawnType_Normal;
 Bombsite g_ShowingSite = BombsiteA;
 
 public void MovePlayerToEditMode(int client) {
@@ -27,21 +26,6 @@ public void ShowSpawns(Bombsite site) {
     Retakes_MessageToAll("Found %d T spawns.", t_count);
 }
 
-public void ShowSpawnType(SpawnType type) {
-    g_DisplaySpawnMode = type;
-
-    char typeString[128];
-    if (type == SpawnType_Normal) {
-        Format(typeString, sizeof(typeString), "all spawns");
-    } else if (type == SpawnType_OnlyWithBomb) {
-        Format(typeString, sizeof(typeString), "only bomb-carrier spawns");
-    } else {
-        Format(typeString, sizeof(typeString), "never bomb-carrier spawns");
-    }
-
-    Retakes_MessageToAll("Now showing T spawn type: %s", typeString);
-}
-
 public Action Timer_ShowSpawns(Handle timer) {
     if (!g_EditMode || g_hEditorEnabled.IntValue == 0)
         return Plugin_Continue;
@@ -59,7 +43,7 @@ public Action Timer_ShowSpawns(Handle timer) {
             origin = g_SpawnPoints[j];
             angle = g_SpawnPoints[j];
             if (SpawnFilter(j))
-                DisplaySpawnPoint(i, origin, angle, 40.0, g_SpawnTeams[j] == CS_TEAM_CT);
+                DisplaySpawnPoint(i, origin, angle, 40.0, g_SpawnTeams[j] == CS_TEAM_CT, g_SpawnTypes[j]);
         }
     }
 
@@ -75,50 +59,60 @@ stock bool SpawnFilter(int spawn) {
         return false;
     }
 
-    if (g_SpawnTeams[spawn] == CS_TEAM_T) {
-        if (g_DisplaySpawnMode == SpawnType_OnlyWithBomb && !CanBombCarrierSpawn(spawn)) {
-            return false;
-        }
-        if (g_DisplaySpawnMode == SpawnType_NeverWithBomb && CanBombCarrierSpawn(spawn)) {
-            return false;
-        }
-    }
-
     return true;
 }
 
-public void FinishSpawn() {
+public void AddSpawn(int client) {
     if (g_NumSpawns + 1 >= MAX_SPAWNS) {
         Retakes_MessageToAll("{DARK_RED}WARNING: {NORMAL}the maximum number of spawns has been reached. New spawns cannot be added.");
         LogError("Maximum number of spawns reached");
         return;
     }
 
+    GetClientAbsOrigin(client, g_SpawnPoints[g_NumSpawns]);
+    GetClientEyeAngles(client, g_SpawnAngles[g_NumSpawns]);
+    g_SpawnSites[g_NumSpawns] = g_EditingSpawnSites[client];
+    g_SpawnTeams[g_NumSpawns] = g_EditingSpawnTeams[client];
+    g_SpawnTypes[g_NumSpawns] = g_EditingSpawnTypes[client];
     g_SpawnDeleted[g_NumSpawns] = false;
+
+    Retakes_MessageToAll("Added %s spawn for %s (#%d).",
+                         TEAMSTRING(g_EditingSpawnTeams[client]),
+                         SITESTRING(g_EditingSpawnSites[client]),
+                         g_NumSpawns);
     g_NumSpawns++;
-    Retakes_MessageToAll("Added %s spawn for %s.",
-                         TEAMSTRING(g_SpawnTeams[g_NumSpawns]),
-                         SITESTRING(g_SpawnSites[g_NumSpawns]));
 }
 
-public void DisplaySpawnPoint(int client, const float position[3], const float angles[3], float size, bool ct) {
+public void DisplaySpawnPoint(int client, const float position[3], const float angles[3],
+                              float size, bool ct, SpawnType spawnType) {
     float direction[3];
-
     GetAngleVectors(angles, direction, NULL_VECTOR, NULL_VECTOR);
     ScaleVector(direction, size/2);
     AddVectors(position, direction, direction);
 
-    int r, g, b, a;
+    int r, g, b;
     if (ct) {
+        // blue
         r = 0;
         g = 0;
         b = 255;
-        a = 255;
     } else {
-        r = 255;
-        g = 0;
-        b = 0;
-        a = 255;
+        if (spawnType == SpawnType_Normal) {
+            // red
+            r = 255;
+            g = 0;
+            b = 0;
+        } else if (spawnType == SpawnType_OnlyWithBomb) {
+            // green
+            r = 0;
+            g = 255;
+            b = 0;
+        } else {
+            // yellow
+            r = 255;
+            g = 255;
+            b = 0;
+        }
     }
 
     TE_Start("BeamRingPoint");
@@ -136,7 +130,7 @@ public void DisplaySpawnPoint(int client, const float position[3], const float a
     TE_WriteNum("r", r);
     TE_WriteNum("g", g);
     TE_WriteNum("b", b);
-    TE_WriteNum("a", a);
+    TE_WriteNum("a", 255);
     TE_WriteNum("m_nSpeed", 50);
     TE_WriteNum("m_nFlags", 0);
     TE_WriteNum("m_nFadeLength", 0);
@@ -156,7 +150,7 @@ public void DisplaySpawnPoint(int client, const float position[3], const float a
     TE_WriteNum("r", r);
     TE_WriteNum("g", g);
     TE_WriteNum("b", b);
-    TE_WriteNum("a", a);
+    TE_WriteNum("a", 255);
     TE_WriteNum("m_nSpeed", 50);
     TE_WriteNum("m_nFlags", 0);
     TE_WriteNum("m_nFadeLength", 0);
@@ -189,7 +183,7 @@ stock int FindClosestSpawn(int client) {
 public void DeleteClosestSpawn(int client) {
     int closest = FindClosestSpawn(client);
     if (closest >= 0) {
-        Retakes_MessageToAll("Deleted spawn %d", closest);
+        Retakes_MessageToAll("Deleted spawn #%d.", closest);
         g_SpawnDeleted[closest] = true;
     }
 }

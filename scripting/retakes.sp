@@ -74,6 +74,11 @@ Bombsite g_SpawnSites[MAX_SPAWNS];
 int g_SpawnTeams[MAX_SPAWNS];
 SpawnType g_SpawnTypes[MAX_SPAWNS];
 
+/** Spawns being edited per-client **/
+Bombsite g_EditingSpawnSites[MAXPLAYERS+1];
+int g_EditingSpawnTeams[MAXPLAYERS+1];
+SpawnType g_EditingSpawnTypes[MAXPLAYERS+1];
+
 /** Bomb-site stuff read from the map **/
 ArrayList g_SiteMins;
 ArrayList g_SiteMaxs;

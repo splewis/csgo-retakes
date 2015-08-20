@@ -59,9 +59,9 @@ You should make sure you have a relatively recent version of smlib - some change
 
 ## Creating and Editing Spawns
 
-**Note: only 1 player should be actively editing spawns at a time. If multiple players are trying to create spawns at the same time their information will conflict.**
+Edit mode can be launched by using the ``sm_edit`` command (!edit in chat), which requires the map-change admin flag. Doing this brings up the edit menu which makes it easy to modify spawns.
 
-Here is how to operate the spawn editor:
+Here is how to operate the spawn editor via commands:
 - use ``sm_edit`` to launch into edit mode, this makes more spawn-editing commands avaliable (you shouldn't do this on a live, public server). Example: ``!edit`` in chat on a map whose spawns you want to edit
 - use ``sm_new`` to create a new spawn. Example: ``!new ct a`` in chat will create a new CT spawn for bombsite A where you are standing.
 - use ``sm_show`` to show the spawns for a site. Example: ``!show a`` in chat will show all spawns for bombsite A.

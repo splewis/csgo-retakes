@@ -17,6 +17,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Retakes_GetPlayerInfo", Native_GetPlayerInfo);
     CreateNative("Retakes_SetPlayerInfo", Native_SetPlayerInfo);
     CreateNative("Retakes_GetRetakeRoundsPlayed", Native_GetRetakeRoundsPlayed);
+    CreateNative("Retakes_InEditMode", Native_InEditMode);
     CreateNative("Retakes_InWarmup", Native_InWarmup);
     CreateNative("Retakes_Enabled", Native_Enabled);
     CreateNative("Retakes_GetMaxPlayers", Native_GetMaxPlayers);
@@ -136,6 +137,10 @@ public int Native_SetPlayerInfo(Handle plugin, int numParams) {
 
 public int Native_GetRetakeRoundsPlayed(Handle plugin, int numParams) {
     return g_RoundCount;
+}
+
+public int Native_InEditMode(Handle plugin, int numParams) {
+    return g_EditMode;
 }
 
 public int Native_InWarmup(Handle plugin, int numParams) {

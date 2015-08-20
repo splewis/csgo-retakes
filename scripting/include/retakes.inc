@@ -11,9 +11,9 @@ enum Bombsite {
 // Spawn types. These only apply to T-side spawns, all
 // CT-spawns are considered SpawnType_Normal since they have no bomb.
 enum SpawnType {
-    SpawnType_Normal,
-    SpawnType_OnlyWithBomb,
-    SpawnType_NeverWithBomb,
+    SpawnType_Normal = 0,
+    SpawnType_OnlyWithBomb = 1,
+    SpawnType_NeverWithBomb = 2,
 };
 
 #define SITESTRING(%1) ((%1) == BombsiteA ? "A" : "B")
@@ -209,6 +209,11 @@ native void Retakes_GetPlayerInfo(int client,
 native int Retakes_GetRetakeRoundsPlayed();
 
 /**
+ * Returns if edit mode is active.
+ */
+native bool Retakes_InEditMode();
+
+/**
  * Returns if the game is currently in a warmup phase.
  */
 native bool Retakes_InWarmup();
@@ -222,7 +227,7 @@ native bool Retakes_Enabled();
  * Returns if the plugin is enabled and not in warmup.
  */
 stock bool Retakes_Live() {
-    return Retakes_Enabled() && !Retakes_InWarmup();
+    return Retakes_Enabled() && !Retakes_InWarmup() && !Retakes_InEditMode();
 }
 
 /**
@@ -256,6 +261,7 @@ public __pl_retakes_SetNTVOptional() {
     MarkNativeAsOptional("Retakes_SetPlayerInfo");
     MarkNativeAsOptional("Retakes_GetPlayerInfo");
     MarkNativeAsOptional("Retakes_GetRetakeRoundsPlayed");
+    MarkNativeAsOptional("Retakes_InEditMode");
     MarkNativeAsOptional("Retakes_InWarmup");
     MarkNativeAsOptional("Retakes_Enabled");
     MarkNativeAsOptional("Retakes_GetMaxPlayers");

@@ -74,7 +74,6 @@ public int ParseSpawns() {
         } else {
             g_SpawnTypes[spawn] = view_as<SpawnType>(kv.GetNum("type"), SpawnType_Normal);
         }
-        // g_SpawnTypes[spawn] = SpawnType_Normal;
 
         g_SpawnDeleted[spawn] = false;
 
@@ -114,22 +113,9 @@ public void WriteSpawns() {
 
         kv.SetVector("origin", g_SpawnPoints[spawn]);
         kv.SetVector("angle", g_SpawnAngles[spawn]);
-
-        if (g_SpawnSites[spawn] == BombsiteA) {
-            kv.SetString("bombsite", "A");
-        } else {
-            kv.SetString("bombsite", "B");
-        }
-
-        if (g_SpawnTeams[spawn] == CS_TEAM_CT) {
-            kv.SetString("team", "CT");
-        } else {
-            kv.SetString("team", "T");
-        }
-
-        if (g_SpawnTeams[spawn] == CS_TEAM_T) {
-            kv.SetNum("type", view_as<int>(g_SpawnTypes[spawn]));
-        }
+        kv.SetString("bombsite", SITESTRING(g_SpawnSites[spawn]));
+        kv.SetString("team", TEAMSTRING(g_SpawnTeams[spawn]));
+        kv.SetNum("type", view_as<int>(g_SpawnTypes[spawn]));
 
         kv.GoBack();
     }
@@ -205,10 +191,7 @@ public Action Timer_StartPlant(Handle timer, int client) {
     }
 }
 
-public bool InsideBombSite(int spawnIndex) {
-    float spawn[3];
-    spawn = g_SpawnPoints[spawnIndex];
-
+public bool InsideBombSite(float vec[3]) {
     for (int i = 0; i < GetArraySize(g_SiteMaxs); i++) {
         float min[3];
         float max[3];
@@ -216,8 +199,8 @@ public bool InsideBombSite(int spawnIndex) {
         GetArrayArray(g_SiteMins, i, min, sizeof(min));
         GetArrayArray(g_SiteMaxs, i, max, sizeof(max));
 
-        bool in_x = (min[0] <= spawn[0] && spawn[0] <= max[0]) || (max[0] <= spawn[0] && spawn[0] <= min[0]);
-        bool in_y = (min[1] <= spawn[1] && spawn[1] <= max[1]) || (max[1] <= spawn[1] && spawn[1] <= min[1]);
+        bool in_x = (min[0] <= vec[0] && vec[0] <= max[0]) || (max[0] <= vec[0] && vec[0] <= min[0]);
+        bool in_y = (min[1] <= vec[1] && vec[1] <= max[1]) || (max[1] <= vec[1] && vec[1] <= min[1]);
 
         if (in_x && in_y) {
             return true;
@@ -225,6 +208,10 @@ public bool InsideBombSite(int spawnIndex) {
 
     }
     return false;
+}
+
+public bool SpawnInsideBombSite(int spawnIndex) {
+    return InsideBombSite(g_SpawnPoints[spawnIndex]);
 }
 
 public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3], float angles[3],
@@ -242,7 +229,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
 public bool CanBombCarrierSpawn(int spawn) {
     if (g_SpawnTeams[spawn] == CS_TEAM_CT)
         return false;
-    return (g_SpawnTypes[spawn] != SpawnType_NeverWithBomb) && InsideBombSite(spawn);
+    return (g_SpawnTypes[spawn] != SpawnType_NeverWithBomb) && SpawnInsideBombSite(spawn);
 }
 
 public bool CanRegularPlayerSpawn(int spawn) {
