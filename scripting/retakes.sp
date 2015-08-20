@@ -173,7 +173,7 @@ public void OnPluginStart() {
     RegAdminCmd("sm_savespawns", Command_SaveSpawns, ADMFLAG_CHANGEMAP);
 
     /** Event hooks **/
-    HookEvent("player_connect_full", Event_PlayerConnectFull);
+ // HookEvent("player_connect_full", Event_PlayerConnectFull);
     HookEvent("player_team", Event_PlayerTeam, EventHookMode_Pre);
     HookEvent("player_spawn", Event_PlayerSpawn);
     HookEvent("player_hurt", Event_DamageDealt);
@@ -227,10 +227,10 @@ public void OnMapStart() {
     ExecConfigs();
 
     /** begin insane warmup hacks **/
-    ServerCommand("mp_do_warmup_period 1");
-    ServerCommand("mp_warmuptime 25");
-    ServerCommand("mp_warmup_start");
-    ServerCommand("mp_warmup_start");
+    //ServerCommand("mp_do_warmup_period 1");
+    //ServerCommand("mp_warmuptime 25");
+    //ServerCommand("mp_warmup_start");
+    //ServerCommand("mp_warmup_start");
 }
 
 public void OnMapEnd() {
@@ -389,18 +389,21 @@ public Action Event_PlayerTeam(Handle event, const char[] name, bool dontBroadca
 }
 
 /**
+ * DISABLED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  * Full connect event right when a player joins.
  * This sets the auto-pick time to a high value because mp_forcepicktime is broken and
  * if a player does not select a team but leaves their mouse over one, they are
  * put on that team and spawned, so we can't allow that.
+ *
+ *public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
+ *    if (!g_Enabled)
+ *        return;
+ *
+ *    int client = GetClientOfUserId(GetEventInt(event, "userid"));
+ *    SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
+ *}
  */
-public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
-    if (!g_Enabled)
-        return;
 
-    int client = GetClientOfUserId(GetEventInt(event, "userid"));
-    SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
-}
 
 /**
  * Called when a player spawns.
@@ -764,7 +767,7 @@ public void UpdateTeams() {
 }
 
 static bool ScramblesEnabled() {
-    return g_hRoundsToScramble.IntValue >= 1 && g_hUseRandomTeams.IntValue != 0;
+    return g_hRoundsToScramble.IntValue >= 1 && g_hUseRandomTeams.IntValue == 0;
 }
 
 public void TerroristsWon() {
