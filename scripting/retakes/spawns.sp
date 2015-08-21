@@ -6,8 +6,8 @@ static void GetConfigFileName(char[] buffer, int size) {
 }
 
 public void FindSites() {
-    ClearArray(g_SiteMins);
-    ClearArray(g_SiteMaxs);
+    g_SiteMins.Clear();
+    g_SiteMaxs.Clear();
 
     int maxEnt = GetMaxEntities();
     char sClassName[128];
@@ -19,8 +19,8 @@ public void FindSites() {
                 float vecBombsiteMax[3];
                 GetEntPropVector(i, Prop_Send, "m_vecMins", vecBombsiteMin);
                 GetEntPropVector(i, Prop_Send, "m_vecMaxs", vecBombsiteMax);
-                PushArrayArray(g_SiteMins, vecBombsiteMin);
-                PushArrayArray(g_SiteMaxs, vecBombsiteMax);
+                g_SiteMins.PushArray(vecBombsiteMin);
+                g_SiteMaxs.PushArray(vecBombsiteMax);
             }
         }
     }
@@ -67,9 +67,13 @@ public int ParseSpawns() {
         kv.GetString("team", sBuf, sizeof(sBuf), "T");
         g_SpawnTeams[spawn] = (StrEqual(sBuf, "CT")) ? CS_TEAM_CT : CS_TEAM_T;
 
-        g_SpawnNoBomb[spawn] = (kv.GetNum("nobomb", 0) != 0);
-
-        g_SpawnOnlyBomb[spawn] = (kv.GetNum("nobomb", 0) != 0);
+        // Backwards compatibility with "nobomb" key.
+        // These are converted into the "type" key when spawns are saved.
+        if (kv.GetNum("nobomb") == 1) {
+            g_SpawnTypes[spawn] = SpawnType_NeverWithBomb;
+        } else {
+            g_SpawnTypes[spawn] = view_as<SpawnType>(kv.GetNum("type"));
+        }
 
         g_SpawnDeleted[spawn] = false;
 
@@ -109,26 +113,9 @@ public void WriteSpawns() {
 
         kv.SetVector("origin", g_SpawnPoints[spawn]);
         kv.SetVector("angle", g_SpawnAngles[spawn]);
-
-        if (g_SpawnSites[spawn] == BombsiteA) {
-            kv.SetString("bombsite", "A");
-        } else {
-            kv.SetString("bombsite", "B");
-        }
-
-        if (g_SpawnTeams[spawn] == CS_TEAM_CT) {
-            kv.SetString("team", "CT");
-        } else {
-            kv.SetString("team", "T");
-        }
-
-        if (g_SpawnNoBomb[spawn] && g_SpawnTeams[spawn] == CS_TEAM_T) {
-            kv.SetNum("nobomb", 1);
-        }
-
-        if (g_SpawnOnlyBomb[spawn] && g_SpawnTeams[spawn] == CS_TEAM_T) {
-            kv.SetNum("onlybomb", 1);
-        }
+        kv.SetString("bombsite", SITESTRING(g_SpawnSites[spawn]));
+        kv.SetString("team", TEAMSTRING(g_SpawnTeams[spawn]));
+        kv.SetNum("type", view_as<int>(g_SpawnTypes[spawn]));
 
         kv.GoBack();
     }
@@ -159,8 +146,9 @@ public void MoveToSpawn(int client, int spawnIndex) {
 }
 
 public void GiveWeapons(int client) {
-    if (!IsValidClient(client))
+    if (!IsValidClient(client)) {
         return;
+    }
 
     Client_RemoveAllWeapons(client);
     GivePlayerItem(client, "weapon_knife");
@@ -203,10 +191,7 @@ public Action Timer_StartPlant(Handle timer, int client) {
     }
 }
 
-public bool InsideBombSite(int spawnIndex) {
-    float spawn[3];
-    spawn = g_SpawnPoints[spawnIndex];
-
+public bool InsideBombSite(float vec[3]) {
     for (int i = 0; i < GetArraySize(g_SiteMaxs); i++) {
         float min[3];
         float max[3];
@@ -214,8 +199,8 @@ public bool InsideBombSite(int spawnIndex) {
         GetArrayArray(g_SiteMins, i, min, sizeof(min));
         GetArrayArray(g_SiteMaxs, i, max, sizeof(max));
 
-        bool in_x = (min[0] <= spawn[0] && spawn[0] <= max[0]) || (max[0] <= spawn[0] && spawn[0] <= min[0]);
-        bool in_y = (min[1] <= spawn[1] && spawn[1] <= max[1]) || (max[1] <= spawn[1] && spawn[1] <= min[1]);
+        bool in_x = (min[0] <= vec[0] && vec[0] <= max[0]) || (max[0] <= vec[0] && vec[0] <= min[0]);
+        bool in_y = (min[1] <= vec[1] && vec[1] <= max[1]) || (max[1] <= vec[1] && vec[1] <= min[1]);
 
         if (in_x && in_y) {
             return true;
@@ -225,8 +210,14 @@ public bool InsideBombSite(int spawnIndex) {
     return false;
 }
 
+public bool SpawnInsideBombSite(int spawnIndex) {
+    return InsideBombSite(g_SpawnPoints[spawnIndex]);
+}
+
 public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3], float angles[3],
                              int& weapon, int& subtype, int& cmdnum, int& tickcount, int& seed, int mouse[2]) {
+    // Forces the player to get the bomb out on their spawn.
+    // The signal is fired by a timer after the bomb-carrier's spawn.
     if (g_bombPlantSignal && !g_bombPlanted && client == g_BombOwner) {
         buttons |= IN_USE;
         g_bombPlantSignal = false;
@@ -237,14 +228,14 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
 
 public bool CanBombCarrierSpawn(int spawn) {
     if (g_SpawnTeams[spawn] == CS_TEAM_CT)
-        return true;
-    return !g_SpawnNoBomb[spawn] && InsideBombSite(spawn);
+        return false;
+    return (g_SpawnTypes[spawn] != SpawnType_NeverWithBomb) && SpawnInsideBombSite(spawn);
 }
 
 public bool CanRegularPlayerSpawn(int spawn) {
     if (g_SpawnTeams[spawn] == CS_TEAM_CT)
         return true;
-    return !g_SpawnOnlyBomb[spawn];
+    return g_SpawnTypes[spawn] != SpawnType_OnlyWithBomb;
 }
 
 /**
@@ -277,5 +268,8 @@ public int SelectSpawn(int team, bool bombSpawn) {
         delete potentialSpawns;
         return choice;
     }
+}
 
+public bool IsValidSpawn(int index) {
+    return index >= 0 && index < g_NumSpawns && !g_SpawnDeleted[index];
 }

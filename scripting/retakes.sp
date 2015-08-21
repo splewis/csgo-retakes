@@ -29,6 +29,9 @@
 #define POINTS_BOMB 150
 #define POINTS_LOSS 2000
 
+#define SITESTRING(%1) ((%1) == BombsiteA ? "A" : "B")
+#define TEAMSTRING(%1) ((%1) == CS_TEAM_CT ? "CT" : "T")
+
 bool g_Enabled = true;
 Handle g_SavedCvars = INVALID_HANDLE;
 
@@ -54,7 +57,6 @@ ConVar g_hUseRandomTeams;
 
 /** Editing global variables **/
 bool g_EditMode = false;
-bool g_ShowingSpawns = false;
 bool g_DirtySpawns = false; // whether the spawns have been edited since loading from the file
 
 /** Win-streak data **/
@@ -70,12 +72,15 @@ float g_SpawnPoints[MAX_SPAWNS][3];
 float g_SpawnAngles[MAX_SPAWNS][3];
 Bombsite g_SpawnSites[MAX_SPAWNS];
 int g_SpawnTeams[MAX_SPAWNS];
-bool g_SpawnNoBomb[MAX_SPAWNS];
-bool g_SpawnOnlyBomb[MAX_SPAWNS];
+SpawnType g_SpawnTypes[MAX_SPAWNS];
+
+/** Spawns being edited per-client **/
+int g_EditingSpawnTeams[MAXPLAYERS+1];
+SpawnType g_EditingSpawnTypes[MAXPLAYERS+1];
 
 /** Bomb-site stuff read from the map **/
-ArrayList g_SiteMins = null;
-ArrayList g_SiteMaxs = null;
+ArrayList g_SiteMins;
+ArrayList g_SiteMaxs;
 
 /** Data created for the current retake scenario **/
 Bombsite g_Bombsite;
@@ -108,8 +113,10 @@ Handle g_OnRoundWon = INVALID_HANDLE;
 Handle g_OnSitePicked = INVALID_HANDLE;
 Handle g_OnWeaponsAllocated = INVALID_HANDLE;
 
-#include "retakes/editor.sp"
 #include "retakes/generic.sp"
+#include "retakes/editor.sp"
+#include "retakes/editor_commands.sp"
+#include "retakes/editor_menus.sp"
 #include "retakes/natives.sp"
 #include "retakes/spawns.sp"
 
@@ -153,24 +160,23 @@ public void OnPluginStart() {
     /** Command hooks **/
     AddCommandListener(Command_JoinTeam, "jointeam");
 
-    /** Admin commands **/
-    RegAdminCmd("sm_goto", Command_GotoSpawn, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the spawn editor mode");
-    RegAdminCmd("sm_spawns", Command_EditSpawns, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_new", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Creates a new spawn");
-    RegAdminCmd("sm_player", Command_AddPlayer, ADMFLAG_CHANGEMAP, "Creates a new spawn");
-    RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP, "Shows all spawns in a bombsite");
-    RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest spawn");
-    RegAdminCmd("sm_deleteallspawns", Command_DeleteAllSpawns, ADMFLAG_CHANGEMAP, "Deletes all spawns for the current map");
-    RegAdminCmd("sm_deletemapspawns", Command_DeleteAllSpawns, ADMFLAG_CHANGEMAP, "Deletes all spawns for the current map");
-    RegAdminCmd("sm_iteratespawns", Command_IterateSpawns, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_reloadspawns", Command_ReloadSpawns, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_savespawns", Command_SaveSpawns, ADMFLAG_CHANGEMAP);
+    /** Admin/editor commands **/
+    RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the retakes spawn editor mode");
+    RegAdminCmd("sm_spawns", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the retakes spawn editor mode");
 
-    // TODO: these commands need a better names/a better interface. They're far too confusingly named.
-    RegAdminCmd("sm_bomb", Command_Bomb, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_nobomb", Command_NoBomb, ADMFLAG_CHANGEMAP);
-    RegAdminCmd("sm_onlybomb", Command_OnlyBomb, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_new", Command_AddSpawn, ADMFLAG_CHANGEMAP, "Creates a new retakes spawn");
+    RegAdminCmd("sm_newspawn", Command_AddSpawn, ADMFLAG_CHANGEMAP, "Creates a new retakes spawn");
+    RegAdminCmd("sm_delete", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest retakes spawn");
+    RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest retakes spawn");\
+    RegAdminCmd("sm_deletemapspawns", Command_DeleteMapSpawns, ADMFLAG_CHANGEMAP, "Deletes all retakes spawns for the current map");
+
+    RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP, "Shows all retakes spawns in a bombsite");
+    RegAdminCmd("sm_goto", Command_GotoSpawn, ADMFLAG_CHANGEMAP, "Goes to a retakes spawn");
+    RegAdminCmd("sm_nearest", Command_GotoNearestSpawn, ADMFLAG_CHANGEMAP, "Goes to nearest retakes spawn");
+
+    RegAdminCmd("sm_iteratespawns", Command_IterateSpawns, ADMFLAG_CHANGEMAP);
+    RegAdminCmd("sm_reloadspawns", Command_ReloadSpawns, ADMFLAG_CHANGEMAP, "Reloads retakes spawns for the current map, discarding changes");
+    RegAdminCmd("sm_savespawns", Command_SaveSpawns, ADMFLAG_CHANGEMAP, "Saves retakes spawns for the current map");
 
     /** Player commands **/
     RegConsoleCmd("sm_guns", Command_Guns);
@@ -203,6 +209,11 @@ public void OnPluginStart() {
     g_SiteMaxs = new ArrayList(3);
     g_hWaitingQueue = Queue_Init();
     g_hRankingQueue = PQ_Init();
+
+    // Set inital spawn types.
+    for (int i = 0; i < MAX_SPAWNS; i++) {
+        g_SpawnTypes[i] = SpawnType_Normal;
+    }
 }
 
 public void OnMapStart() {
@@ -216,12 +227,11 @@ public void OnMapStart() {
     g_bombPlanted = false;
     g_bombPlantSignal = false;
 
-    g_ShowingSpawns = false;
-    g_EditMode = false;
-    CreateTimer(1.0, Timer_ShowSpawns, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
-
     FindSites();
     g_NumSpawns = ParseSpawns();
+
+    g_EditMode = false;
+    CreateTimer(1.0, Timer_ShowSpawns, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 
     if (!g_Enabled)
         return;
@@ -234,11 +244,13 @@ public void OnMapStart() {
 }
 
 public void OnMapEnd() {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
-    if (g_hEditorEnabled.IntValue != 0 && g_DirtySpawns)
+    if (g_hEditorEnabled.IntValue != 0 && g_DirtySpawns) {
         WriteSpawns();
+    }
 }
 
 public int EnabledChanged(Handle cvar, const char[] oldValue, const char[] newValue) {
@@ -321,8 +333,9 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
  ***********************/
 
 public Action Command_JoinTeam(int client, const char[] command, int argc) {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return Plugin_Continue;
+    }
 
     if (!IsValidClient(client) || argc < 1)
         return Plugin_Handled;
@@ -399,8 +412,9 @@ public Action PlacePlayer(int client) {
  * Called when a player joins a team, silences team join events
  */
 public Action Event_PlayerTeam(Handle event, const char[] name, bool dontBroadcast)  {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return Plugin_Continue;
+    }
 
     SetEventBroadcast(event, true);
     return Plugin_Continue;
@@ -413,8 +427,9 @@ public Action Event_PlayerTeam(Handle event, const char[] name, bool dontBroadca
  * put on that team and spawned, so we can't allow that.
  */
 public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dontBroadcast) {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
@@ -425,8 +440,9 @@ public Action Event_PlayerConnectFull(Handle event, const char[] name, bool dont
  * Gives default weapons. (better than mp_ct_default_primary since it gives the player the correct skin)
  */
 public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadcast) {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     if (!IsValidClient(client) || !IsOnTeam(client) || g_EditMode || Retakes_InWarmup())
@@ -452,8 +468,9 @@ public Action Event_PlayerSpawn(Handle event, const char[] name, bool dontBroadc
  * Called when a player dies - gives points to killer, and does database stuff with the kill.
  */
 public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     int victim = GetClientOfUserId(GetEventInt(event, "userid"));
     int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
@@ -474,8 +491,9 @@ public Action Event_PlayerDeath(Handle event, const char[] name, bool dontBroadc
  * Called when a player deals damage to another player - ads round points if needed.
  */
 public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return Plugin_Continue;
+    }
 
     int attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
     int victim = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -493,8 +511,9 @@ public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadc
  * Called when the bomb explodes or is defuser, gives ponts to the one that planted/defused it.
  */
 public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcast) {
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
     g_bombPlanted = true;
     g_bombPlantSignal = false;
@@ -504,8 +523,9 @@ public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcas
  * Called when the bomb explodes or is defused, gives ponts to the one that planted/defused it.
  */
 public Action Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
     if (IsValidClient(client)) {
@@ -518,8 +538,9 @@ public Action Event_Bomb(Handle event, const char[] name, bool dontBroadcast) {
  * since it should happen before respawns.
  */
 public Action Event_RoundPreStart(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     g_RoundSpawnsDecided = false;
     RoundEndUpdates();
@@ -543,14 +564,13 @@ public Action Event_RoundPreStart(Handle event, const char[] name, bool dontBroa
 }
 
 public Action Event_RoundPostStart(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     if (!g_EditMode) {
         GameRules_SetProp("m_iRoundTime", g_hRoundTime.IntValue, 4, 0, true);
-        char bombsite[4];
-        GetSiteString(g_Bombsite, bombsite, sizeof(bombsite));
-        Retakes_MessageToAll("%t", "RetakeSiteMessage", bombsite, g_NumT, g_NumCT);
+        Retakes_MessageToAll("%t", "RetakeSiteMessage", SITESTRING(g_Bombsite), g_NumT, g_NumCT);
     }
 
     g_bombPlanted = false;
@@ -569,8 +589,9 @@ public Action Event_RoundFreezeEnd(Handle event, const char[] name, bool dontBro
  * Round end event, calls the appropriate winner (T/CT) unction and sets the scores.
  */
 public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast) {
-    if (!Retakes_Live())
+    if (!Retakes_Live()) {
         return;
+    }
 
     if (g_ActivePlayers >= 2) {
         g_RoundCount++;
@@ -665,8 +686,9 @@ public void RoundEndUpdates() {
  * This assumes the priority queue has already been built (e.g. by RoundEndUpdates).
  */
 public void UpdateTeams() {
-    for (int i = 0; i < MAX_SPAWNS; i++)
+    for (int i = 0; i < MAX_SPAWNS; i++) {
         g_SpawnTaken[i] = false;
+    }
 
     if (g_NumSpawns < g_hMaxPlayers.IntValue) {
         LogError("This map does not have enough spawns!");
@@ -823,4 +845,12 @@ void CheckRoundDone() {
     if (tHumanCount == 0 || ctHumanCount == 0) {
         CS_TerminateRound(0.1, CSRoundEnd_TerroristWin);
     }
+}
+
+public int GetOtherTeam(int team) {
+    return (team == CS_TEAM_CT) ? CS_TEAM_T : CS_TEAM_CT;
+}
+
+public Bombsite GetOtherSite(Bombsite site) {
+    return (site == BombsiteA) ? BombsiteB : BombsiteA;
 }

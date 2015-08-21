@@ -59,14 +59,13 @@ You should make sure you have a relatively recent version of smlib - some change
 
 ## Creating and Editing Spawns
 
-Here is how to operate the spawn editor:
+Edit mode can be launched by using the ``sm_edit`` command (!edit in chat), which requires the map-change admin flag. Doing this brings up the edit menu which makes it easy to modify spawns.
+
+Here is how to operate the spawn editor via commands:
 - use ``sm_edit`` to launch into edit mode, this makes more spawn-editing commands avaliable (you shouldn't do this on a live, public server). Example: ``!edit`` in chat on a map whose spawns you want to edit
 - use ``sm_new`` to create a new spawn. Example: ``!new ct a`` in chat will create a new CT spawn for bombsite A where you are standing.
 - use ``sm_show`` to show the spawns for a site. Example: ``!show a`` in chat will show all spawns for bombsite A.
-- use ``sm_deletespawn`` to delete the nearest spawn. Example: ``!deletespawn`` in chat.
-- use ``sm_bomb`` to toggle whether to display all spawns or potential bomb-carrier spawns. Example: ``!bomb`` in chat
-- use ``sm_nobomb`` to mark a T spawn as unavailable to a bomb carrier. (by default, only spawns within the xy plane of a bombsite are available for a bomb carrier). Example: ``!nobomb`` in chat while standing on top of the spawn you want to edit.
-- use ``sm_onlybomb`` to mark a T spawn as unavaliable to players without the bomb (by default, a T spawn is avaliable to all Ts). Example: ``!onlybomb`` in chat while standing on top of the spawn you want to edit.
+- use ``sm_delete`` to delete the nearest spawn. Example: ``!deletespawn`` in chat.
 - use ``sm_goto`` to go to a spawn. Spawns are indexed from 0 upwards. Example: ``!goto 10`` to go to spawn 10.
 - use ``sm_iteratespawns`` to fake ``sm_goto`` commands every few seconds to visit every spawn in the map.
 - use ``sm_deletemapspawns`` to delete all spawns for the current map

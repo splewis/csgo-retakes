@@ -17,6 +17,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
     CreateNative("Retakes_GetPlayerInfo", Native_GetPlayerInfo);
     CreateNative("Retakes_SetPlayerInfo", Native_SetPlayerInfo);
     CreateNative("Retakes_GetRetakeRoundsPlayed", Native_GetRetakeRoundsPlayed);
+    CreateNative("Retakes_InEditMode", Native_InEditMode);
     CreateNative("Retakes_InWarmup", Native_InWarmup);
     CreateNative("Retakes_Enabled", Native_Enabled);
     CreateNative("Retakes_GetMaxPlayers", Native_GetMaxPlayers);
@@ -40,8 +41,6 @@ public int Native_IsInQueue(Handle plugin, int numParams) {
 
 public int Native_RetakeMessage(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
-    CHECK_CONNECTED(client);
-
     SetGlobalTransTarget(client);
     char buffer[1024];
     int bytesWritten = 0;
@@ -49,9 +48,15 @@ public int Native_RetakeMessage(Handle plugin, int numParams) {
 
     char finalMsg[1024];
     Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
-    Colorize(finalMsg, sizeof(finalMsg));
 
-    PrintToChat(client, finalMsg);
+    if (client == 0) {
+        Colorize(finalMsg, sizeof(finalMsg), true);
+        PrintToConsole(client, finalMsg);
+    } else {
+        Colorize(finalMsg, sizeof(finalMsg));
+        PrintToChat(client, finalMsg);
+    }
+
 }
 
 public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
@@ -59,12 +64,16 @@ public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
     char finalMsg[1024];
     int bytesWritten = 0;
 
+    FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
+    Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
+    Colorize(finalMsg, sizeof(finalMsg), true);
+    PrintToConsole(0, finalMsg);
+
     for (int i = 1; i <= MaxClients; i++) {
         if (IsClientInGame(i)) {
             SetGlobalTransTarget(i);
             FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
             Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
-
             Colorize(finalMsg, sizeof(finalMsg));
             PrintToChat(i, finalMsg);
         }
@@ -136,6 +145,10 @@ public int Native_SetPlayerInfo(Handle plugin, int numParams) {
 
 public int Native_GetRetakeRoundsPlayed(Handle plugin, int numParams) {
     return g_RoundCount;
+}
+
+public int Native_InEditMode(Handle plugin, int numParams) {
+    return g_EditMode;
 }
 
 public int Native_InWarmup(Handle plugin, int numParams) {

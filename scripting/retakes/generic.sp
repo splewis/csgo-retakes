@@ -103,6 +103,18 @@ stock bool IsPlayer(int client) {
     return IsValidClient(client) && !IsFakeClient(client);
 }
 
+stock void AddMenuOption(Menu menu, const char[] info, const char[] display, any:...) {
+    char formattedDisplay[128];
+    VFormat(formattedDisplay, sizeof(formattedDisplay), display, 4);
+    menu.AddItem(info, formattedDisplay);
+}
+
+stock void AddMenuOptionDisabled(Menu menu, const char[] info, const char[] display, any:...) {
+    char formattedDisplay[128];
+    VFormat(formattedDisplay, sizeof(formattedDisplay), display, 4);
+    menu.AddItem(info, formattedDisplay, ITEMDRAW_DISABLED);
+}
+
 /**
  * Adds an integer to a menu as a string choice.
  */
@@ -260,7 +272,7 @@ stock void SQL_UpdatePrimaryKey(Handle db_connection, const char[] table_name, c
  * Example: de_dust2 instead of workshop/125351616/de_dust2
  */
 stock void GetCleanMapName(char[] buffer, int size) {
-    char mapName[128];
+    char mapName[PLATFORM_MAX_PATH+1];
     GetCurrentMap(mapName, sizeof(mapName));
     int last_slash = 0;
     int len = strlen(mapName);
@@ -274,21 +286,19 @@ stock void GetCleanMapName(char[] buffer, int size) {
 /**
  * Applies colorized characters across a string to replace color tags.
  */
-stock void Colorize(char[] msg, int size) {
+stock void Colorize(char[] msg, int size, bool strip=false) {
     for (int i = 0; i < sizeof(g_ColorNames); i ++) {
-        ReplaceString(msg, size, g_ColorNames[i], g_ColorCodes[i]);
-    }
-}
-
-stock void StripColors(char[] msg, int size) {
-    for (int i = 0; i < sizeof(g_ColorNames); i ++) {
-        ReplaceString(msg, size, g_ColorNames[i], "");
+        if (strip) {
+            ReplaceString(msg, size, g_ColorNames[i], "\x01");
+        } else {
+            ReplaceString(msg, size, g_ColorNames[i], g_ColorCodes[i]);
+        }
     }
 }
 
 stock void StartPausedWarmup() {
     ServerCommand("mp_warmup_start");
-    ServerCommand("mp_warmup_time 120");  // this value must be greater than 6 or the warmup countdown will always start
+    ServerCommand("mp_warmuptime 120");  // this value must be greater than 6 or the warmup countdown will always start
     ServerCommand("mp_warmup_pausetimer 1");
 }
 
@@ -299,4 +309,3 @@ stock void StartTimedWarmup(int time) {
     ServerCommand("mp_warmup_start");
     ServerCommand("mp_warmup_start"); // don't ask.
 }
-
