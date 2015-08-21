@@ -63,7 +63,7 @@ public int EditorMenuHandler(Menu menu, MenuAction action, int param1, int param
 public void GiveNewSpawnMenu(int client) {
     Menu menu = new Menu(GiveNewSpawnMenuHandler);
     SetMenuExitButton(menu, true);
-    SetMenuTitle(menu, "Spawn settings");
+    SetMenuTitle(menu, "Add a spawn");
     AddMenuOption(menu, "finish", "Finish spawn");
     AddMenuOption(menu, "team", "Team: %s", TEAMSTRING(g_EditingSpawnTeams[client]));
     AddMenuOption(menu, "site", "Bombsite: %s", SITESTRING(g_EditingSite));
