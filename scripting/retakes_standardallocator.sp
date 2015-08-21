@@ -62,7 +62,7 @@ int nades_molotov_ct_max = 0;
 int nades_molotov_t_max = 0;
 
 public Plugin myinfo = {
-    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 1.2",
+    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 1.3",
     author = "BatMen, Gdk add on",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
     version = PLUGIN_VERSION,
@@ -73,6 +73,7 @@ public void OnPluginStart() {
     g_hGUNChoiceCookie = RegClientCookie("retakes_pistolchoice", "", CookieAccess_Private);
     g_hM4ChoiceCookie  = RegClientCookie("retakes_m4choice", "", CookieAccess_Private);
     g_hAwpChoiceCookie = RegClientCookie("retakes_awpchoice", "", CookieAccess_Private);
+    RegConsoleCmd("sm_guns", Command_GunsMenu, "Opens the retakes weapons menu");
 
     //new convars
     g_h_sm_retakes_weapon_mimic_competitive_pistol_rounds = CreateConVar("sm_retakes_weapon_mimic_competitive_pistol_rounds", "1", "Whether pistol rounds are like 800$ rounds");
@@ -104,6 +105,17 @@ public void OnClientConnected(int client) {
     g_Pistolchoice[client] = 1;
     g_SilencedM4[client] = false;
     g_AwpChoice[client] = false;
+}
+
+public Action Command_GunsMenu(int client, int args) {
+    if (GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) != 1 && 
+                GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) != 1 &&
+                GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) != 1 && 
+                GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) != 1)
+                GiveWeaponMenu(client);
+            else
+                GivePistolMenu(client);
+    return Plugin_Handled;
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
@@ -552,3 +564,4 @@ public int MenuHandler_AWP(Handle menu, MenuAction action, int param1, int param
         CloseHandle(menu);
     }
 }
+
