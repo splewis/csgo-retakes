@@ -66,7 +66,7 @@ int nades_molotov_ct_max = 0;
 int nades_molotov_t_max = 0;
 
 public Plugin myinfo = {
-    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 2.1",
+    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 2.2",
     author = "BatMen, Gdk add on",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
     version = PLUGIN_VERSION,
@@ -264,6 +264,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         	kit = false;
 		helmet = false;
 		health = 100;
+		kevlar = 0;
 		if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
         	{
             		secondary = "weapon_p250";
@@ -409,7 +410,8 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 	//CT Pistol round competitive
 	if(isPistolRound && mimicCompetitivePistolRounds)
 	{
-        	kit = false;
+        	kevlar = 0;
+		kit = false;
 		helmet = false;
 		health = 100;
 		if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
@@ -746,4 +748,3 @@ public int MenuHandler_SIDE(Handle menu, MenuAction action, int param1, int para
         CloseHandle(menu);
     }
 }
-
