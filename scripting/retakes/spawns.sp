@@ -174,6 +174,7 @@ public void GiveWeapons(int client) {
             case 'm': weapon = "weapon_molotov";
             case 'i': weapon = "weapon_incgrenade";
             case 's': weapon = "weapon_smokegrenade";
+            case 'd': weapon = "weapon_decoy";
         }
         GivePlayerItem(client, weapon);
     }
