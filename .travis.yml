@@ -1,0 +1,24 @@
+language: c
+
+install:
+    - sudo apt-get update
+    - sudo apt-get install -y gcc-multilib lynx git lib32stdc++6
+    - git clone https://github.com/splewis/sm-builder
+    - cd sm-builder
+    - sudo pip install -r requirements.txt
+    - sudo python setup.py install
+    - cd ..
+
+before_script:
+    - wget http://www.gsptalk.com/mirror/sourcemod/sourcemod-1.7.1-linux.tar.gz
+    - tar -xzf sourcemod-1.7.1-linux.tar.gz
+    - cd addons/sourcemod/scripting/
+    - chmod +x spcomp
+    - PATH+=":$PWD"
+    - cd include
+    - git clone https://github.com/bcserv/smlib
+    - cp -r smlib/scripting/include/* .
+    - cd ../../../..
+
+script:
+    - smbuilder
