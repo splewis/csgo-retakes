@@ -167,7 +167,7 @@ public Action Timer_IterateSpawns(Handle timer, Handle data) {
     if (!IsPlayer(client))
         return Plugin_Handled;
 
-    FakeClientCommand(client, "sm_goto %d", spawnIndex);
+    MoveToSpawnInEditor(client, spawnIndex);
 
     spawnIndex++;
     while (g_SpawnDeleted[spawnIndex] && spawnIndex < g_NumSpawns) {
@@ -198,10 +198,7 @@ public Action Command_GotoSpawn(int client, int args) {
     if (args >= 1 && GetCmdArg(1, buffer, sizeof(buffer))) {
         int spawn = StringToInt(buffer);
         if (IsValidSpawn(spawn)) {
-            Retakes_Message(client, "Teleporting to spawn {GREEN}%d", spawn);
-            Retakes_Message(client, "   Team: {MOSS_GREEN}%s", TEAMSTRING(g_SpawnTeams[spawn]));
-            Retakes_Message(client, "   Site: {MOSS_GREEN}%s", SITESTRING(g_SpawnSites[spawn]));
-            MoveToSpawn(client, spawn);
+            MoveToSpawnInEditor(client, spawn);
         }
     }
 
@@ -220,10 +217,7 @@ public Action Command_GotoNearestSpawn(int client, int args) {
 
     int spawn = FindClosestSpawn(client);
     if (IsValidSpawn(spawn)) {
-        Retakes_Message(client, "Teleporting to spawn {GREEN}%d", spawn);
-        Retakes_Message(client, "   Team: {MOSS_GREEN}%s", TEAMSTRING(g_SpawnTeams[spawn]));
-        Retakes_Message(client, "   Site: {MOSS_GREEN}%s", SITESTRING(g_SpawnSites[spawn]));
-        MoveToSpawn(client, spawn);
+        MoveToSpawnInEditor(client, spawn);
     }
 
     return Plugin_Handled;

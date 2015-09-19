@@ -39,7 +39,7 @@ public int EditorMenuHandler(Menu menu, MenuAction action, int param1, int param
 
         } else if (StrEqual(choice, "goto_nearest_spawn")) {
             int spawn = FindClosestSpawn(client);
-            MoveToSpawn(client, spawn);
+            MoveToSpawnInEditor(client, spawn);
             GiveEditorMenu(client, menuPosition);
 
         }else if (StrEqual(choice, "delete_nearest_spawn")) {
