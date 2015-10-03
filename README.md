@@ -83,6 +83,8 @@ This plugin adds a simple admin command sm_site to let an admin pick between bom
 #### retakes_standardallocator
 This plugin provides a simple ``sm_guns`` (!guns in chat) command that lets users choose between regular and silenced M4's and whether they want to ever recieve an AWP. It also randomly gives out a small amount of grenades.
 
+#### retakes_pistolallocator
+This plugin is an alternative to retakes_standardallocator (meaning: you shouldn't use both of these plugins, just one!) that makes every round a pistol round and lets players choose which pistol they have.
 
 ## Contribution and Suggestions
 First, check the [issue tracker](https://github.com/splewis/csgo-retakes/issues?state=open) to ask questions or make a suggestion.
