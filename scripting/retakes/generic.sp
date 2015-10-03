@@ -1,6 +1,6 @@
 #tryinclude "manual_version.sp"
 #if !defined PLUGIN_VERSION
-#define PLUGIN_VERSION "0.3.0-dev"
+#define PLUGIN_VERSION "0.3.0"
 #endif
 
 #define INTEGER_STRING_LENGTH 20 // max number of digits a 64-bit integer can use up as a string
