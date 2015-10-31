@@ -5,10 +5,6 @@
 #include "retakes/generic.sp"
 
 #pragma semicolon 1
-<<<<<<< HEAD
-=======
-#pragma newdecls required
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 
 #define MENU_TIME_LENGTH 15
 
@@ -24,11 +20,7 @@ int gun_price_for_cz = 500;
 int gun_price_for_fiveseven = 500;
 int gun_price_for_tec9 = 500;
 int gun_price_for_deagle = 700;
-<<<<<<< HEAD
 int gun_price_for_elite = 500;
-=======
-int gun_price_for_elite;
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 
 int kit_price = 400;
 int kevlar_price = 650;
@@ -78,19 +70,11 @@ int nades_decoy_ct_max = 0;
 int nades_decoy_t_max = 0;
 
 public Plugin myinfo = {
-<<<<<<< HEAD
     name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 3.4",
     author = "BatMen, Gdk add on",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
     version = PLUGIN_VERSION,
     url = "https://github.com/RavageCS/csgo-retakes-splewis-convar-weapon-allocator"
-=======
-    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 3.1",
-    author = "BatMen, Gdk add on",
-    description = "Defines convars to customize weapon allocator of splewis retakes plugin",
-    version = PLUGIN_VERSION,
-    url = "https://github.com/BatMen/csgo-retakes-splewis-convar-weapon-allocator"
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 };
 
 public void OnPluginStart() {
@@ -106,17 +90,12 @@ public void OnPluginStart() {
     g_h_sm_retakes_weapon_nades_enabled = CreateConVar("sm_retakes_weapon_nades_enabled", "1", "Whether the players can have nades");
     g_h_sm_retakes_weapon_nades_hegrenade_ct_max = CreateConVar("sm_retakes_weapon_nades_hegrenade_ct_max", "1", "Number of hegrenade CT team can have");
     g_h_sm_retakes_weapon_nades_hegrenade_t_max = CreateConVar("sm_retakes_weapon_nades_hegrenade_t_max", "1", "Number of hegrenade T team can have");
-<<<<<<< HEAD
     g_h_sm_retakes_weapon_nades_flashbang_ct_max = CreateConVar("sm_retakes_weapon_nades_flashbang_ct_max", "2", "Number of flashbang CT team can have");
-=======
-    g_h_sm_retakes_weapon_nades_flashbang_ct_max = CreateConVar("sm_retakes_weapon_nades_flashbang_ct_max", "1", "Number of flashbang CT team can have");
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
     g_h_sm_retakes_weapon_nades_flashbang_t_max = CreateConVar("sm_retakes_weapon_nades_flashbang_t_max", "1", "Number of flashbang T team can have");
     g_h_sm_retakes_weapon_nades_smokegrenade_ct_max = CreateConVar("sm_retakes_weapon_nades_smokegrenade_ct_max", "1", "Number of smokegrenade CT team can have");
     g_h_sm_retakes_weapon_nades_smokegrenade_t_max = CreateConVar("sm_retakes_weapon_nades_smokegrenade_t_max", "1", "Number of smokegrenade T team can have");
     g_h_sm_retakes_weapon_nades_molotov_ct_max = CreateConVar("sm_retakes_weapon_nades_molotov_ct_max", "1", "Number of molotov CT team can have");
     g_h_sm_retakes_weapon_nades_molotov_t_max = CreateConVar("sm_retakes_weapon_nades_molotov_t_max", "1", "Number of molotov T team can have");
-<<<<<<< HEAD
 //  g_h_sm_retakes_weapon_helmet_enabled = CreateConVar("sm_retakes_weapon_helmet_enabled", "1", "Whether the players have helmet");
 //  g_h_sm_retakes_weapon_kevlar_enabled = CreateConVar("sm_retakes_weapon_kevlar_enabled", "1", "Whether the players have kevlar");
     g_h_sm_retakes_weapon_awp_team_max = CreateConVar("sm_retakes_weapon_awp_team_max", "1", "The max number of AWP per team (0 = no awp)");
@@ -128,19 +107,6 @@ public void OnPluginStart() {
     g_h_sm_retakes_weapon_dual_elite_enabled = CreateConVar("sm_retakes_weapon_dual_elite_enabled", "1", "Whether the players can choose Dual Elite");
     g_h_sm_retakes_weapon_nades_decoy_ct_max = CreateConVar("sm_retakes_weapon_nades_decoy_ct_max", "1", "Number of decoys CT team can have");
     g_h_sm_retakes_weapon_nades_decoy_t_max = CreateConVar("sm_retakes_weapon_nades_decoy_t_max", "1", "Number of decoys T team can have");
-=======
-//    g_h_sm_retakes_weapon_helmet_enabled = CreateConVar("sm_retakes_weapon_helmet_enabled", "1", "Whether the players have helmet");
-//   g_h_sm_retakes_weapon_kevlar_enabled = CreateConVar("sm_retakes_weapon_kevlar_enabled", "1", "Whether the players have kevlar");
-    g_h_sm_retakes_weapon_awp_team_max = CreateConVar("sm_retakes_weapon_awp_team_max", "1", "The max number of AWP per team (0 = no awp)");
-    g_h_sm_retakes_weapon_pistolrounds = CreateConVar("sm_retakes_weapon_pistolrounds", "5", "The number of gun rounds (0 = no gun round)");
-    g_h_sm_retakes_weapon_deagle_enabled = CreateConVar("sm_retakes_weapon_deagle_enabled", "1", "Whether the players can choose deagle");
-    g_h_sm_retakes_weapon_cz_enabled = CreateConVar("sm_retakes_weapon_cz_enabled", "1", "Whether the playres can choose CZ");
-    g_h_sm_retakes_weapon_p250_enabled = CreateConVar("sm_retakes_weapon_p250_enabled", "1", "Whether the players can choose P250");
-    g_h_sm_retakes_weapon_tec9_fiveseven_enabled = CreateConVar("sm_retakes_weapon_tec9_fiveseven_enabled", "1", "Whether the players can choose Tec9/Five seven");
-    g_h_sm_retakes_weapon_dual_elite_enabled = CreateConVar("sm_retakes_weapon_dual_elite_enabled", "1", "Whether the players can choose Dual Elite");
-	g_h_sm_retakes_weapon_nades_decoy_ct_max = CreateConVar("sm_retakes_weapon_nades_decoy_ct_max", "1", "Number of flashbang CT team can have");
-	g_h_sm_retakes_weapon_nades_decoy_t_max = CreateConVar("sm_retakes_weapon_nades_decoy_t_max", "1", "Number of flashbang T team can have");
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 
     /** Create/Execute retakes cvars **/
     AutoExecConfig(true, "retakes_allocator", "sourcemod/retakes");
@@ -216,12 +182,8 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     int kevlar = 100;
     bool helmet = true;
     bool kit = true;
-<<<<<<< HEAD
     int numkits = 0;
  
-=======
-
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
     int odds = 0;
 
     nades_hegrenade_ct_max = 0;
@@ -232,13 +194,8 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     nades_flashbang_t_max = 0;
     nades_molotov_ct_max = 0;
     nades_molotov_t_max = 0;
-<<<<<<< HEAD
     nades_decoy_ct_max = 0;
     nades_decoy_t_max = 0;
-=======
-	nades_decoy_ct_max = 0;
-	nades_decoy_t_max = 0;
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 
     int awp_given = 0;
     bool giveTAwp = true;
@@ -294,11 +251,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
             		secondary = "weapon_cz75a";
             		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
         	}
-<<<<<<< HEAD
         	else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-=======
-        	else if (g_Pistolchoice[client] == 5)
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 		{
 			secondary = "weapon_elite";
 			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
@@ -336,11 +289,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
             		secondary = "weapon_cz75a";
             		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
         	}
-<<<<<<< HEAD
         	else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-=======
-        	else if (g_Pistolchoice[client] == 5)
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 		{
 			secondary = "weapon_elite";
 			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
@@ -385,11 +334,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         	{
             		secondary = "weapon_cz75a";
         	}
-<<<<<<< HEAD
         	else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-=======
-        	else if (g_Sidechoice[client] == 5)
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 		{
 			secondary = "weapon_elite";
 		}
@@ -455,11 +400,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
             		secondary = "weapon_cz75a";
             		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
         	}
-<<<<<<< HEAD
         	else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-=======
-        	else if (g_Pistolchoice[client] == 5)
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 		{
 			secondary = "weapon_elite";
 			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
@@ -482,7 +423,6 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		kit = false;
 		helmet = false;
 		health = 100;
-<<<<<<< HEAD
 
 		//Testing
 		//new String:testCt[12];	
@@ -492,8 +432,6 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		//PrintToChatAll("CT Count: %s", testCt);
 		//PrintToChatAll("T Count: %s", testT);
 
-=======
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 		if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
         	{
             		secondary = "weapon_p250";
@@ -509,11 +447,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
             		secondary = "weapon_cz75a";
             		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
         	}
-<<<<<<< HEAD
         	else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-=======
-        	else if (g_Pistolchoice[client] == 5)
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 		{
 			secondary = "weapon_elite";
 			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
@@ -550,17 +484,13 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		if(dollars_for_mimic_competitive_pistol_rounds >= kit_price)
         	{
 			kit = true;
-<<<<<<< HEAD
 			numkits ++;
-=======
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
                 	dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kit_price;
 		}
 		else if(dollars_for_mimic_competitive_pistol_rounds < kit_price)
 		{
 			kit = false;
 		}
-<<<<<<< HEAD
 		
 		//If there are no kits, give one if there are 2-4 ct's
 		if(ctCount > 1 && ctCount < 5 && numkits < 1)
@@ -569,8 +499,6 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 			numkits++;
 		}
 		
-=======
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 	}
 	
 	if(!isPistolRound || !mimicCompetitivePistolRounds)
@@ -592,11 +520,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         	{
             		secondary = "weapon_cz75a";
         	}
-<<<<<<< HEAD
         	else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-=======
-        	else if (g_Sidechoice[client] == 5)
->>>>>>> 37fa7e9f8317bc3849f1ed991768849c35113d10
 		{
 			secondary = "weapon_elite";
 		}
