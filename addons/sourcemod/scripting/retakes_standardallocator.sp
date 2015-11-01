@@ -58,20 +58,20 @@ Handle g_h_sm_retakes_weapon_dual_elite_enabled = INVALID_HANDLE;
 Handle g_h_sm_retakes_weapon_nades_decoy_ct_max = INVALID_HANDLE;
 Handle g_h_sm_retakes_weapon_nades_decoy_t_max = INVALID_HANDLE;
 
-int nades_hegrenade_ct_max = 0;
-int nades_hegrenade_t_max = 0;
-int nades_flashbang_ct_max = 0;
-int nades_flashbang_t_max = 0;
-int nades_smokegrenade_ct_max = 0;
-int nades_smokegrenade_t_max = 0;
-int nades_molotov_ct_max = 0;
-int nades_molotov_t_max = 0;
-int nades_decoy_ct_max = 0;
-int nades_decoy_t_max = 0;
+int nades_hegrenade_ct_count = 0;
+int nades_hegrenade_t_count = 0;
+int nades_flashbang_ct_count = 0;
+int nades_flashbang_t_count = 0;
+int nades_smokegrenade_ct_count = 0;
+int nades_smokegrenade_t_count = 0;
+int nades_molotov_ct_count = 0;
+int nades_molotov_t_count = 0;
+int nades_decoy_ct_count = 0;
+int nades_decoy_t_count = 0;
 
 public Plugin myinfo = {
-    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 3.4",
-    author = "BatMen, Gdk add on",
+    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 4.2",
+    author = "BatMen and Gdk",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
     version = PLUGIN_VERSION,
     url = "https://github.com/RavageCS/csgo-retakes-splewis-convar-weapon-allocator"
@@ -167,380 +167,420 @@ public void OnClientCookiesCached(int client) {
     g_AwpChoice[client]  = GetCookieBool(client, g_hAwpChoiceCookie);
 }
 
-public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) {
-    int tCount = GetArraySize(tPlayers);
-    int ctCount = GetArraySize(ctPlayers);
+public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) 
+{
+    	int tCount = GetArraySize(tPlayers);
+    	int ctCount = GetArraySize(ctPlayers);
 
-    bool isPistolRound = GetConVarInt(g_h_sm_retakes_weapon_primary_enabled) == 0 || Retakes_GetRetakeRoundsPlayed() < GetConVarInt(g_h_sm_retakes_weapon_pistolrounds);
-    bool mimicCompetitivePistolRounds = GetConVarInt(g_h_sm_retakes_weapon_mimic_competitive_pistol_rounds) == 1;
+	nades_hegrenade_ct_count = 0;
+	nades_hegrenade_t_count = 0;
+	nades_flashbang_ct_count = 0;
+	nades_flashbang_t_count = 0;
+	nades_smokegrenade_ct_count = 0;
+	nades_smokegrenade_t_count = 0;
+	nades_molotov_ct_count = 0;
+	nades_molotov_t_count = 0;
+	nades_decoy_ct_count = 0;
+	nades_decoy_t_count = 0;
 
-    char primary[WEAPON_STRING_LENGTH];
-    char secondary[WEAPON_STRING_LENGTH];
-    char nades[NADE_STRING_LENGTH];
+    	bool isPistolRound = GetConVarInt(g_h_sm_retakes_weapon_primary_enabled) == 0 || Retakes_GetRetakeRoundsPlayed() < GetConVarInt(g_h_sm_retakes_weapon_pistolrounds);
+    	bool mimicCompetitivePistolRounds = GetConVarInt(g_h_sm_retakes_weapon_mimic_competitive_pistol_rounds) == 1;
 
-    int health = 100;
-    int kevlar = 100;
-    bool helmet = true;
-    bool kit = true;
-    int numkits = 0;
+    	char primary[WEAPON_STRING_LENGTH];
+    	char secondary[WEAPON_STRING_LENGTH];
+    	char nades[NADE_STRING_LENGTH];
+
+    	int health = 100;
+    	int kevlar = 100;
+    	bool helmet = true;
+    	bool kit = true;
+    	int numkits = 0;
  
-    int odds = 0;
+    	int odds = 0;
 
-    nades_hegrenade_ct_max = 0;
-    nades_hegrenade_t_max = 0;
-    nades_smokegrenade_ct_max = 0;
-    nades_smokegrenade_t_max = 0;
-    nades_flashbang_ct_max = 0;
-    nades_flashbang_t_max = 0;
-    nades_molotov_ct_max = 0;
-    nades_molotov_t_max = 0;
-    nades_decoy_ct_max = 0;
-    nades_decoy_t_max = 0;
-
-    int awp_given = 0;
-    bool giveTAwp = true;
-    bool giveCTAwp = true;
-    if (GetConVarInt(g_h_sm_retakes_weapon_awp_team_max) < 1)
-    {
-        giveTAwp = false;
-        giveCTAwp = false;
-    }
-    int dollars_for_mimic_competitive_pistol_rounds = 800;
+    	int awp_given = 0;
+    	bool giveTAwp = true;
+    	bool giveCTAwp = true;
+    	
+	if (GetConVarInt(g_h_sm_retakes_weapon_awp_team_max) < 1)
+    	{
+        	giveTAwp = false;
+        	giveCTAwp = false;
+    	}
+    	int dollars_for_mimic_competitive_pistol_rounds = 800;
 
 
 //T players
-    for (int i = 0; i < tCount; i++) {
-        int client = GetArrayCell(tPlayers, i);
-
-        dollars_for_mimic_competitive_pistol_rounds = 800;
-	
-	//T gun round
-        primary = "";
-        if (!isPistolRound)
-        {
-            int randGiveAwp = GetRandomInt(0, 1);
-
-            if (giveTAwp && g_AwpChoice[client] && randGiveAwp == 1 && awp_given < GetConVarInt(g_h_sm_retakes_weapon_awp_team_max)) {
-                primary = "weapon_awp";
-                giveTAwp = false;
-		awp_given = awp_given + 1;
-            } else {
-                primary = "weapon_ak47";
-            }
-        }
-	
-	//T Pistol round non competitive
-	if(isPistolRound && !mimicCompetitivePistolRounds)
+    	for (int i = 0; i < tCount; i++) 
 	{
-		kit = false;
-		kevlar = 100;
-		helmet = false;
-		health = 100;
-		if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
+        	int client = GetArrayCell(tPlayers, i);
+      		dollars_for_mimic_competitive_pistol_rounds = 800;
+		primary = "";
+
+//T gun round
+        	if (!isPistolRound)
         	{
-            		secondary = "weapon_p250";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_p250;
-        	}
-        	else if (g_Pistolchoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
-        	{
-            		secondary = "weapon_tec9";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_tec9;
-        	}
-        	else if (g_Pistolchoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
-        	{
-            		secondary = "weapon_cz75a";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
-        	}
-        	else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-		{
-			secondary = "weapon_elite";
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
-		}
-		else if (g_Pistolchoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
-		{
-			secondary = "weapon_deagle";
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_deagle;
-        	}		
-		else
-		{
-			secondary = "weapon_glock";
-		}
-	}
-	
-	//T Pistol round competitive
-	if(isPistolRound && mimicCompetitivePistolRounds)
-	{
-        	kit = false;
-		helmet = false;
-		health = 100;
-		kevlar = 0;
-		if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
-        	{
-            		secondary = "weapon_p250";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_p250;
-        	}
-        	else if (g_Pistolchoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
-        	{
-            		secondary = "weapon_tec9";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_tec9;
-        	}
-        	else if (g_Pistolchoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
-        	{
-            		secondary = "weapon_cz75a";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
-        	}
-        	else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-		{
-			secondary = "weapon_elite";
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
-		}
-		else if (g_Pistolchoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
-		{
-			secondary = "weapon_deagle";
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_deagle;
-        	}		
-		else
-		{
-			secondary = "weapon_glock";
-		}
-		
-		if(dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
-		{
+            		int randGiveAwp = GetRandomInt(0, 1);
+			
+			kit = false;
 			kevlar = 100;
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
-		}
-		else if(dollars_for_mimic_competitive_pistol_rounds < kevlar_price)
+			helmet = true;
+			health = 100;
+
+            		if (giveTAwp && g_AwpChoice[client] && randGiveAwp == 1 && awp_given < GetConVarInt(g_h_sm_retakes_weapon_awp_team_max)) 
+			{
+                		primary = "weapon_awp";
+                		giveTAwp = false;
+				awp_given = awp_given + 1;
+            		} 
+			else 
+			{
+                		primary = "weapon_ak47";
+            		}
+			
+//Gun round pistols
+			if (g_Sidechoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
+        		{
+				secondary = "weapon_p250";
+			}
+			else if (g_Sidechoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
+        		{
+            			secondary = "weapon_tec9";
+        		}
+        		else if (g_Sidechoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
+        		{
+            			secondary = "weapon_cz75a";
+        		}
+        		else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+			}
+			else if (g_Sidechoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
+			{
+				secondary = "weapon_deagle";
+        		}		
+			else
+			{
+				secondary = "weapon_glock";
+			}
+        	}
+	
+//T Pistol round non competitive
+		if(isPistolRound && !mimicCompetitivePistolRounds)
 		{
+			kit = false;
+			kevlar = 100;
+			helmet = false;
+			health = 100;
+			if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
+        		{
+            			secondary = "weapon_p250";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_p250;
+        		}
+        		else if (g_Pistolchoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
+        		{
+            			secondary = "weapon_tec9";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_tec9;
+        		}
+        		else if (g_Pistolchoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
+        		{
+            			secondary = "weapon_cz75a";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
+        		}
+        		else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
+			}
+			else if (g_Pistolchoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
+			{
+				secondary = "weapon_deagle";
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_deagle;
+        		}		
+			else
+			{
+				secondary = "weapon_glock";
+			}
+		}
+	
+//T Pistol round competitive
+		if(isPistolRound && mimicCompetitivePistolRounds)
+		{
+        		kit = false;
+			helmet = false;
+			health = 100;
 			kevlar = 0;
-		}
-	}
-	
-	if(!isPistolRound || !mimicCompetitivePistolRounds)
-	{
-		kit = false;
-		kevlar = 100;
-		helmet = true;
-		health = 100;	
 
-		if (g_Sidechoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
-        	{
-			secondary = "weapon_p250";
-		}
-		else if (g_Sidechoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
-        	{
-            		secondary = "weapon_tec9";
-        	}
-        	else if (g_Sidechoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
-        	{
-            		secondary = "weapon_cz75a";
-        	}
-        	else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-		{
-			secondary = "weapon_elite";
-		}
-		else if (g_Sidechoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
-		{
-			secondary = "weapon_deagle";
-        	}		
-		else
-		{
-			secondary = "weapon_glock";
-		}
-	}
-        
-        SetNades(nades, true, mimicCompetitivePistolRounds && isPistolRound, dollars_for_mimic_competitive_pistol_rounds);
-
-        Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
-    }
-    
-    awp_given = 0;
-
-//Ct players
-    for (int i = 0; i < ctCount; i++) {
-        int client = GetArrayCell(ctPlayers, i);
-        
-        dollars_for_mimic_competitive_pistol_rounds = 800;
-	
-	//CT gun round
-        primary = "";
-        if (!isPistolRound)
-        {
-            int randGiveAwp = GetRandomInt(0, 1);
-
-            if (giveCTAwp && g_AwpChoice[client] && randGiveAwp == 1 && awp_given < GetConVarInt(g_h_sm_retakes_weapon_awp_team_max)) {
-                primary = "weapon_awp";
-                giveCTAwp = false;
-		awp_given = awp_given + 1;
-            } else if (g_SilencedM4[client]) {
-                primary = "weapon_m4a1_silencer";
-            } else {
-                primary = "weapon_m4a1";
-            }
-        }
-
-	//CT Pistol round non competitive
-	if(isPistolRound && !mimicCompetitivePistolRounds)
-	{
-		kit = true;
-		kevlar = 100;
-		helmet = false;
-		health = 100;
-		if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
-        	{
-            		secondary = "weapon_p250";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_p250;
-        	}
-        	else if (g_Pistolchoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
-        	{
-            		secondary = "weapon_fiveseven";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_tec9;
-        	}
-        	else if (g_Pistolchoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
-        	{
-            		secondary = "weapon_cz75a";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
-        	}
-        	else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-		{
-			secondary = "weapon_elite";
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
-		}
-		else if (g_Pistolchoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
-		{
-			secondary = "weapon_deagle";
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_deagle;
-        	}		
-		else
-		{
-			secondary = "weapon_hkp2000";
-		}
-	}
-
-	//CT Pistol round competitive
-	if(isPistolRound && mimicCompetitivePistolRounds)
-	{
-        	kevlar = 0;
-		kit = false;
-		helmet = false;
-		health = 100;
-
-		//Testing
-		//new String:testCt[12];	
-		//new String:testT[12];
-		//IntToString(ctCount, testCt, 12);
-		//IntToString(tCount, testT, 12);
-		//PrintToChatAll("CT Count: %s", testCt);
-		//PrintToChatAll("T Count: %s", testT);
-
-		if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
-        	{
-            		secondary = "weapon_p250";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_p250;
-        	}
-        	else if (g_Pistolchoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
-        	{
-            		secondary = "weapon_fiveseven";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_fiveseven;
-        	}
-        	else if (g_Pistolchoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
-        	{
-            		secondary = "weapon_cz75a";
-            		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
-        	}
-        	else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-		{
-			secondary = "weapon_elite";
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
-		}
-		else if (g_Pistolchoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
-		{
-			secondary = "weapon_deagle";
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_deagle;
-        	}		
-		else
-		{
-			secondary = "weapon_hkp2000";
+			if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
+        		{
+            			secondary = "weapon_p250";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_p250;
+        		}
+        		else if (g_Pistolchoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
+        		{
+            			secondary = "weapon_tec9";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_tec9;
+        		}
+        		else if (g_Pistolchoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
+        		{
+            			secondary = "weapon_cz75a";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
+        		}
+        		else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
+			}
+			else if (g_Pistolchoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
+			{
+				secondary = "weapon_deagle";
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_deagle;
+        		}		
+			else
+			{
+				secondary = "weapon_glock";
+			}
+		
 			if(dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
 			{
-				
-				odds = GetRandomInt(1,4);
-                 		// 75% to have kevlar if money before kit and nades
-                 		if (odds < 4)
-                 		{
-                        		kevlar = 100;
-                        		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
-                 		}
-				else
-				{
-					kevlar = 0;
-				}
+				kevlar = 100;
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
 			}
 			else if(dollars_for_mimic_competitive_pistol_rounds < kevlar_price)
 			{
 				kevlar = 0;
 			}
 		}
-
-		if(dollars_for_mimic_competitive_pistol_rounds >= kit_price)
-        	{
-			kit = true;
-			numkits ++;
-                	dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kit_price;
-		}
-		else if(dollars_for_mimic_competitive_pistol_rounds < kit_price)
+	
+		if(!isPistolRound || !mimicCompetitivePistolRounds)
 		{
 			kit = false;
+			kevlar = 100;
+			helmet = true;
+			health = 100;	
+
+			if (g_Sidechoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
+        		{
+				secondary = "weapon_p250";
+			}
+			else if (g_Sidechoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
+        		{
+            			secondary = "weapon_tec9";
+        		}
+        		else if (g_Sidechoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
+        		{
+            			secondary = "weapon_cz75a";
+        		}
+        		else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+			}
+			else if (g_Sidechoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
+			{
+				secondary = "weapon_deagle";
+        		}		
+			else
+			{
+				secondary = "weapon_glock";
+			}
 		}
+        
+        	SetNades(nades, true, mimicCompetitivePistolRounds && isPistolRound, dollars_for_mimic_competitive_pistol_rounds);
+
+        	Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
+	}
+
+//Ct players
+	awp_given = 0;
+	
+	for (int i = 0; i < ctCount; i++) 
+	{
+		int client = GetArrayCell(ctPlayers, i);
+		dollars_for_mimic_competitive_pistol_rounds = 800;
+		primary = "";
 		
-		//If there are no kits, give one if there are 2-4 ct's
-		if(ctCount > 1 && ctCount < 5 && numkits < 1)
+//CT gun round
+        	if (!isPistolRound)
+        	{
+			kit = true;
+			kevlar = 100;
+			helmet = true;
+			health = 100;
+
+			int randGiveAwp = GetRandomInt(0, 1);
+
+           		if (giveCTAwp && g_AwpChoice[client] && randGiveAwp == 1 && awp_given < GetConVarInt(g_h_sm_retakes_weapon_awp_team_max)) 
+			{
+                		primary = "weapon_awp";
+                		giveCTAwp = false;
+				awp_given = awp_given + 1;
+            		} 
+			else if (g_SilencedM4[client]) 
+			{
+                		primary = "weapon_m4a1_silencer";
+            		} 
+			else 
+			{
+                		primary = "weapon_m4a1";
+            		}
+//Gun round pistols
+			if (g_Sidechoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
+        		{
+				secondary = "weapon_p250";
+			}
+			else if (g_Sidechoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
+        		{
+            			secondary = "weapon_fiveseven";
+        		}
+        		else if (g_Sidechoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
+        		{
+            			secondary = "weapon_cz75a";
+        		}
+        		else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+			}
+			else if (g_Sidechoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
+			{
+				secondary = "weapon_deagle";
+        		}		
+			else
+			{
+				secondary = "weapon_hkp2000";
+			}
+        	}
+
+//CT Pistol round non competitive
+		if(isPistolRound && !mimicCompetitivePistolRounds)
 		{
 			kit = true;
-			numkits++;
-		}
+			kevlar = 100;
+			helmet = false;
+			health = 100;
 		
-	}
+			if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
+        		{
+            			secondary = "weapon_p250";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_p250;
+        		}
+        		else if (g_Pistolchoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
+        		{
+            			secondary = "weapon_fiveseven";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_tec9;
+        		}
+        		else if (g_Pistolchoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
+        		{
+            			secondary = "weapon_cz75a";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
+        		}
+        		else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
+			}
+			else if (g_Pistolchoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
+			{
+				secondary = "weapon_deagle";
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_deagle;
+        		}		
+			else
+			{
+				secondary = "weapon_hkp2000";
+			}
+		}
+
+//CT Pistol round competitive
+		if(isPistolRound && mimicCompetitivePistolRounds)
+		{
+        		kevlar = 0;
+			kit = false;
+			helmet = false;
+			health = 100;
+
+			//Testing
+			//new String:testCt[12];	
+			//new String:testT[12];
+			//IntToString(ctCount, testCt, 12);
+			//IntToString(tCount, testT, 12);
+			//PrintToChatAll("CT Count: %s", testCt);
+			//PrintToChatAll("T Count: %s", testT);
+
+			if (g_Pistolchoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
+        		{
+            			secondary = "weapon_p250";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_p250;
+        		}
+        		else if (g_Pistolchoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
+        		{
+            			secondary = "weapon_fiveseven";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_fiveseven;
+        		}
+        		else if (g_Pistolchoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
+        		{
+            			secondary = "weapon_cz75a";
+            			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_cz;
+        		}
+        		else if (g_Pistolchoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_elite;
+			}
+			else if (g_Pistolchoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
+			{
+				secondary = "weapon_deagle";
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - gun_price_for_deagle;
+        		}		
+			else
+			{
+				secondary = "weapon_hkp2000";
+				if(dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
+				{
+					odds = GetRandomInt(1,4);
+                 			// 75% to have kevlar if money before kit and nades
+                 			if (odds < 4)
+                 			{
+                        			kevlar = 100;
+                        			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
+                 			}
+					else
+					{
+						kevlar = 0;
+					}
+				}
+				else if(dollars_for_mimic_competitive_pistol_rounds < kevlar_price)
+				{
+					kevlar = 0;
+				}
+			}
+			if(dollars_for_mimic_competitive_pistol_rounds >= kit_price)
+        		{
+				int rand = GetRandomInt(1, 4);
+				//75% to have a kit
+				if(rand < 4)
+				{
+					kit = true;
+					numkits++;
+                			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kit_price;
+				}
+			}
+			else if(dollars_for_mimic_competitive_pistol_rounds < kit_price)
+			{
+				kit = false;
+			}
+			
+			//If there are no kits, give one if there are 2-4 ct's
+			if(ctCount > 1 && ctCount < 5 && numkits < 1)
+			{
+				kit = true;
+				numkits++;
+			}
+		
+		}
 	
-	if(!isPistolRound || !mimicCompetitivePistolRounds)
-	{
-		kit = true;
-		kevlar = 100;
-		helmet = true;
-		health = 100;	
+        	SetNades(nades, false, mimicCompetitivePistolRounds && isPistolRound, dollars_for_mimic_competitive_pistol_rounds);
 
-		if (g_Sidechoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
-        	{
-			secondary = "weapon_p250";
-		}
-		else if (g_Sidechoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
-        	{
-            		secondary = "weapon_fiveseven";
-        	}
-        	else if (g_Sidechoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
-        	{
-            		secondary = "weapon_cz75a";
-        	}
-        	else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-		{
-			secondary = "weapon_elite";
-		}
-		else if (g_Sidechoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
-		{
-			secondary = "weapon_deagle";
-        	}		
-		else
-		{
-			secondary = "weapon_hkp2000";
-		}
-	}
-
-        if (!isPistolRound || (isPistolRound && !mimicCompetitivePistolRounds))
-            kit = true;
-
-        SetNades(nades, false, mimicCompetitivePistolRounds && isPistolRound, dollars_for_mimic_competitive_pistol_rounds);
-
-        Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
-    }
+        	Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
+    	}
 }
 
 static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool competitivePistolRound, int dollars_for_mimic_competitive_pistol_rounds) {
@@ -561,6 +601,7 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
         int molotov_number = 0;
 	int decoy_number = 0;
 
+
         int maxgrenades = GetConVarInt(FindConVar("ammo_grenade_limit_total"));
         int maxflashbang = GetConVarInt(FindConVar("ammo_grenade_limit_flashbang"));
 
@@ -580,9 +621,9 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
 
             switch(rand) {
 		
-		//Gdk: add 50% chance to give no nade of that type except on comp pistol rounds
+		//Add chance to give no nade of that type except on comp pistol rounds
 		case 1:
-			if ((terrorist ? nades_smokegrenade_t_max : nades_smokegrenade_ct_max) < max_smokegrenade_allow && smoke_number == 0)
+			if ((terrorist ? nades_smokegrenade_t_count : nades_smokegrenade_ct_count) < max_smokegrenade_allow && smoke_number == 0)
 			{
 				randgive = GetRandomInt(1, 3);
 				if(competitivePistolRound && dollars_for_mimic_competitive_pistol_rounds >= nade_price_for_smokegrenade)
@@ -596,15 +637,15 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
                         			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - nade_price_for_smokegrenade;
                         			smoke_number++;
                         			if (terrorist)
-							nades_smokegrenade_t_max++;
+							nades_smokegrenade_t_count++;
 						else
-                            				nades_smokegrenade_ct_max++;
+                            				nades_smokegrenade_ct_count++;
 				}
 				indice++;
 			}
 			
 		case 2:
-			if ((terrorist ? nades_hegrenade_t_max : nades_hegrenade_ct_max) < max_hegrenade_allow && he_number == 0)
+			if ((terrorist ? nades_hegrenade_t_count : nades_hegrenade_ct_count) < max_hegrenade_allow && he_number == 0)
                     	{
 				randgive = GetRandomInt(1, 2);
 				if(competitivePistolRound && dollars_for_mimic_competitive_pistol_rounds >= nade_price_for_hegrenade)
@@ -618,15 +659,15 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
                         		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - nade_price_for_hegrenade;
                         		he_number++;
                         		if (terrorist)
-                            			nades_hegrenade_t_max++;
+                            			nades_hegrenade_t_count++;
                         		else
-                            			nades_hegrenade_ct_max++;
+                            			nades_hegrenade_ct_count++;
 				}
 				indice++;
                    	}			
 
                 case 3:
-			if ((terrorist ? nades_flashbang_t_max : nades_flashbang_ct_max) < max_flashbang_allow && flashbang_number < maxflashbang)
+			if ((terrorist ? nades_flashbang_t_count : nades_flashbang_ct_count) < max_flashbang_allow && flashbang_number < maxflashbang)
                     	{
 				randgive = GetRandomInt(1, 2);
 				if(competitivePistolRound && dollars_for_mimic_competitive_pistol_rounds >= nade_price_for_flashbang)
@@ -640,15 +681,15 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
                         		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - nade_price_for_flashbang;
                         		flashbang_number++;
                         		if (terrorist)
-                            			nades_flashbang_t_max++;
+                            			nades_flashbang_t_count++;
                         		else
-                           			nades_flashbang_ct_max++;
+                           			nades_flashbang_ct_count++;
 				}
 				indice++;
                    	}
 
                 case 4:
-			if ((terrorist ? nades_molotov_t_max : nades_molotov_ct_max) < max_molotov_allow && molotov_number == 0)
+			if ((terrorist ? nades_molotov_t_count : nades_molotov_ct_count) < max_molotov_allow && molotov_number == 0)
                     	{
 				//Change percent to 20%
 				randgive = GetRandomInt(1, 5);
@@ -677,20 +718,20 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
                             			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - nade_price_for_incgrenade;
                         		molotov_number++;
                         		if (terrorist)
-                            			nades_molotov_t_max++;
+                            			nades_molotov_t_count++;
                         		else
-                            			nades_molotov_ct_max++;
+                            			nades_molotov_ct_count++;
 				}
-				else if(randgive > 4 && (terrorist ? nades_decoy_t_max : nades_decoy_ct_max) < max_decoy_allow && decoy_number == 0) //sometimes give decoy
+				else if(randgive > 4 && (terrorist ? nades_decoy_t_count : nades_decoy_ct_count) < max_decoy_allow && decoy_number == 0) //sometimes give decoy
 				{
 					if(competitivePistolRound && dollars_for_mimic_competitive_pistol_rounds >= nade_price_for_decoy || !competitivePistolRound)
 					{
 						nades[indice] = 'd';
 						dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - nade_price_for_decoy;
 						if (terrorist)
-                            				nades_decoy_t_max++;
+                            				nades_decoy_t_count++;
                         			else
-                            				nades_decoy_ct_max++;
+                            				nades_decoy_ct_count++;
 					}
 				}
 				indice++;
