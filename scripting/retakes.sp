@@ -312,7 +312,7 @@ public Action Command_Guns(int client, int args) {
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
-    static char gunsChatCommands[][] = { "gun", "guns", ".gun", ".guns", ".setup", "!gun", "gnus" };
+    static char gunsChatCommands[][] = { "gun", "guns", ".gun", ".guns", "!gun", "gnus" };
     for (int i = 0; i < sizeof(gunsChatCommands); i++) {
         if (strcmp(args[0], gunsChatCommands[i], false) == 0) {
             Call_StartForward(g_hOnGunsCommand);
