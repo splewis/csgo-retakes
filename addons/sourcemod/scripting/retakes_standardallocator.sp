@@ -70,10 +70,10 @@ int nades_decoy_ct_count = 0;
 int nades_decoy_t_count = 0;
 
 public Plugin myinfo = {
-    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin, Gdk add on 4.2",
+    name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin,",
     author = "BatMen and Gdk",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
-    version = PLUGIN_VERSION,
+    version = "4.3.0",
     url = "https://github.com/RavageCS/csgo-retakes-splewis-convar-weapon-allocator"
 };
 
@@ -386,7 +386,19 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		}
         
         	SetNades(nades, true, mimicCompetitivePistolRounds && isPistolRound, dollars_for_mimic_competitive_pistol_rounds);
+		
+		//Testing
+		//new String:moneyT[12];
+		//IntToString(dollars_for_mimic_competitive_pistol_rounds, moneyT, 12);
+		//PrintToChatAll("MoneyT: %s", moneyT);
 
+		//Make sure to give armor if no nades are given
+		if(isPistolRound && mimicCompetitivePistolRounds && dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
+		{
+			kevlar = true;
+			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
+		}
+		
         	Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
 	}
 
@@ -578,7 +590,19 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		}
 	
         	SetNades(nades, false, mimicCompetitivePistolRounds && isPistolRound, dollars_for_mimic_competitive_pistol_rounds);
+		
+		//Testing
+		//new String:money[12];	
+		//IntToString(dollars_for_mimic_competitive_pistol_rounds, money, 12);
+		//PrintToChatAll("Money: %s", money);
 
+		//Make sure to give armor if no nades or kit are given
+		if(isPistolRound && mimicCompetitivePistolRounds && dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
+		{
+			kevlar = true;
+			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
+		}
+		
         	Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
     	}
 }
