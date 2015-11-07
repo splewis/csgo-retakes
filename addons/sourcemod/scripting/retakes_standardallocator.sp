@@ -73,7 +73,7 @@ public Plugin myinfo = {
     name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin,",
     author = "BatMen and Gdk",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
-    version = "4.3.0",
+    version = "4.4.0",
     url = "https://github.com/RavageCS/csgo-retakes-splewis-convar-weapon-allocator"
 };
 
@@ -596,11 +596,20 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		//IntToString(dollars_for_mimic_competitive_pistol_rounds, money, 12);
 		//PrintToChatAll("Money: %s", money);
 
-		//Make sure to give armor if no nades or kit are given
-		if(isPistolRound && mimicCompetitivePistolRounds && dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
+		//Make sure to give armor or kit if there is left over money
+		if(isPistolRound && mimicCompetitivePistolRounds)
 		{
-			kevlar = true;
-			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
+			if(dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
+			{	
+				kevlar = true;
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
+			}
+			if(dollars_for_mimic_competitive_pistol_rounds >= kit_price)
+			{
+				kit = true;
+				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kit_price;
+				numkits++;
+			}
 		}
 		
         	Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
@@ -865,4 +874,3 @@ public int MenuHandler_SIDE(Handle menu, MenuAction action, int param1, int para
         CloseHandle(menu);
     }
 }
-
