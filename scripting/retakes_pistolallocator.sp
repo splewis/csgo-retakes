@@ -10,9 +10,12 @@
 #define MENU_TIME_LENGTH 15
 
 char g_PistolChoices[][][] = {
+    // Default pistols:
     { "weapon_glock", "Glock" },
     { "weapon_usp_silencer", "USP" },
     { "weapon_hkp2000", "P2000" },
+
+    // Upgraded pistols:
     { "weapon_p250", "P250" },
     { "weapon_tec9", "Tec-9" },
     { "weapon_fiveseven", "Five-Seven" },
@@ -79,7 +82,7 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         int choice = g_PistolChoice[client];
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
         health = 100;
-        kevlar = 100;
+        kevlar = IsDefaultPistol(choice) ? 100 : 0;
         helmet = false;
         kit = false;
         SetNades(nades);
@@ -92,7 +95,7 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
         kit = true;
         health = 100;
-        kevlar = 100;
+        kevlar = IsDefaultPistol(choice) ? 100 : 0;
         helmet = false;
         SetNades(nades);
         Retakes_SetPlayerInfo(client, primary, secondary, nades, health, kevlar, helmet, kit);
@@ -117,4 +120,8 @@ public int GunsMenuHandler(Menu menu, MenuAction action, int param1, int param2)
     } else if (action == MenuAction_End) {
         CloseHandle(menu);
     }
+}
+
+public bool IsDefaultPistol(int weaponIndex) {
+    return weaponIndex <= 2;
 }
