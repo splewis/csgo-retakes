@@ -161,6 +161,9 @@ public void OnPluginStart() {
     AddCommandListener(Command_JoinTeam, "jointeam");
 
     /** Admin/editor commands **/
+    RegAdminCmd("sm_scramble", Command_ScrambleTeams, ADMFLAG_CHANGEMAP, "Sets teams to scramble on the next round");
+    RegAdminCmd("sm_scrambleteams", Command_ScrambleTeams, ADMFLAG_CHANGEMAP, "Sets teams to scramble on the next round");
+
     RegAdminCmd("sm_edit", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the retakes spawn editor mode");
     RegAdminCmd("sm_spawns", Command_EditSpawns, ADMFLAG_CHANGEMAP, "Launches the retakes spawn editor mode");
 
@@ -303,6 +306,12 @@ public void ResetClientVariables(int client) {
     g_Team[client] = CS_TEAM_SPECTATOR;
     g_PluginTeamSwitch[client] = false;
     g_RoundPoints[client] = -POINTS_LOSS;
+}
+
+public Action Command_ScrambleTeams(int client, int args) {
+    g_ScrambleSignal = true;
+    Retakes_MessageToAll("%t", "AdminScrambleTeams", client);
+    return Plugin_Handled;
 }
 
 public Action Command_Guns(int client, int args) {
@@ -652,25 +661,16 @@ public void RoundEndUpdates() {
     Call_PushCell(g_hWaitingQueue);
     Call_Finish();
 
-    bool randomTeams = g_hUseRandomTeams.IntValue != 0;
-    int randomMax = 1000;
-
     for (int client = 1; client <= MaxClients; client++) {
         if (IsPlayer(client) && IsOnTeam(client)) {
-            if (randomTeams)
-                PQ_Enqueue(g_hRankingQueue, client, GetRandomInt(0, randomMax));
-            else
-                PQ_Enqueue(g_hRankingQueue, client, g_RoundPoints[client]);
+            PQ_Enqueue(g_hRankingQueue, client, g_RoundPoints[client]);
         }
     }
 
     while (!Queue_IsEmpty(g_hWaitingQueue) && PQ_GetSize(g_hRankingQueue) < g_hMaxPlayers.IntValue) {
         int client = Queue_Dequeue(g_hWaitingQueue);
         if (IsPlayer(client)) {
-            if (randomTeams)
-                PQ_Enqueue(g_hRankingQueue, client, GetRandomInt(0, randomMax));
-            else
-                PQ_Enqueue(g_hRankingQueue, client, -POINTS_LOSS);
+            PQ_Enqueue(g_hRankingQueue, client, -POINTS_LOSS);
         } else {
             break;
         }
@@ -715,7 +715,7 @@ public void UpdateTeams() {
     Call_PushCellRef(g_NumCT);
     Call_Finish();
 
-    if (g_ScrambleSignal && ScramblesEnabled()) {
+    if (g_ScrambleSignal || g_hUseRandomTeams.IntValue != 0) {
         int n = GetArraySize(g_hRankingQueue);
         for (int i = 0; i < n; i++) {
             int value = GetRandomInt(1, 1000);
@@ -804,7 +804,7 @@ public void UpdateTeams() {
 }
 
 static bool ScramblesEnabled() {
-    return g_hRoundsToScramble.IntValue >= 1 && g_hUseRandomTeams.IntValue == 0;
+    return g_hRoundsToScramble.IntValue >= 1;
 }
 
 public void TerroristsWon() {
@@ -814,7 +814,7 @@ public void TerroristsWon() {
     if (g_WinStreak >= toScramble) {
         if (ScramblesEnabled()) {
             g_ScrambleSignal = true;
-            Retakes_MessageToAll("%t", "ScrambleMessage", toScramble);
+            Retakes_MessageToAll("%t", "ScrambleMessage", g_WinStreak);
         }
         g_WinStreak = 0;
     } else if (g_WinStreak >= toScramble - 3 && ScramblesEnabled()) {
