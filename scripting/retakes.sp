@@ -309,18 +309,25 @@ public void ResetClientVariables(int client) {
 }
 
 public Action Command_ScrambleTeams(int client, int args) {
-    g_ScrambleSignal = true;
-    Retakes_MessageToAll("%t", "AdminScrambleTeams", client);
-    return Plugin_Handled;
+    if (g_Enabled) {
+        g_ScrambleSignal = true;
+        Retakes_MessageToAll("%t", "AdminScrambleTeams", client);
+    }
 }
 
 public Action Command_Guns(int client, int args) {
-    Call_StartForward(g_hOnGunsCommand);
-    Call_PushCell(client);
-    Call_Finish();
+    if (g_Enabled) {
+        Call_StartForward(g_hOnGunsCommand);
+        Call_PushCell(client);
+        Call_Finish();
+    }
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
+    if (!g_Enabled) {
+        return Plugin_Continue;
+    }
+
     static char gunsChatCommands[][] = { "gun", "guns", ".gun", ".guns", "!gun", "gnus" };
     for (int i = 0; i < sizeof(gunsChatCommands); i++) {
         if (strcmp(args[0], gunsChatCommands[i], false) == 0) {
