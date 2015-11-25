@@ -28,6 +28,10 @@ before_script:
     - cd include
     - git clone https://github.com/bcserv/smlib
     - cp -r smlib/scripting/include/* .
+
+    # get pugsetup include
+    - wget https://raw.githubusercontent.com/splewis/csgo-pug-setup/master/scripting/include/pugsetup.inc
+
     - cd ../../../..
 
 script:

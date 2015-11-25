@@ -9,6 +9,9 @@
 #include "include/restorecvars.inc"
 #include "include/retakes.inc"
 
+#undef REQUIRE_PLUGIN
+#tryinclude <pugsetup>
+
 #pragma semicolon 1
 #pragma newdecls required
 
@@ -46,9 +49,9 @@ Handle g_hWaitingQueue = INVALID_HANDLE;
 Handle g_hRankingQueue = INVALID_HANDLE;
 
 /** ConVar handles **/
+ConVar g_EnabledCvar;
 ConVar g_hCvarVersion;
 ConVar g_hEditorEnabled;
-ConVar g_EnabledCvar;
 ConVar g_hMaxPlayers;
 ConVar g_hRatioConstant;
 ConVar g_hRoundsToScramble;
@@ -259,6 +262,8 @@ public void OnMapEnd() {
 public int EnabledChanged(Handle cvar, const char[] oldValue, const char[] newValue) {
     bool wasEnabled = !StrEqual(oldValue, "0");
     g_Enabled = !StrEqual(newValue, "0");
+
+    LogMessage("EnabledChanged");
 
     if (wasEnabled && !g_Enabled) {
         if (g_SavedCvars != INVALID_HANDLE)
@@ -861,3 +866,39 @@ public int GetOtherTeam(int team) {
 public Bombsite GetOtherSite(Bombsite site) {
     return (site == BombsiteA) ? BombsiteB : BombsiteA;
 }
+
+// pugsetup (github.com/splewis/csgo-pug-setup) integrations
+#if defined _pugsetup_included
+public Action OnSetupMenuOpen(int client, Menu menu, bool displayOnly) {
+    int leader = GetLeader(false);
+    if (!IsPlayer(leader)) {
+        SetLeader(client);
+    }
+
+    int style = ITEMDRAW_DEFAULT;
+    if (!HasPermissions(client, Permission_Leader) || displayOnly) {
+        style = ITEMDRAW_DISABLED;
+    }
+
+    if (g_Enabled) {
+        AddMenuItem(menu, "disable_retakes", "Disable retakes", style);
+    } else {
+        AddMenuItem(menu, "enable_retakes", "Enable retakes", style);
+    }
+
+    return Plugin_Continue;
+}
+
+public void OnSetupMenuSelect(Menu menu, MenuAction action, int param1, int param2) {
+    int client = param1;
+    char buffer[64];
+    menu.GetItem(param2, buffer, sizeof(buffer));
+    if (StrEqual(buffer, "disable_retakes")) {
+        SetConVarInt(g_EnabledCvar, 0);
+        GiveSetupMenu(client);
+    } else if (StrEqual(buffer, "enable_retakes")) {
+        SetConVarInt(g_EnabledCvar, 1);
+        GiveSetupMenu(client);
+    }
+}
+#endif
