@@ -889,16 +889,13 @@ public Action OnSetupMenuOpen(int client, Menu menu, bool displayOnly) {
     return Plugin_Continue;
 }
 
-public void OnSetupMenuSelect(Menu menu, MenuAction action, int param1, int param2) {
-    int client = param1;
-    char buffer[64];
-    menu.GetItem(param2, buffer, sizeof(buffer));
-    if (StrEqual(buffer, "disable_retakes")) {
+public void OnSetupMenuSelect(Menu menu, int client, const char[] selected_info, int selected_position) {
+    if (StrEqual(selected_info, "disable_retakes")) {
         SetConVarInt(g_EnabledCvar, 0);
-        GiveSetupMenu(client);
-    } else if (StrEqual(buffer, "enable_retakes")) {
+        GiveSetupMenu(client, false, selected_position);
+    } else if (StrEqual(selected_info, "enable_retakes")) {
         SetConVarInt(g_EnabledCvar, 1);
-        GiveSetupMenu(client);
+        GiveSetupMenu(client, false, selected_position);
     }
 }
 #endif
