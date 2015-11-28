@@ -222,6 +222,12 @@ public void OnPluginStart() {
     }
 }
 
+public void OnPluginEnd() {
+    if (g_SavedCvars != INVALID_HANDLE) {
+        RestoreCvars(g_SavedCvars, true);
+    }
+}
+
 public void OnMapStart() {
     PQ_Clear(g_hRankingQueue);
     PQ_Clear(g_hWaitingQueue);
