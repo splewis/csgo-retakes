@@ -73,7 +73,7 @@ public Plugin myinfo = {
     name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin,",
     author = "BatMen and Gdk",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
-    version = "4.4.0",
+    version = "4.5.0",
     url = "https://github.com/RavageCS/csgo-retakes-splewis-convar-weapon-allocator"
 };
 
@@ -395,7 +395,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		//Make sure to give armor if no nades are given
 		if(isPistolRound && mimicCompetitivePistolRounds && dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
 		{
-			kevlar = true;
+			kevlar = 100;
 			dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
 		}
 		
@@ -601,7 +601,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		{
 			if(dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
 			{	
-				kevlar = true;
+				kevlar = 100;
 				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
 			}
 			if(dollars_for_mimic_competitive_pistol_rounds >= kit_price)
