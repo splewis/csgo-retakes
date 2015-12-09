@@ -54,6 +54,7 @@ Handle g_h_sm_retakes_weapon_deagle_enabled  = INVALID_HANDLE;
 Handle g_h_sm_retakes_weapon_cz_enabled  = INVALID_HANDLE;
 Handle g_h_sm_retakes_weapon_p250_enabled  = INVALID_HANDLE;
 Handle g_h_sm_retakes_weapon_tec9_fiveseven_enabled = INVALID_HANDLE;
+Handle g_h_sm_retakes_weapon_revolver_enabled = INVALID_HANDLE;
 Handle g_h_sm_retakes_weapon_dual_elite_enabled = INVALID_HANDLE;
 Handle g_h_sm_retakes_weapon_nades_decoy_ct_max = INVALID_HANDLE;
 Handle g_h_sm_retakes_weapon_nades_decoy_t_max = INVALID_HANDLE;
@@ -73,7 +74,7 @@ public Plugin myinfo = {
     name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin,",
     author = "BatMen and Gdk",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
-    version = "4.5.0",
+    version = "4.6.0",
     url = "https://github.com/RavageCS/csgo-retakes-splewis-convar-weapon-allocator"
 };
 
@@ -105,6 +106,7 @@ public void OnPluginStart() {
     g_h_sm_retakes_weapon_p250_enabled = CreateConVar("sm_retakes_weapon_p250_enabled", "1", "Whether the players can choose P250");
     g_h_sm_retakes_weapon_tec9_fiveseven_enabled = CreateConVar("sm_retakes_weapon_tec9_fiveseven_enabled", "1", "Whether the players can choose Tec9/Five seven");
     g_h_sm_retakes_weapon_dual_elite_enabled = CreateConVar("sm_retakes_weapon_dual_elite_enabled", "1", "Whether the players can choose Dual Elite");
+    g_h_sm_retakes_weapon_revolver_enabled = CreateConVar("sm_retakes_weapon_revolver_enabled", "1", "Whether the players can choose Revolver");
     g_h_sm_retakes_weapon_nades_decoy_ct_max = CreateConVar("sm_retakes_weapon_nades_decoy_ct_max", "1", "Number of decoys CT team can have");
     g_h_sm_retakes_weapon_nades_decoy_t_max = CreateConVar("sm_retakes_weapon_nades_decoy_t_max", "1", "Number of decoys T team can have");
 
@@ -115,9 +117,9 @@ public void OnPluginStart() {
 
 public void OnClientConnected(int client) {
     g_Pistolchoice[client] = 1;
-    g_Sidechoice[client] = 1;
-    g_SilencedM4[client] = false;
-    g_AwpChoice[client] = false;
+    g_Sidechoice[client] = 5;
+    g_SilencedM4[client] = true;
+    g_AwpChoice[client] = true;
 }
 
 public Action Command_GunsMenu(int client, int args) {
@@ -251,14 +253,18 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         		{
             			secondary = "weapon_cz75a";
         		}
-        		else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+        		else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_revolver_enabled) == 1)
 			{
-				secondary = "weapon_elite";
-			}
+				secondary = "weapon_revolver";
+        		}
 			else if (g_Sidechoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
 			{
 				secondary = "weapon_deagle";
-        		}		
+        		}
+			else if (g_Sidechoice[client] == 7 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+			}		
 			else
 			{
 				secondary = "weapon_glock";
@@ -351,40 +357,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 				kevlar = 0;
 			}
 		}
-	
-		if(!isPistolRound || !mimicCompetitivePistolRounds)
-		{
-			kit = false;
-			kevlar = 100;
-			helmet = true;
-			health = 100;	
 
-			if (g_Sidechoice[client] == 2 && GetConVarInt(g_h_sm_retakes_weapon_p250_enabled) == 1)
-        		{
-				secondary = "weapon_p250";
-			}
-			else if (g_Sidechoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
-        		{
-            			secondary = "weapon_tec9";
-        		}
-        		else if (g_Sidechoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
-        		{
-            			secondary = "weapon_cz75a";
-        		}
-        		else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-			{
-				secondary = "weapon_elite";
-			}
-			else if (g_Sidechoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
-			{
-				secondary = "weapon_deagle";
-        		}		
-			else
-			{
-				secondary = "weapon_glock";
-			}
-		}
-        
         	SetNades(nades, true, mimicCompetitivePistolRounds && isPistolRound, dollars_for_mimic_competitive_pistol_rounds);
 		
 		//Testing
@@ -442,20 +415,24 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 			}
 			else if (g_Sidechoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
         		{
-            			secondary = "weapon_fiveseven";
+            			secondary = "weapon_tec9";
         		}
         		else if (g_Sidechoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
         		{
             			secondary = "weapon_cz75a";
         		}
-        		else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+        		else if (g_Sidechoice[client] == 5 && GetConVarInt(g_h_sm_retakes_weapon_revolver_enabled) == 1)
 			{
-				secondary = "weapon_elite";
-			}
+				secondary = "weapon_revolver";
+        		}
 			else if (g_Sidechoice[client] == 6 && GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
 			{
 				secondary = "weapon_deagle";
-        		}		
+        		}
+			else if (g_Sidechoice[client] == 7 && GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+			{
+				secondary = "weapon_elite";
+			}		
 			else
 			{
 				secondary = "weapon_hkp2000";
@@ -580,8 +557,8 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 				kit = false;
 			}
 			
-			//If there are no kits, give one if there are 2-4 ct's
-			if(ctCount > 1 && ctCount < 5 && numkits < 1)
+			//If there are no kits, give one
+			if(numkits < 1 && i == (ctCount-1))
 			{
 				kit = true;
 				numkits++;
@@ -724,8 +701,7 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
                 case 4:
 			if ((terrorist ? nades_molotov_t_count : nades_molotov_ct_count) < max_molotov_allow && molotov_number == 0)
                     	{
-				//Change percent to 20%
-				randgive = GetRandomInt(1, 5);
+				randgive = GetRandomInt(1, 10);
 				
 				if(terrorist)
 				{
@@ -741,7 +717,7 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
 					if(competitivePistolRound && dollars_for_mimic_competitive_pistol_rounds < nade_price_for_incgrenade)
 						randgive = 10;
 				}
-
+				//10% chance to give molotov
                     		if(randgive < 2)
 				{	
                         		nades[indice] = terrorist ? 'm' : 'i';
@@ -755,7 +731,8 @@ static void SetNades(char nades[NADE_STRING_LENGTH], bool terrorist, bool compet
                         		else
                             			nades_molotov_ct_count++;
 				}
-				else if(randgive > 4 && (terrorist ? nades_decoy_t_count : nades_decoy_ct_count) < max_decoy_allow && decoy_number == 0) //sometimes give decoy
+				//10% chance to give decoy
+				else if(randgive > 9 && (terrorist ? nades_decoy_t_count : nades_decoy_ct_count) < max_decoy_allow && decoy_number == 0) //sometimes give decoy
 				{
 					if(competitivePistolRound && dollars_for_mimic_competitive_pistol_rounds >= nade_price_for_decoy || !competitivePistolRound)
 					{
@@ -857,10 +834,12 @@ public void GiveSidearmMenu(int client) {
        		AddMenuInt(menu, 3, "Fiveseven/Tec-9");
     	if (GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
         	AddMenuInt(menu, 4, "CZ75");
-    	if (GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
-       		AddMenuInt(menu, 5, "Dual Elite");
+	if (GetConVarInt(g_h_sm_retakes_weapon_revolver_enabled) == 1)
+        	AddMenuInt(menu, 5, "R8 Revolver");
 	if (GetConVarInt(g_h_sm_retakes_weapon_deagle_enabled) == 1)
         	AddMenuInt(menu, 6, "Deagle");
+	if (GetConVarInt(g_h_sm_retakes_weapon_dual_elite_enabled) == 1)
+       		AddMenuInt(menu, 7, "Dual Elite");
     	DisplayMenu(menu, client, MENU_TIME_LENGTH);
 }
 
