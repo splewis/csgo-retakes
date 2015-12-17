@@ -74,7 +74,7 @@ public Plugin myinfo = {
     name = "CS:GO Retakes: Customised Weapon Allocator for splewis retakes plugin,",
     author = "BatMen and Gdk",
     description = "Defines convars to customize weapon allocator of splewis retakes plugin",
-    version = "4.6.0",
+    version = "4.7.0",
     url = "https://github.com/RavageCS/csgo-retakes-splewis-convar-weapon-allocator"
 };
 
@@ -117,7 +117,7 @@ public void OnPluginStart() {
 
 public void OnClientConnected(int client) {
     g_Pistolchoice[client] = 1;
-    g_Sidechoice[client] = 5;
+    g_Sidechoice[client] = 6;
     g_SilencedM4[client] = true;
     g_AwpChoice[client] = true;
 }
@@ -222,7 +222,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 //T gun round
         	if (!isPistolRound)
         	{
-            		int randGiveAwp = GetRandomInt(0, 1);
+            		int randGiveAwp = GetRandomInt(1, 3);
 			
 			kit = false;
 			kevlar = 100;
@@ -349,8 +349,17 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		
 			if(dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
 			{
-				kevlar = 100;
-				dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
+				odds = GetRandomInt(1,10);
+                 		// 90% to have kevlar if money before nades
+                 		if (odds < 10)
+                 		{
+                        		kevlar = 100;
+                        		dollars_for_mimic_competitive_pistol_rounds = dollars_for_mimic_competitive_pistol_rounds - kevlar_price;
+                 		}
+				else
+				{
+					kevlar = 0;
+				}
 			}
 			else if(dollars_for_mimic_competitive_pistol_rounds < kevlar_price)
 			{
@@ -365,7 +374,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 		//IntToString(dollars_for_mimic_competitive_pistol_rounds, moneyT, 12);
 		//PrintToChatAll("MoneyT: %s", moneyT);
 
-		//Make sure to give armor if no nades are given
+		//Make sure to give armor if no nades are given (? gives armor even if nades are given? this is ok though)
 		if(isPistolRound && mimicCompetitivePistolRounds && dollars_for_mimic_competitive_pistol_rounds >= kevlar_price)
 		{
 			kevlar = 100;
@@ -392,7 +401,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 			helmet = true;
 			health = 100;
 
-			int randGiveAwp = GetRandomInt(0, 1);
+			int randGiveAwp = GetRandomInt(1, 3);
 
            		if (giveCTAwp && g_AwpChoice[client] && randGiveAwp == 1 && awp_given < GetConVarInt(g_h_sm_retakes_weapon_awp_team_max)) 
 			{
@@ -415,7 +424,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 			}
 			else if (g_Sidechoice[client] == 3 && GetConVarInt(g_h_sm_retakes_weapon_tec9_fiveseven_enabled) == 1)
         		{
-            			secondary = "weapon_tec9";
+            			secondary = "weapon_fiveseven";
         		}
         		else if (g_Sidechoice[client] == 4 && GetConVarInt(g_h_sm_retakes_weapon_cz_enabled) == 1)
         		{
