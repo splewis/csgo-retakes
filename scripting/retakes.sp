@@ -332,6 +332,7 @@ public Action Command_Guns(int client, int args) {
         Call_PushCell(client);
         Call_Finish();
     }
+    return Plugin_Handled;
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] args) {
