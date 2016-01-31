@@ -157,7 +157,7 @@ public void OnPluginStart() {
     /** Create/Execute retakes cvars **/
     AutoExecConfig(true, "retakes", "sourcemod/retakes");
 
-    g_hCvarVersion = CreateConVar("sm_retakes_version", PLUGIN_VERSION, "Current retakes version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
+    g_hCvarVersion = CreateConVar("sm_retakes_version", PLUGIN_VERSION, "Current retakes version", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
     g_hCvarVersion.SetString(PLUGIN_VERSION);
 
     /** Command hooks **/
