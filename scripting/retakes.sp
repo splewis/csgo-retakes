@@ -250,9 +250,9 @@ public void OnMapStart() {
 
     ExecConfigs();
 
-    // Force-start warmup for players to connect.
-    // TODO: this really should be a separate cvar, or at least read the builtin warmup cvars.
-    StartTimedWarmup(25);
+    // Restart warmup for players to connect.
+    int warmupTime = FindConVar("mp_warmuptime").IntValue;
+    StartTimedWarmup(warmupTime);
 }
 
 public void OnMapEnd() {
