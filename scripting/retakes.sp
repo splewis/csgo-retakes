@@ -27,10 +27,10 @@
  * "round points". Actions during a round earn points, and at the end of the round,
  * players are put into a priority queue using their rounds as the value.
  */
-#define POINTS_KILL 300
-#define POINTS_DMG 10
-#define POINTS_BOMB 150
-#define POINTS_LOSS 2000
+#define POINTS_KILL 50
+#define POINTS_DMG 1
+#define POINTS_BOMB 50
+#define POINTS_LOSS 5000
 
 #define SITESTRING(%1) ((%1) == BombsiteA ? "A" : "B")
 #define TEAMSTRING(%1) ((%1) == CS_TEAM_CT ? "CT" : "T")
@@ -530,7 +530,7 @@ public Action Event_DamageDealt(Handle event, const char[] name, bool dontBroadc
 
     if (validAttacker && validVictim && HelpfulAttack(attacker, victim) ) {
         int damage = GetEventInt(event, "dmg_PlayerHealth");
-        g_RoundPoints[attacker] += damage / POINTS_DMG;
+        g_RoundPoints[attacker] += (damage * POINTS_DMG);
     }
     return Plugin_Continue;
 }
