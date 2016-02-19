@@ -50,6 +50,7 @@ Handle g_hRankingQueue = INVALID_HANDLE;
 
 /** ConVar handles **/
 ConVar g_EnabledCvar;
+ConVar g_hAutoTeamsCvar;
 ConVar g_hCvarVersion;
 ConVar g_hEditorEnabled;
 ConVar g_hMaxPlayers;
@@ -146,6 +147,7 @@ public void OnPluginStart() {
 
     /** ConVars **/
     g_EnabledCvar = CreateConVar("sm_retakes_enabled", "1", "Whether the plugin is enabled");
+    g_hAutoTeamsCvar = CreateConVar("sm_retakes_auto_set_teams", "1", "Whether retakes is allowed to automanage team balance");
     g_hEditorEnabled = CreateConVar("sm_retakes_editor_enabled", "1", "Whether the editor can be launched by admins");
     g_hMaxPlayers = CreateConVar("sm_retakes_maxplayers", "9", "Maximum number of players allowed in the game at once.", _, true, 2.0);
     g_hRatioConstant = CreateConVar("sm_retakes_ratio_constant", "0.425", "Ratio constant for team sizes.");
@@ -362,7 +364,7 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
  ***********************/
 
 public Action Command_JoinTeam(int client, const char[] command, int argc) {
-    if (!g_Enabled) {
+    if (!g_Enabled || g_hAutoTeamsCvar.IntValue == 0) {
         return Plugin_Continue;
     }
 
@@ -747,18 +749,34 @@ public void UpdateTeams() {
     ArrayList ts = new ArrayList();
     ArrayList cts = new ArrayList();
 
-    for (int i = 0; i < g_NumT; i++) {
-        int client = PQ_Dequeue(g_hRankingQueue);
-        if (IsValidClient(client)) {
-            ts.Push(client);
+    if (g_hAutoTeamsCvar.IntValue != 0) {
+        // Ordinary team switching by retakes
+        for (int i = 0; i < g_NumT; i++) {
+            int client = PQ_Dequeue(g_hRankingQueue);
+            if (IsValidClient(client)) {
+                ts.Push(client);
+            }
         }
-    }
 
-    for (int i = 0; i < g_NumCT; i++) {
-        int client = PQ_Dequeue(g_hRankingQueue);
-        if (IsValidClient(client)) {
-            cts.Push(client);
+        for (int i = 0; i < g_NumCT; i++) {
+            int client = PQ_Dequeue(g_hRankingQueue);
+            if (IsValidClient(client)) {
+                cts.Push(client);
+            }
         }
+    } else {
+        // Use the already set teams
+        for (int i = 1; i <= MaxClients; i++) {
+            if (IsValidClient(i)) {
+                if (GetClientTeam(i) == CS_TEAM_CT)
+                    cts.Push(i);
+                else if (GetClientTeam(i) == CS_TEAM_T)
+                    ts.Push(i);
+            }
+        }
+        g_NumCT = cts.Length;
+        g_NumT = ts.Length;
+        g_ActivePlayers = g_NumCT + g_NumT;
     }
 
     Call_StartForward(g_hOnTeamsSet);
