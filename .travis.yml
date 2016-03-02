@@ -8,10 +8,6 @@ env:
     - SMVERSION=1.7
     - SMVERSION=1.8
 
-matrix:
-    allow_failures:
-        - env: SMVERSION=1.8
-
 before_script:
     # install smbuilder
     - git clone https://github.com/splewis/sm-builder
@@ -30,7 +26,7 @@ before_script:
 
     # install smlib
     - cd include
-    - git clone https://github.com/bcserv/smlib
+    - git clone https://github.com/splewis/smlib
     - cp -r smlib/scripting/include/* .
 
     # get pugsetup include
