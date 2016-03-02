@@ -151,7 +151,11 @@ public void GiveWeapons(int client) {
     }
 
     Client_RemoveAllWeapons(client);
-    GivePlayerItem(client, "weapon_knife");
+
+    if (g_Team[client] == CS_TEAM_T)
+        GivePlayerItem(client, "weapon_knife_t");
+    else
+        GivePlayerItem(client, "weapon_knife");
 
     GivePlayerItem(client, g_PlayerPrimary[client]);
     GivePlayerItem(client, g_PlayerSecondary[client]);
