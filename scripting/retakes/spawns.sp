@@ -162,7 +162,7 @@ public void GiveWeapons(int client) {
 
     Client_SetArmor(client, g_PlayerArmor[client]);
     SetEntityHealth(client, g_PlayerHealth[client]);
-    SetEntData(client, FindSendPropOffs("CCSPlayer", "m_bHasHelmet"), g_PlayerHelmet[client]);
+    SetEntData(client, FindSendPropInfo("CCSPlayer", "m_bHasHelmet"), g_PlayerHelmet[client]);
 
     if (g_Team[client] == CS_TEAM_CT) {
         SetEntProp(client, Prop_Send, "m_bHasDefuser", g_PlayerKit[client]);
