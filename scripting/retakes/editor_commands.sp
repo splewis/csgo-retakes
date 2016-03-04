@@ -152,7 +152,7 @@ public Action Command_IterateSpawns(int client, int args) {
     DataPack pack = new DataPack();
     pack.WriteCell(GetClientSerial(client));
     pack.WriteCell(startIndex);
-    CreateTimer(2.0, Timer_IterateSpawns, pack);
+    CreateDataTimer(2.0, Timer_IterateSpawns, pack);
     return Plugin_Handled;
 }
 
@@ -162,7 +162,6 @@ public Action Timer_IterateSpawns(Handle timer, Handle data) {
     int serial = pack.ReadCell();
     int spawnIndex = pack.ReadCell();
     int client = GetClientFromSerial(serial);
-    delete pack;
 
     if (!IsPlayer(client))
         return Plugin_Handled;
@@ -178,7 +177,7 @@ public Action Timer_IterateSpawns(Handle timer, Handle data) {
         pack = new DataPack();
         pack.WriteCell(serial);
         pack.WriteCell(spawnIndex);
-        CreateTimer(2.0, Timer_IterateSpawns, pack);
+        CreateDataTimer(2.0, Timer_IterateSpawns, pack);
     }
 
     return Plugin_Handled;
