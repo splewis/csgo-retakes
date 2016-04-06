@@ -263,7 +263,7 @@ public void OnMapEnd() {
         return;
     }
 
-    if (g_hEditorEnabled.IntValue != 0 && g_DirtySpawns) {
+    if (g_DirtySpawns) {
         WriteSpawns();
     }
 }
@@ -271,8 +271,6 @@ public void OnMapEnd() {
 public int EnabledChanged(Handle cvar, const char[] oldValue, const char[] newValue) {
     bool wasEnabled = !StrEqual(oldValue, "0");
     g_Enabled = !StrEqual(newValue, "0");
-
-    LogMessage("EnabledChanged");
 
     if (wasEnabled && !g_Enabled) {
         if (g_SavedCvars != INVALID_HANDLE)
