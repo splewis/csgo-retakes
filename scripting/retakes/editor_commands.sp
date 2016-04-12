@@ -53,6 +53,7 @@ public Action Command_AddSpawn(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     char arg1[32];
@@ -97,6 +98,7 @@ public Action Command_Show(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     char arg[32];
@@ -117,6 +119,7 @@ public Action Command_DeleteSpawn(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     DeleteClosestSpawn(client);
@@ -141,6 +144,7 @@ public Action Command_IterateSpawns(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     int startIndex = 0;
@@ -191,6 +195,7 @@ public Action Command_GotoSpawn(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     char buffer[32];
@@ -212,6 +217,7 @@ public Action Command_GotoNearestSpawn(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     int spawn = FindClosestSpawn(client);
