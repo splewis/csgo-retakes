@@ -10,8 +10,6 @@
 #include "include/retakes.inc"
 
 #pragma semicolon 1
-#pragma newdecls required
-
 
 /***********************
  *                     *
@@ -44,6 +42,8 @@ int g_Team[MAXPLAYERS+1] = 0;
 /** Queue Handles **/
 Handle g_hWaitingQueue = INVALID_HANDLE;
 Handle g_hRankingQueue = INVALID_HANDLE;
+
+
 
 /** ConVar handles **/
 ConVar g_hCvarVersion;

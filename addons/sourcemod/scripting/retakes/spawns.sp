@@ -1,3 +1,8 @@
+// Gdk: add taser to admins
+#include <clientprefs>
+
+Handle g_taser_cookie = INVALID_HANDLE;
+
 static void GetConfigFileName(char[] buffer, int size) {
     // get the map, with any workshop stuff before removed
     char mapName[128];
@@ -151,8 +156,17 @@ public void GiveWeapons(int client) {
     }
 
     Client_RemoveAllWeapons(client);
+
     GivePlayerItem(client, "weapon_knife");
 
+    g_taser_cookie = FindClientCookie("retakes_taser");
+    char buffer[INTEGER_STRING_LENGTH];
+    GetClientCookie(client, g_taser_cookie, buffer, sizeof(buffer));
+    if(GetUserAdmin(client) != INVALID_ADMIN_ID && StringToInt(buffer))
+    {
+	GivePlayerItem(client, "weapon_taser");
+	PrintToChatAll(buffer[client]);
+    }
     GivePlayerItem(client, g_PlayerPrimary[client]);
     GivePlayerItem(client, g_PlayerSecondary[client]);
 
