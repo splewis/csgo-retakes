@@ -13,7 +13,7 @@ public Plugin myinfo =
     name = "CS:GO Retakes: Gdk's alternate weapon allocator",
     author = "Gdk",
     description = "Alternate weapon allocator for splewis retakes plugin",
-    version = "1.2.1",
+    version = "1.2.5",
     url = "TopSecretGaming.net"
 };
 
@@ -49,8 +49,8 @@ int  g_ct_pistol[MAXPLAYERS+1];
 int  g_ct_sidearm[MAXPLAYERS+1];
 int  g_t_pistol[MAXPLAYERS+1];
 int  g_t_sidearm[MAXPLAYERS+1];
+int  g_awp[MAXPLAYERS+1];
 bool g_silenced_m4[MAXPLAYERS+1];
-bool g_awp[MAXPLAYERS+1];
 bool g_taser[MAXPLAYERS+1];
 
 // Cookies
@@ -85,6 +85,7 @@ Handle g_fiveseven_enabled = INVALID_HANDLE;
 Handle g_dual_elite_enabled = INVALID_HANDLE;
 Handle g_revolver_enabled = INVALID_HANDLE;
 
+
 public void OnPluginStart() 
 {
 	g_ct_pistol_cookie = RegClientCookie("retakes_ct_pistol", "", CookieAccess_Private);
@@ -94,6 +95,8 @@ public void OnPluginStart()
     	g_m4_cookie  = RegClientCookie("retakes_m4", "", CookieAccess_Private);
     	g_awp_cookie = RegClientCookie("retakes_awp", "", CookieAccess_Private);
 	g_taser_cookie = RegClientCookie("retakes_taser", "", CookieAccess_Public);
+
+
     	RegConsoleCmd("sm_guns", Command_GunsMenu, "Opens the retakes primary weapons menu");
 	RegConsoleCmd("sm_pistols", Command_PistolsMenu, "Opens the retakes seconday weapons menu");
 
@@ -210,7 +213,7 @@ public void OnClientCookiesCached(int client)
 	g_ct_sidearm[client] = GetCookieInt (client, g_ct_sidearm_cookie);
 	g_t_sidearm[client] = GetCookieInt (client, g_t_sidearm_cookie);
 	g_silenced_m4[client] = GetCookieBool (client, g_m4_cookie);
-	g_awp[client] = GetCookieBool (client, g_awp_cookie);
+	g_awp[client] = GetCookieInt (client, g_awp_cookie);
 	g_taser[client] = GetCookieBool (client, g_taser_cookie);
 }
 
@@ -241,23 +244,46 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     	bool helmet = true;
     	bool kit = true;
     	int numkits = 0;
- 
     	int odds = 0;
-
-    	int awp_given = 0;
-    	bool giveCTAwp = true;
-	bool giveTAwp = true;
-    	
-	if (GetConVarInt(g_awp_ct_max) < 1)
-        	giveCTAwp = false;
-	if (GetConVarInt(g_awp_t_max) < 1)
-        	giveTAwp = false;
-
+	int t_awp_given = 0;
+    	int ct_awp_given = 0;
     	int pistol_round_dollars = 800;
 
+	// Admins
+	int num_t_admin_awps = 0;
+	int num_ct_admin_awps = 0;
+	int t_rand_admin_awp = 0;
+	int ct_rand_admin_awp = 0;
+	int t_admin_awp[MAXPLAYERS+1];
+	int ct_admin_awp[MAXPLAYERS+1];
 
 //T players
-	awp_given = 0;
+
+	//Count t admins for priority awp
+	for (int i = 0; i < tCount; i++) 
+	{
+		int client = GetArrayCell(tPlayers, i);
+		if(GetUserAdmin(client) != INVALID_ADMIN_ID)
+		{
+			if(g_awp[client] == 1)
+			{
+				int rand = GetRandomInt(1, 3);
+				if(rand == 1)
+				{
+					num_t_admin_awps++;
+					t_admin_awp[client] = num_t_admin_awps;
+				}
+			}
+			else if(g_awp[client] == 2)
+			{
+				num_t_admin_awps++;
+				t_admin_awp[client] = num_t_admin_awps;
+			}		
+		}
+	}
+
+	//Chose which t admin gets awp
+	t_rand_admin_awp = GetRandomInt(1, num_t_admin_awps);
 
     	for (int i = 0; i < tCount; i++) 
 	{
@@ -275,11 +301,23 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 			helmet = true;
 			health = 100;
 
-            		if (giveTAwp && g_awp[client] && randGiveAwp == 1 && awp_given < GetConVarInt(g_awp_t_max)) 
+			if (GetUserAdmin(client) != INVALID_ADMIN_ID)
+			{
+				if(t_admin_awp[client] == t_rand_admin_awp && t_awp_given < GetConVarInt(g_awp_t_max))
+				{
+					primary = "weapon_awp";
+					t_awp_given++;
+				}
+				else 
+				{
+                			primary = "weapon_ak47";
+            			}
+					
+			}
+            		else if (g_awp[client] == 1 && randGiveAwp && t_awp_given < GetConVarInt(g_awp_t_max) && num_t_admin_awps < 1) 
 			{
                 		primary = "weapon_awp";
-                		giveTAwp = false;
-				awp_given = awp_given + 1;
+				t_awp_given++;
             		} 
 			else 
 			{
@@ -381,7 +419,32 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 	}
 
 //Ct players
-	awp_given = 0;
+
+	//Count ct admins for priority awp
+	for (int i = 0; i < ctCount; i++) 
+	{
+		int client = GetArrayCell(ctPlayers, i);
+		if(GetUserAdmin(client) != INVALID_ADMIN_ID)
+		{
+			if(g_awp[client] == 1)
+			{
+				int rand = GetRandomInt(1, 3);
+				if(rand == 1)
+				{
+					num_ct_admin_awps++;
+					ct_admin_awp[client] = num_ct_admin_awps;
+				}
+			}
+			else if(g_awp[client] == 2)
+			{
+				num_ct_admin_awps++;
+				ct_admin_awp[client] = num_ct_admin_awps;
+			}		
+		}
+	}
+
+	//Chose which ct admin gets awp
+	ct_rand_admin_awp = GetRandomInt(1, num_ct_admin_awps);
 	
 	for (int i = 0; i < ctCount; i++) 
 	{
@@ -399,11 +462,29 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 
 			int randGiveAwp = GetRandomInt(1, 3);
 
-           		if (giveCTAwp && g_awp[client] && randGiveAwp == 1 && awp_given < GetConVarInt(g_awp_ct_max)) 
+
+			if (GetUserAdmin(client) != INVALID_ADMIN_ID)
+			{
+				if(ct_admin_awp[client] == ct_rand_admin_awp && ct_awp_given < GetConVarInt(g_awp_ct_max))
+				{
+					primary = "weapon_awp";
+					ct_awp_given++;
+				}
+				else if (g_silenced_m4[client]) 
+				{
+                			primary = "weapon_m4a1_silencer";
+            			} 
+				else 
+				{
+                			primary = "weapon_m4a1";
+            			}
+					
+			}
+
+            		else if (g_awp[client] == 1 && randGiveAwp == 1 && ct_awp_given < GetConVarInt(g_awp_ct_max) && num_ct_admin_awps < 1) 
 			{
                 		primary = "weapon_awp";
-                		giveCTAwp = false;
-				awp_given = awp_given + 1;
+				ct_awp_given++;
             		} 
 			else if (g_silenced_m4[client]) 
 			{
@@ -413,6 +494,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 			{
                 		primary = "weapon_m4a1";
             		}
+
 //CT Gun round pistols
 			if (g_ct_sidearm[client] == 2 && GetConVarInt(g_p250_enabled) == 1)
         		{
@@ -689,7 +771,7 @@ public int MenuHandler_M4(Handle menu, MenuAction action, int param1, int param2
         	SetCookieBool(client, g_m4_cookie, useSilenced);
 
         	if (GetConVarInt(g_awp_ct_max) > 0 || GetConVarInt(g_awp_t_max) > 0)
-            		GiveAwpMenu(client);
+			GiveAwpMenu(client);
         	else
             		CloseHandle(menu);
     	} 
@@ -700,11 +782,22 @@ public int MenuHandler_M4(Handle menu, MenuAction action, int param1, int param2
 //Awp Menu
 public void GiveAwpMenu(int client) 
 {
-    Handle menu = CreateMenu(MenuHandler_AWP);
-    SetMenuTitle(menu, "Allow yourself to receive AWPs?");
-    AddMenuBool(menu, true, "Yes");
-    AddMenuBool(menu, false, "No");
-    DisplayMenu(menu, client, MENU_TIME_LENGTH);
+
+    	Handle menu = CreateMenu(MenuHandler_AWP);
+    	SetMenuTitle(menu, "Allow yourself to receive AWPs?");
+
+	if(GetUserAdmin(client) != INVALID_ADMIN_ID)
+	{
+		AddMenuInt(menu, 1, "Sometimes");
+    		AddMenuInt(menu, 2, "As much as possible");
+		AddMenuInt(menu, 3, "No");
+	}
+	else
+    	{
+		AddMenuInt(menu, 1, "Yes");
+    		AddMenuInt(menu, 3, "No");
+	}
+    	DisplayMenu(menu, client, MENU_TIME_LENGTH);
 }
 
 public int MenuHandler_AWP(Handle menu, MenuAction action, int param1, int param2) 
@@ -712,9 +805,9 @@ public int MenuHandler_AWP(Handle menu, MenuAction action, int param1, int param
 	if (action == MenuAction_Select) 
 	{
         	int client = param1;
-        	bool allowAwps = GetMenuBool(menu, param2);
+        	int allowAwps = GetMenuInt(menu, param2);
         	g_awp[client] = allowAwps;
-        	SetCookieBool(client, g_awp_cookie, allowAwps);
+        	SetCookieInt(client, g_awp_cookie, allowAwps);
 		
 		if(GetUserAdmin(client) != INVALID_ADMIN_ID)
 		{
