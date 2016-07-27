@@ -157,7 +157,10 @@ public void GiveWeapons(int client) {
 
     Client_RemoveAllWeapons(client);
 
-    GivePlayerItem(client, "weapon_knife");
+    if (g_Team[client] == CS_TEAM_T)
+    	GivePlayerItem(client, "weapon_knife_t");
+    else
+	GivePlayerItem(client, "weapon_knife");
 
     g_taser_cookie = FindClientCookie("retakes_taser");
     char buffer[INTEGER_STRING_LENGTH];
