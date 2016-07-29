@@ -1,0 +1,14 @@
+GlobPlugins('scripting/*.sp')
+
+Package(name='retakes-base',
+        plugins=['retakes'],
+)
+
+Package(name='retakes-release',
+        extends=['retakes-base'],
+        plugins=Plugins('retakes*'),
+        disabled_plugins=['retakes_sitepicker', 'retakes_standardallocator', 'retakes_pistolallocator'],
+        filegroups={
+            '.': ['LICENSE', 'README.md'],
+        },
+)

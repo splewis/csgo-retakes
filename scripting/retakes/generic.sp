@@ -1,6 +1,6 @@
 #tryinclude "manual_version.sp"
 #if !defined PLUGIN_VERSION
-#define PLUGIN_VERSION "0.3.0-dev"
+#define PLUGIN_VERSION "0.3.2-dev"
 #endif
 
 #define INTEGER_STRING_LENGTH 20 // max number of digits a 64-bit integer can use up as a string
@@ -217,53 +217,6 @@ stock bool GetCookieBool(int client, Handle cookie) {
 stock bool Chance(float p) {
     float f = GetRandomFloat();
     return f < p;
-}
-/**
- * Creates a table given an array of table arguments.
- */
-stock void SQL_CreateTable(Handle db_connection, const char[] table_name, const char[][] fields, int num_fields) {
-    char buffer[1024];
-    Format(buffer, sizeof(buffer), "CREATE TABLE IF NOT EXISTS %s (", table_name);
-    for (int i = 0; i < num_fields; i++) {
-        StrCat(buffer, sizeof(buffer), fields[i]);
-        if (i != num_fields - 1)
-            StrCat(buffer, sizeof(buffer), ", ");
-    }
-    StrCat(buffer, sizeof(buffer), ")");
-
-    if (!SQL_FastQuery(db_connection, buffer)) {
-        char err[255];
-        SQL_GetError(db_connection, err, sizeof(err));
-        LogError(err);
-    }
-}
-
-/**
- * Adds a new field to a table.
- */
-stock void SQL_AddColumn(Handle db_connection, const char[] table_name, const char[] column_info) {
-    char buffer[1024];
-    Format(buffer, sizeof(buffer), "ALTER TABLE %s ADD COLUMN %s", table_name, column_info);
-    if (!SQL_FastQuery(db_connection, buffer)) {
-        char err[255];
-        SQL_GetError(db_connection, err, sizeof(err));
-        if (StrContains(err, "Duplicate column name", false) == -1) {
-            LogError(err);
-        }
-    }
-}
-
-/**
- * Sets the primary key for a table.
- */
-stock void SQL_UpdatePrimaryKey(Handle db_connection, const char[] table_name, const char[] primary_key) {
-    char buffer[1024];
-    Format(buffer, sizeof(buffer), "ALTER TABLE %s DROP PRIMARY KEY, ADD PRIMARY KEY (%s)", table_name, primary_key);
-    if (!SQL_FastQuery(db_connection, buffer)) {
-        char err[255];
-        SQL_GetError(db_connection, err, sizeof(err));
-        LogError(err);
-    }
 }
 
 /**

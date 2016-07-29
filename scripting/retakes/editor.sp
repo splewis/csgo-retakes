@@ -206,3 +206,10 @@ public void DeleteMapSpawns() {
     g_NumSpawns = 0;
     Retakes_MessageToAll("All spawns for this map have been deleted");
 }
+
+public void MoveToSpawnInEditor(int client, int spawnIndex) {
+    TeleportEntity(client, g_SpawnPoints[spawnIndex], g_SpawnAngles[spawnIndex], NULL_VECTOR);
+    Retakes_Message(client, "Teleporting to spawn {GREEN}%d", spawnIndex);
+    Retakes_Message(client, "   Team: {MOSS_GREEN}%s", TEAMSTRING(g_SpawnTeams[spawnIndex]));
+    Retakes_Message(client, "   Site: {MOSS_GREEN}%s", SITESTRING(g_SpawnSites[spawnIndex]));
+}

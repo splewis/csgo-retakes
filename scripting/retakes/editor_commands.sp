@@ -53,6 +53,7 @@ public Action Command_AddSpawn(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     char arg1[32];
@@ -97,6 +98,7 @@ public Action Command_Show(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     char arg[32];
@@ -117,6 +119,7 @@ public Action Command_DeleteSpawn(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     DeleteClosestSpawn(client);
@@ -141,6 +144,7 @@ public Action Command_IterateSpawns(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     int startIndex = 0;
@@ -152,7 +156,7 @@ public Action Command_IterateSpawns(int client, int args) {
     DataPack pack = new DataPack();
     pack.WriteCell(GetClientSerial(client));
     pack.WriteCell(startIndex);
-    CreateTimer(2.0, Timer_IterateSpawns, pack);
+    CreateDataTimer(2.0, Timer_IterateSpawns, pack);
     return Plugin_Handled;
 }
 
@@ -162,12 +166,11 @@ public Action Timer_IterateSpawns(Handle timer, Handle data) {
     int serial = pack.ReadCell();
     int spawnIndex = pack.ReadCell();
     int client = GetClientFromSerial(serial);
-    delete pack;
 
     if (!IsPlayer(client))
         return Plugin_Handled;
 
-    FakeClientCommand(client, "sm_goto %d", spawnIndex);
+    MoveToSpawnInEditor(client, spawnIndex);
 
     spawnIndex++;
     while (g_SpawnDeleted[spawnIndex] && spawnIndex < g_NumSpawns) {
@@ -178,7 +181,7 @@ public Action Timer_IterateSpawns(Handle timer, Handle data) {
         pack = new DataPack();
         pack.WriteCell(serial);
         pack.WriteCell(spawnIndex);
-        CreateTimer(2.0, Timer_IterateSpawns, pack);
+        CreateDataTimer(2.0, Timer_IterateSpawns, pack);
     }
 
     return Plugin_Handled;
@@ -192,16 +195,14 @@ public Action Command_GotoSpawn(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     char buffer[32];
     if (args >= 1 && GetCmdArg(1, buffer, sizeof(buffer))) {
         int spawn = StringToInt(buffer);
         if (IsValidSpawn(spawn)) {
-            Retakes_Message(client, "Teleporting to spawn {GREEN}%d", spawn);
-            Retakes_Message(client, "   Team: {MOSS_GREEN}%s", TEAMSTRING(g_SpawnTeams[spawn]));
-            Retakes_Message(client, "   Site: {MOSS_GREEN}%s", SITESTRING(g_SpawnSites[spawn]));
-            MoveToSpawn(client, spawn);
+            MoveToSpawnInEditor(client, spawn);
         }
     }
 
@@ -216,14 +217,12 @@ public Action Command_GotoNearestSpawn(int client, int args) {
 
     if (!g_EditMode) {
         Retakes_Message(client, "You are not in edit mode.");
+        return Plugin_Handled;
     }
 
     int spawn = FindClosestSpawn(client);
     if (IsValidSpawn(spawn)) {
-        Retakes_Message(client, "Teleporting to spawn {GREEN}%d", spawn);
-        Retakes_Message(client, "   Team: {MOSS_GREEN}%s", TEAMSTRING(g_SpawnTeams[spawn]));
-        Retakes_Message(client, "   Site: {MOSS_GREEN}%s", SITESTRING(g_SpawnSites[spawn]));
-        MoveToSpawn(client, spawn);
+        MoveToSpawnInEditor(client, spawn);
     }
 
     return Plugin_Handled;
