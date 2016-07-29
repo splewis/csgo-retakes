@@ -99,7 +99,6 @@ bool g_PlayerHelmet[MAXPLAYERS+1];
 bool g_PlayerKit[MAXPLAYERS+1];
 
 /** Per-round information about the player setup **/
-bool g_bombPlantSignal = false;
 bool g_bombPlanted = false;
 int g_BombOwner = -1;
 int g_NumCT = 0;
@@ -241,7 +240,6 @@ public void OnMapStart() {
     g_RoundSpawnsDecided = false;
 
     g_bombPlanted = false;
-    g_bombPlantSignal = false;
 
     FindSites();
     g_NumSpawns = ParseSpawns();
@@ -545,7 +543,6 @@ public Action Event_BombPlant(Handle event, const char[] name, bool dontBroadcas
     }
 
     g_bombPlanted = true;
-    g_bombPlantSignal = false;
 }
 
 /**

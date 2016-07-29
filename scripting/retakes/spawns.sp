@@ -184,7 +184,6 @@ public void GiveWeapons(int client) {
     }
 
     if (g_BombOwner == client) {
-        g_bombPlantSignal = false;
         GivePlayerItem(client, "weapon_c4");
         CreateTimer(1.0, Timer_StartPlant, client);
     }
@@ -192,7 +191,7 @@ public void GiveWeapons(int client) {
 
 public Action Timer_StartPlant(Handle timer, int client) {
     if (IsPlayer(client)) {
-        g_bombPlantSignal = true;
+        ClientCommand(client, "slot5");
     }
 }
 
@@ -217,18 +216,6 @@ public bool InsideBombSite(float vec[3]) {
 
 public bool SpawnInsideBombSite(int spawnIndex) {
     return InsideBombSite(g_SpawnPoints[spawnIndex]);
-}
-
-public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3], float angles[3],
-                             int& weapon, int& subtype, int& cmdnum, int& tickcount, int& seed, int mouse[2]) {
-    // Forces the player to get the bomb out on their spawn.
-    // The signal is fired by a timer after the bomb-carrier's spawn.
-    if (g_bombPlantSignal && !g_bombPlanted && client == g_BombOwner) {
-        buttons |= IN_USE;
-        g_bombPlantSignal = false;
-    }
-
-    return Plugin_Continue;
 }
 
 public bool CanBombCarrierSpawn(int spawn) {
