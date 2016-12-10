@@ -1,0 +1,39 @@
+"Phrases"
+{
+	"JoinedQueueMessage"
+	{
+		"chi"			"您已被放置在等待队列中。"
+	}
+	"WaitingQueueMessage"
+	{
+		"chi"			"本回合比赛的位置已满，共有{GREEN}{1}{NORMAL}名玩家。您当前在等待列表中。"
+	}
+	"RetakeSiteMessage"
+	{
+		"chi"			"残局{GREEN}{1}：{LIGHT_RED}{2}名恐怖分子 {NORMAL}对战 {PURPLE}{3}名反恐精英"
+	}
+	"ScrambleMessage"
+	{
+		"chi"			"恐怖分子连胜了{GREEN}{1}{NORMAL}回合。{PURPLE}正在给队伍增加困难度!"
+	}
+	"WinStreakAlmostToScramble"
+	{
+		"chi"			"恐怖分子连胜了{GREEN}{1}{NORMAL}回合 —— 如果他们赢了{GREEN}{2}，{PURPLE}之后将会给队伍增加困难度。"
+	}
+	"WinStreak"
+	{
+		"chi"			"恐怖分子连胜了{GREEN}{1}{NORMAL}回合！"
+	}
+	"WinStreakOver"
+	{
+		"chi"			"反恐精英结束了{GREEN}{1}{NORMAL}——多个回合获得胜利！"
+	}
+	"AdminScrambleTeams"
+	{
+		"chi"			"{1}已经设置了下一回合的队伍成员名单。"
+	}
+	"FailedToPlant"
+	{
+		"chi"		"{PURPLE}{1}{NORMAL}未能安放炸弹......"
+	}
+}
