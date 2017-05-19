@@ -123,6 +123,7 @@ public void WriteSpawns() {
     char configFile[PLATFORM_MAX_PATH];
     GetConfigFileName(configFile, sizeof(configFile));
 
+    DeleteFile(configFile);
     kv.Rewind();
     kv.ExportToFile(configFile);
     delete kv;
