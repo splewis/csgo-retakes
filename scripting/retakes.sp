@@ -68,6 +68,7 @@ bool g_DirtySpawns = false; // whether the spawns have been edited since loading
 bool g_ScrambleSignal = false;
 int g_WinStreak = 0;
 int g_RoundCount = 0;
+bool g_LastRoundSignal = false;
 
 /** Stored info from the spawns config file **/
 #define MAX_SPAWNS 256
@@ -204,6 +205,7 @@ public void OnPluginStart() {
     HookEvent("bomb_exploded", Event_Bomb);
     HookEvent("bomb_defused", Event_Bomb);
     HookEvent("round_end", Event_RoundEnd);
+    HookEvent("round_announce_last_round_half", Event_LastRoundOfHalf);
 
     g_hOnGunsCommand = CreateGlobalForward("Retakes_OnGunsCommand", ET_Ignore, Param_Cell);
     g_hOnPostRoundEnqueue = CreateGlobalForward("Retakes_OnPostRoundEnqueue", ET_Ignore, Param_Cell);
@@ -239,6 +241,7 @@ public void OnMapStart() {
     g_WinStreak = 0;
     g_RoundCount = 0;
     g_RoundSpawnsDecided = false;
+    g_LastRoundSignal = false;
 
     g_bombPlanted = false;
     g_bombPlantSignal = false;
@@ -661,6 +664,12 @@ public Action Event_RoundEnd(Handle event, const char[] name, bool dontBroadcast
     }
 }
 
+public Action Event_LastRoundOfHalf(Handle event, const char[] name, bool dontBroadcast) {
+    if (!Retakes_Live()) {
+        return;
+    }
+    g_LastRoundSignal = (FindConVar("mp_halftime").IntValue != 0);
+}
 
 
 /***********************
@@ -763,13 +772,16 @@ public void UpdateTeams() {
             }
         }
     } else {
-        // Use the already set teams
+        // Use the already set teams, unless g_LastRoundSignal and we need a halftime swap.
         for (int i = 1; i <= MaxClients; i++) {
             if (IsValidClient(i)) {
-                if (GetClientTeam(i) == CS_TEAM_CT)
+                bool ct = GetClientTeam(i) == CS_TEAM_CT;
+                bool t = GetClientTeam(i) == CS_TEAM_T;
+                if (ct || (t && g_LastRoundSignal)) {
                     cts.Push(i);
-                else if (GetClientTeam(i) == CS_TEAM_T)
+                } else if (t || (ct && g_LastRoundSignal)) {
                     ts.Push(i);
+                }
             }
         }
         g_NumCT = cts.Length;
