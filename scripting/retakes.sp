@@ -777,9 +777,9 @@ public void UpdateTeams() {
             if (IsValidClient(i)) {
                 bool ct = GetClientTeam(i) == CS_TEAM_CT;
                 bool t = GetClientTeam(i) == CS_TEAM_T;
-                if (ct || (t && g_LastRoundSignal)) {
+                if ((ct && !g_LastRoundSignal) || (t && g_LastRoundSignal)) {
                     cts.Push(i);
-                } else if (t || (ct && g_LastRoundSignal)) {
+                } else if ((t && !g_LastRoundSignal) || (ct && g_LastRoundSignal)) {
                     ts.Push(i);
                 }
             }
