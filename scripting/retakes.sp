@@ -703,6 +703,10 @@ public void RoundEndUpdates() {
         }
     }
 
+    if (g_hAutoTeamsCvar.IntValue == 0) {
+        PQ_Clear(g_hRankingQueue);
+    }
+
     Call_StartForward(g_hOnPostRoundEnqueue);
     Call_PushCell(g_hRankingQueue);
     Call_Finish();
