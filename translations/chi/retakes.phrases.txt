@@ -14,11 +14,11 @@
 	}
 	"ScrambleMessage"
 	{
-		"chi"			"恐怖分子已经获得了{GREEN}{1}{NORMAL}回合的胜利。{PURPLE}队伍已被打乱！"
+		"chi"			"恐怖分子已经获得了{GREEN}{1}{NORMAL}回合的胜利。{PURPLE}已随机重组队伍！"
 	}
 	"WinStreakAlmostToScramble"
 	{
-		"chi"			"恐怖分子已经获得了{GREEN}{1}{NORMAL}回合的胜利 —— 如果他们再次以{GREEN}{2}{PURPLE}人组合赢得本回合，那么队伍将会被打乱。"
+		"chi"			"恐怖分子已经获得了{GREEN}{1}{NORMAL}回合的胜利 —— 如果他们再次以{GREEN}{2}{PURPLE}人组合赢得本回合，那么将会随机重组队伍。"
 	}
 	"WinStreak"
 	{
