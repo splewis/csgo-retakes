@@ -47,7 +47,7 @@ forward void Retakes_OnPreRoundEnqueue(Handle rankingQueue, Handle waitingQueue)
  * (rather than using the Retakes_SetRoundPoints native)
  *
  * @param rankingQueue a priority queue (see include/priorityqueue.inc)
- * @param waitingQueue a priority queue (see include/priorityqueue.inc)
+ * @param waitingQueue a queue of the players waiting to join (see include/queue.inc)
  * @noreturn
  */
 forward void Retakes_OnPostRoundEnqueue(Handle rankingQueue, Handle waitingQueue);
