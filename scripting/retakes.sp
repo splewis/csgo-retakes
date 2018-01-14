@@ -208,7 +208,7 @@ public void OnPluginStart() {
     HookEvent("announce_phase_end", Event_HalfTime);
 
     g_hOnGunsCommand = CreateGlobalForward("Retakes_OnGunsCommand", ET_Ignore, Param_Cell);
-    g_hOnPostRoundEnqueue = CreateGlobalForward("Retakes_OnPostRoundEnqueue", ET_Ignore, Param_Cell);
+    g_hOnPostRoundEnqueue = CreateGlobalForward("Retakes_OnPostRoundEnqueue", ET_Ignore, Param_Cell, Param_Cell);
     g_hOnPreRoundEnqueue = CreateGlobalForward("Retakes_OnPreRoundEnqueue", ET_Ignore, Param_Cell, Param_Cell);
     g_hOnTeamSizesSet = CreateGlobalForward("Retakes_OnTeamSizesSet", ET_Ignore, Param_CellByRef, Param_CellByRef);
     g_hOnTeamsSet = CreateGlobalForward("Retakes_OnTeamsSet", ET_Ignore, Param_Cell, Param_Cell, Param_Cell);
@@ -709,6 +709,7 @@ public void RoundEndUpdates() {
 
     Call_StartForward(g_hOnPostRoundEnqueue);
     Call_PushCell(g_hRankingQueue);
+    Call_PushCell(g_hWaitingQueue);
     Call_Finish();
 }
 
