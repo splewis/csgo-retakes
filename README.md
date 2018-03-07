@@ -6,7 +6,7 @@ csgo-retakes
 
 This is a CS:GO [Sourcemod](http://www.sourcemod.net) plugin that creates a competitive-minded gamemode called retakes. The idea is that the T players spawn in a bombsite with the bomb, while the CT spawn on rotation routes and try to retake the site and defuse the bomb.
 
-**Note that this plugin is currently in beta.**
+**Status: Maintained. Not actively developed.**
 
 
 ## For plugin developers
