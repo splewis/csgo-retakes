@@ -26,7 +26,7 @@
 	}
 	"WinStreakOver"
 	{
-		"hu"			"TEk megállították a {GREEN}{1}{NORMAL} kör hosszú győzelem sorozatot!"
+		"hu"			"TE-k megállították a {GREEN}{1}{NORMAL} kör hosszú győzelem sorozatot!"
 	}
 	"AdminScrambleTeams"
 	{
@@ -34,6 +34,6 @@
 	}
 	"FailedToPlant"
 	{
-		"hu"		"{PURPLE}{1} {NORMAL}nem rakta le a bombát..."
+		"hu"			"{PURPLE}{1} {NORMAL}nem rakta le a bombát..."
 	}
 }
