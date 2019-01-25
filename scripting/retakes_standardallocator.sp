@@ -9,9 +9,11 @@
 
 #define MENU_TIME_LENGTH 15
 
-bool g_SilencedM4[MAXPLAYERS+1];
+char g_CTRifleChoice[MAXPLAYERS+1][WEAPON_STRING_LENGTH];
+char g_TRifleChoice[MAXPLAYERS+1][WEAPON_STRING_LENGTH];
 bool g_AwpChoice[MAXPLAYERS+1];
-Handle g_hM4ChoiceCookie = INVALID_HANDLE;
+Handle g_hCTRifleChoiceCookie = INVALID_HANDLE;
+Handle g_hTRifleChoiceCookie = INVALID_HANDLE;
 Handle g_hAwpChoiceCookie = INVALID_HANDLE;
 
 public Plugin myinfo = {
@@ -23,12 +25,14 @@ public Plugin myinfo = {
 };
 
 public void OnPluginStart() {
-    g_hM4ChoiceCookie = RegClientCookie("retakes_m4choice", "", CookieAccess_Private);
+    g_hCTRifleChoiceCookie = RegClientCookie("retakes_ctriflechoice", "", CookieAccess_Private);
+    g_hTRifleChoiceCookie = RegClientCookie("retakes_triflechoice", "", CookieAccess_Private);
     g_hAwpChoiceCookie = RegClientCookie("retakes_awpchoice", "", CookieAccess_Private);
 }
 
 public void OnClientConnected(int client) {
-    g_SilencedM4[client] = false;
+    g_CTRifleChoice[client] = "m4a1";
+    g_TRifleChoice[client] = "ak47";
     g_AwpChoice[client] = false;
 }
 
@@ -46,8 +50,12 @@ public void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, 
 public void OnClientCookiesCached(int client) {
     if (IsFakeClient(client))
         return;
-
-    g_SilencedM4[client] = GetCookieBool(client, g_hM4ChoiceCookie);
+    char ctrifle[WEAPON_STRING_LENGTH];
+    char trifle[WEAPON_STRING_LENGTH];
+    GetClientCookie(client, g_hCTRifleChoiceCookie, ctrifle, sizeof(ctrifle));
+    GetClientCookie(client, g_hTRifleChoiceCookie, trifle, sizeof(trifle));
+    g_CTRifleChoice[client] = ctrifle;
+    g_TRifleChoice[client] = trifle;
     g_AwpChoice[client] = GetCookieBool(client, g_hAwpChoiceCookie);
 }
 
@@ -82,6 +90,8 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         if (giveTAwp && g_AwpChoice[client]) {
             primary = "weapon_awp";
             giveTAwp = false;
+        } else if(StrEqual(g_TRifleChoice[client], "sg556", true)) {
+            primary = "weapon_sg556";
         } else {
             primary = "weapon_ak47";
         }
@@ -102,10 +112,12 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         if (giveCTAwp && g_AwpChoice[client]) {
             primary = "weapon_awp";
             giveCTAwp = false;
-        } else if (g_SilencedM4[client]) {
+        } else if (StrEqual(g_CTRifleChoice[client], "m4a1_silencer", true)) {
             primary = "weapon_m4a1_silencer";
-        } else {
+        } else if (StrEqual(g_CTRifleChoice[client], "m4a1", true)) {
             primary = "weapon_m4a1";
+        } else {
+            primary = "weapon_aug";
         }
 
         secondary = "weapon_hkp2000";
@@ -120,19 +132,42 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 }
 
 public void GiveWeaponsMenu(int client) {
-    Handle menu = CreateMenu(MenuHandler_M4);
+    Handle menu = CreateMenu(MenuHandler_CTRifle);
     SetMenuTitle(menu, "Select a CT rifle:");
-    AddMenuBool(menu, false, "M4A4");
-    AddMenuBool(menu, true, "M4A1-S");
+    AddMenuItem(menu, "m4a1", "M4A4");
+    AddMenuItem(menu, "m4a1_silencer", "M4A1-S");
+    AddMenuItem(menu, "aug", "AUG");
     DisplayMenu(menu, client, MENU_TIME_LENGTH);
 }
 
-public int MenuHandler_M4(Handle menu, MenuAction action, int param1, int param2) {
+public int MenuHandler_CTRifle(Handle menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         int client = param1;
-        bool useSilenced = GetMenuBool(menu, param2);
-        g_SilencedM4[client] = useSilenced;
-        SetCookieBool(client, g_hM4ChoiceCookie, useSilenced);
+        char choice[WEAPON_STRING_LENGTH];
+        GetMenuItem(menu, param2, choice, sizeof(choice));
+        g_CTRifleChoice[client] = choice;
+        SetClientCookie(client, g_hCTRifleChoiceCookie, choice);
+        TRifleMenu(client);
+    } else if (action == MenuAction_End) {
+        CloseHandle(menu);
+    }
+}
+
+public void TRifleMenu(int client) {
+    Handle menu = CreateMenu(MenuHandler_TRifle);
+    SetMenuTitle(menu, "Select a T rifle:");
+    AddMenuItem(menu, "ak47", "AK-47");
+    AddMenuItem(menu, "sg556", "SG-556");
+    DisplayMenu(menu, client, MENU_TIME_LENGTH);
+}
+
+public int MenuHandler_TRifle(Handle menu, MenuAction action, int param1, int param2) {
+    if (action == MenuAction_Select) {
+        int client = param1;
+        char choice[WEAPON_STRING_LENGTH];
+        GetMenuItem(menu, param2, choice, sizeof(choice));
+        g_TRifleChoice[client] = choice;
+        SetClientCookie(client, g_hTRifleChoiceCookie, choice);
         GiveAwpMenu(client);
     } else if (action == MenuAction_End) {
         CloseHandle(menu);
