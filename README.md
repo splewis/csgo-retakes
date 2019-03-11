@@ -29,7 +29,7 @@ You may download the [latest development build](http://ci.splewis.net/job/csgo-r
 
 #### Requirements
 
-**Only Sourcemod 1.7 or later is supported.** Releases are compiled using a 1.8 compiler and will not work on a server using a sourcemod version earlier than 1.7.
+**Only Sourcemod 1.9 or later is supported.**
 
 #### Instructions
 Download the archive and extract the files to the game server. From the download, you should have installed the following (to the ``csgo`` directory):
