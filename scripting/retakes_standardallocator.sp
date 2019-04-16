@@ -12,9 +12,9 @@
 char g_CTRifleChoice[MAXPLAYERS+1][WEAPON_STRING_LENGTH];
 char g_TRifleChoice[MAXPLAYERS+1][WEAPON_STRING_LENGTH];
 bool g_AwpChoice[MAXPLAYERS+1];
-Handle g_hCTRifleChoiceCookie = INVALID_HANDLE;
-Handle g_hTRifleChoiceCookie = INVALID_HANDLE;
-Handle g_hAwpChoiceCookie = INVALID_HANDLE;
+Handle g_hCTRifleChoiceCookie;
+Handle g_hTRifleChoiceCookie;
+Handle g_hAwpChoiceCookie;
 
 public Plugin myinfo = {
     name = "CS:GO Retakes: standard weapon allocator",
@@ -70,8 +70,8 @@ static void SetNades(char nades[NADE_STRING_LENGTH]) {
 }
 
 public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) {
-    int tCount = GetArraySize(tPlayers);
-    int ctCount = GetArraySize(ctPlayers);
+    int tCount = tPlayers.Length;
+    int ctCount = ctPlayers.Length;
 
     char primary[WEAPON_STRING_LENGTH];
     char secondary[WEAPON_STRING_LENGTH];
@@ -85,7 +85,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     bool giveCTAwp = true;
 
     for (int i = 0; i < tCount; i++) {
-        int client = GetArrayCell(tPlayers, i);
+        int client = tPlayers.Get(i);
 
         if (giveTAwp && g_AwpChoice[client]) {
             primary = "weapon_awp";
@@ -107,7 +107,7 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     }
 
     for (int i = 0; i < ctCount; i++) {
-        int client = GetArrayCell(ctPlayers, i);
+        int client = ctPlayers.Get(i);
 
         if (giveCTAwp && g_AwpChoice[client]) {
             primary = "weapon_awp";
@@ -132,63 +132,63 @@ public void WeaponAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 }
 
 public void GiveWeaponsMenu(int client) {
-    Handle menu = CreateMenu(MenuHandler_CTRifle);
-    SetMenuTitle(menu, "Select a CT rifle:");
-    AddMenuItem(menu, "m4a1", "M4A4");
-    AddMenuItem(menu, "m4a1_silencer", "M4A1-S");
-    AddMenuItem(menu, "aug", "AUG");
-    DisplayMenu(menu, client, MENU_TIME_LENGTH);
+    Menu menu = new Menu(MenuHandler_CTRifle);
+    menu.SetTitle("Select a CT rifle:");
+    menu.AddItem("m4a1", "M4A4");
+    menu.AddItem("m4a1_silencer", "M4A1-S");
+    menu.AddItem("aug", "AUG");
+    menu.Display(client, MENU_TIME_LENGTH);
 }
 
-public int MenuHandler_CTRifle(Handle menu, MenuAction action, int param1, int param2) {
+public int MenuHandler_CTRifle(Menu menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         int client = param1;
         char choice[WEAPON_STRING_LENGTH];
-        GetMenuItem(menu, param2, choice, sizeof(choice));
+        menu.GetItem(param2, choice, sizeof(choice));
         g_CTRifleChoice[client] = choice;
         SetClientCookie(client, g_hCTRifleChoiceCookie, choice);
         TRifleMenu(client);
     } else if (action == MenuAction_End) {
-        CloseHandle(menu);
+        delete menu;
     }
 }
 
 public void TRifleMenu(int client) {
-    Handle menu = CreateMenu(MenuHandler_TRifle);
-    SetMenuTitle(menu, "Select a T rifle:");
-    AddMenuItem(menu, "ak47", "AK-47");
-    AddMenuItem(menu, "sg556", "SG-556");
-    DisplayMenu(menu, client, MENU_TIME_LENGTH);
+    Menu menu = new Menu(MenuHandler_TRifle);
+    menu.SetTitle("Select a T rifle:");
+    menu.AddItem("ak47", "AK-47");
+    menu.AddItem("sg556", "SG-556");
+    menu.Display(client, MENU_TIME_LENGTH);
 }
 
-public int MenuHandler_TRifle(Handle menu, MenuAction action, int param1, int param2) {
+public int MenuHandler_TRifle(Menu menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         int client = param1;
         char choice[WEAPON_STRING_LENGTH];
-        GetMenuItem(menu, param2, choice, sizeof(choice));
+        menu.GetItem(param2, choice, sizeof(choice));
         g_TRifleChoice[client] = choice;
         SetClientCookie(client, g_hTRifleChoiceCookie, choice);
         GiveAwpMenu(client);
     } else if (action == MenuAction_End) {
-        CloseHandle(menu);
+        delete menu;
     }
 }
 
 public void GiveAwpMenu(int client) {
-    Handle menu = CreateMenu(MenuHandler_AWP);
-    SetMenuTitle(menu, "Allow yourself to receive AWPs?");
+    Menu menu = new Menu(MenuHandler_AWP);
+    menu.SetTitle("Allow yourself to receive AWPs?");
     AddMenuBool(menu, true, "Yes");
     AddMenuBool(menu, false, "No");
-    DisplayMenu(menu, client, MENU_TIME_LENGTH);
+    menu.Display(client, MENU_TIME_LENGTH);
 }
 
-public int MenuHandler_AWP(Handle menu, MenuAction action, int param1, int param2) {
+public int MenuHandler_AWP(Menu menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         int client = param1;
         bool allowAwps = GetMenuBool(menu, param2);
         g_AwpChoice[client] = allowAwps;
         SetCookieBool(client, g_hAwpChoiceCookie, allowAwps);
     } else if (action == MenuAction_End) {
-        CloseHandle(menu);
+        delete menu;
     }
 }

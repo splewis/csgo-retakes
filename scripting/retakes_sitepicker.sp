@@ -41,7 +41,7 @@ public Action Command_Site(int client, int args) {
     }
 }
 
-public void Retakes_OnSitePicked(Bombsite& site) {
+public void Retakes_OnSitePicked(Bombsite &site) {
     if (g_forceSite) {
         site = g_pickedSite;
     }

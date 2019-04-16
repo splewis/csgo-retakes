@@ -12,9 +12,9 @@ stock void GiveEditorMenu(int client, int menuPosition=-1) {
     AddMenuOption(menu, "reload_spawns", "Reload map spawns (discard current changes)");
 
     if (menuPosition == -1) {
-        DisplayMenu(menu, client, MENU_TIME_FOREVER);
+        menu.Display(client, MENU_TIME_FOREVER);
     } else {
-        DisplayMenuAtItem(menu, client, menuPosition, MENU_TIME_FOREVER);
+        menu.DisplayAt(client, menuPosition, MENU_TIME_FOREVER);
     }
 }
 
@@ -22,7 +22,7 @@ public int EditorMenuHandler(Menu menu, MenuAction action, int param1, int param
     if (action == MenuAction_Select) {
         int client = param1;
         char choice[64];
-        GetMenuItem(menu, param2, choice, sizeof(choice));
+        menu.GetItem(param2, choice, sizeof(choice));
         int menuPosition = GetMenuSelectionPosition();
 
         if (StrEqual(choice, "end_edit")) {
@@ -94,14 +94,14 @@ public void GiveNewSpawnMenu(int client) {
     menu.ExitButton = false;
     menu.ExitBackButton = true;
 
-    DisplayMenu(menu, client, MENU_TIME_FOREVER);
+    menu.Display(client, MENU_TIME_FOREVER);
 }
 
 public int GiveNewSpawnMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
     if (action == MenuAction_Select) {
         int client = param1;
         char choice[64];
-        GetMenuItem(menu, param2, choice, sizeof(choice));
+        menu.GetItem(param2, choice, sizeof(choice));
         if (StrEqual(choice, "finish")) {
             AddSpawn(client);
             GiveNewSpawnMenu(client);
