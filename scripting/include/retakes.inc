@@ -58,7 +58,7 @@ forward void Retakes_OnPostRoundEnqueue(ArrayList rankingQueue, ArrayList waitin
  * @param site which bombsite the round will use
  * @noreturn
  */
-forward void Retakes_OnSitePicked(Bombsite &site);
+forward void Retakes_OnSitePicked(Bombsite& site);
 
 /**
  * Called when the team sizes are set for the round.
@@ -67,7 +67,7 @@ forward void Retakes_OnSitePicked(Bombsite &site);
  * @param ctcount the number of counter-terrorists that will play the round
  * @noreturn
  */
-forward void Retakes_OnTeamSizesSet(int &tCount, int &ctCount);
+forward void Retakes_OnTeamSizesSet(int& tCount, int& ctCount);
 
 /**
  * Called when a player fails to plant the bomb when he spawned with it.
@@ -199,10 +199,10 @@ native void Retakes_GetPlayerInfo(int client,
                                   char primary[WEAPON_STRING_LENGTH],
                                   char secondary[WEAPON_STRING_LENGTH],
                                   char nades[NADE_STRING_LENGTH],
-                                  int &health,
-                                  int &armor,
-                                  bool &helmet,
-                                  bool &kit);
+                                  int& health,
+                                  int& armor,
+                                  bool& helmet,
+                                  bool& kit);
 
 /**
  * Returns the total number of live rounds played on the current map.
