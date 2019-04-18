@@ -2,8 +2,8 @@
 #define CVAR_VALUE_MAX_LENGTH 255
 
 // Returns a cvar Handle that can be used to restore cvars.
-stock Handle SaveCvars(ArrayList cvarNames) {
-    ArrayList storageList = CreateArray();
+stock ArrayList SaveCvars(ArrayList cvarNames) {
+    ArrayList storageList = new ArrayList();
     ArrayList cvarNameList = new ArrayList(CVAR_NAME_MAX_LENGTH);
     ArrayList cvarValueList = new ArrayList(CVAR_VALUE_MAX_LENGTH);
 
@@ -12,9 +12,9 @@ stock Handle SaveCvars(ArrayList cvarNames) {
     for (int i = 0; cvarNames != null && i < cvarNames.Length; i++) {
         cvarNames.GetString(i, nameBuffer, sizeof(nameBuffer));
 
-        Handle cvar = FindConVar(nameBuffer);
-        if (cvar != INVALID_HANDLE) {
-            GetConVarString(cvar, valueBuffer, sizeof(valueBuffer));
+        ConVar cvar = FindConVar(nameBuffer);
+        if (cvar != null) {
+            cvar.GetString(valueBuffer, sizeof(valueBuffer));
             cvarNameList.PushString(nameBuffer);
             cvarValueList.PushString(valueBuffer);
         }
@@ -27,9 +27,9 @@ stock Handle SaveCvars(ArrayList cvarNames) {
 }
 
 // Restores cvars to their previous value using a return value of SaveCvars.
-stock void RestoreCvars(Handle& cvarStorage, bool close=false) {
-    ArrayList cvarNameList = view_as<ArrayList>(GetArrayCell(cvarStorage, 0));
-    ArrayList cvarValueList = view_as<ArrayList>(GetArrayCell(cvarStorage, 1));
+stock void RestoreCvars(ArrayList &cvarStorage, bool close=false) {
+    ArrayList cvarNameList = view_as<ArrayList>(cvarStorage.Get(0));
+    ArrayList cvarValueList = view_as<ArrayList>(cvarStorage.Get(1));
 
     char name[CVAR_NAME_MAX_LENGTH];
     char value[CVAR_VALUE_MAX_LENGTH];
@@ -37,9 +37,9 @@ stock void RestoreCvars(Handle& cvarStorage, bool close=false) {
         cvarNameList.GetString(i, name, sizeof(name));
         cvarValueList.GetString(i, value, sizeof(value));
 
-        Handle cvar = FindConVar(name);
-        if (cvar != INVALID_HANDLE) {
-            SetConVarString(cvar, value);
+        ConVar cvar = FindConVar(name);
+        if (cvar != null) {
+            cvar.SetString(value);
         }
     }
 
@@ -49,11 +49,11 @@ stock void RestoreCvars(Handle& cvarStorage, bool close=false) {
 }
 
 // Closes a cvar storage object returned by SaveCvars.
-stock void CloseCvarStorage(Handle& cvarStorage) {
-    CloseHandle(GetArrayCell(cvarStorage, 0));
-    CloseHandle(GetArrayCell(cvarStorage, 1));
-    CloseHandle(cvarStorage);
-    cvarStorage = INVALID_HANDLE;
+stock void CloseCvarStorage(ArrayList &cvarStorage) {
+    delete view_as<Handle>(cvarStorage.Get(0));
+    delete view_as<Handle>(cvarStorage.Get(1));
+    delete cvarStorage;
+    cvarStorage = null;
 }
 
 // Returns the first "word" in a line, as seperated by whitespace.
@@ -80,7 +80,7 @@ stock bool __firstWord(const char[] line, char[] buffer, int len) {
 
 // Wrapper for SetCvars from an arbitrary file.
 // Returns if successful.
-stock Handle ExecuteAndSaveCvars(const char[] cfgFile) {
+stock ArrayList ExecuteAndSaveCvars(const char[] cfgFile) {
     char lineBuffer[CVAR_NAME_MAX_LENGTH + CVAR_VALUE_MAX_LENGTH];
     char nameBuffer[CVAR_NAME_MAX_LENGTH];
 
@@ -98,13 +98,13 @@ stock Handle ExecuteAndSaveCvars(const char[] cfgFile) {
             }
         }
 
-        Handle ret = SaveCvars(nameList);
+        ArrayList ret = SaveCvars(nameList);
         ServerCommand("exec %s", cfgFile);
         delete nameList;
         delete file;
         return ret;
     } else {
         LogError("Failed to open file for reading: %s", filePath);
-        return INVALID_HANDLE;
+        return null;
     }
 }

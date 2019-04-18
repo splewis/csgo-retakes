@@ -8,6 +8,7 @@
 
 #include <cstrike>
 #include <smlib>
+#include <clientprefs>
 
 char g_ColorNames[][] = {"{NORMAL}", "{DARK_RED}", "{PURPLE}", "{GREEN}", "{MOSS_GREEN}", "{LIGHT_GREEN}", "{LIGHT_RED}", "{GRAY}", "{ORANGE}", "{LIGHT_BLUE}", "{DARK_BLUE}", "{PURPLE}"};
 char g_ColorCodes[][] =    {"\x01",     "\x02",      "\x03",   "\x04",         "\x05",     "\x06",          "\x07",        "\x08",   "\x09",     "\x0B",         "\x0C",        "\x0E"};
@@ -103,13 +104,13 @@ stock bool IsPlayer(int client) {
     return IsValidClient(client) && !IsFakeClient(client);
 }
 
-stock void AddMenuOption(Menu menu, const char[] info, const char[] display, any:...) {
+stock void AddMenuOption(Menu menu, const char[] info, const char[] display, any ...) {
     char formattedDisplay[128];
     VFormat(formattedDisplay, sizeof(formattedDisplay), display, 4);
     menu.AddItem(info, formattedDisplay);
 }
 
-stock void AddMenuOptionDisabled(Menu menu, const char[] info, const char[] display, any:...) {
+stock void AddMenuOptionDisabled(Menu menu, const char[] info, const char[] display, any ...) {
     char formattedDisplay[128];
     VFormat(formattedDisplay, sizeof(formattedDisplay), display, 4);
     menu.AddItem(info, formattedDisplay, ITEMDRAW_DISABLED);
@@ -118,34 +119,34 @@ stock void AddMenuOptionDisabled(Menu menu, const char[] info, const char[] disp
 /**
  * Adds an integer to a menu as a string choice.
  */
-stock void AddMenuInt(Handle menu, int value, const char[] display) {
+stock void AddMenuInt(Menu menu, int value, const char[] display) {
     char buffer[INTEGER_STRING_LENGTH];
     IntToString(value, buffer, sizeof(buffer));
-    AddMenuItem(menu, buffer, display);
+    menu.AddItem(buffer, display);
 }
 
 /**
  * Adds an integer to a menu as a string choice with the integer as the display.
  */
-stock void AddMenuInt2(Handle menu, int value) {
+stock void AddMenuInt2(Menu menu, int value) {
     char buffer[INTEGER_STRING_LENGTH];
     IntToString(value, buffer, sizeof(buffer));
-    AddMenuItem(menu, buffer, buffer);
+    menu.AddItem(buffer, buffer);
 }
 
 /**
  * Gets an integer to a menu from a string choice.
  */
-stock int GetMenuInt(Handle menu, int param2) {
+stock int GetMenuInt(Menu menu, int param2) {
     char choice[INTEGER_STRING_LENGTH];
-    GetMenuItem(menu, param2, choice, sizeof(choice));
+    menu.GetItem(param2, choice, sizeof(choice));
     return StringToInt(choice);
 }
 
 /**
  * Adds a boolean to a menu as a string choice.
  */
-stock void AddMenuBool(Handle menu, bool value, const char[] display) {
+stock void AddMenuBool(Menu menu, bool value, const char[] display) {
     int convertedInt = value ? 1 : 0;
     AddMenuInt(menu, convertedInt, display);
 }
@@ -153,15 +154,15 @@ stock void AddMenuBool(Handle menu, bool value, const char[] display) {
 /**
  * Gets a boolean to a menu from a string choice.
  */
-stock bool GetMenuBool(Handle menu, int param2) {
+stock bool GetMenuBool(Menu menu, int param2) {
     return GetMenuInt(menu, param2) != 0;
 }
 
 /**
  * Returns a random index from an array.
  */
-stock int RandomIndex(Handle array) {
-    int len = GetArraySize(array);
+stock int RandomIndex(ArrayList array) {
+    int len = array.Length;
     if (len == 0)
         ThrowError("Can't get random index from empty array");
     return GetRandomInt(0, len - 1);
@@ -170,8 +171,8 @@ stock int RandomIndex(Handle array) {
 /**
  * Returns a random element from an array.
  */
-stock int RandomElement(Handle array) {
-    return GetArrayCell(array, RandomIndex(array));
+stock int RandomElement(ArrayList array) {
+    return array.Get(RandomIndex(array));
 }
 
 /**
@@ -203,7 +204,7 @@ stock int GetCookieInt(int client, Handle cookie) {
  * Sets a cookie to a boolean value.
  */
 stock void SetCookieBool(int client, Handle cookie, bool value) {
-    new convertedInt = value ? 1 : 0;
+    int convertedInt = value ? 1 : 0;
     SetCookieInt(client, cookie, convertedInt);
 }
 
