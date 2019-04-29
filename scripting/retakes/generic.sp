@@ -17,8 +17,9 @@ char g_ColorCodes[][] =    {"\x01",     "\x02",      "\x03",   "\x04",         "
  * Switches a player to a new team.
  */
 stock void SwitchPlayerTeam(int client, int team) {
-    if (GetClientTeam(client) == team)
+    if (GetClientTeam(client) == team) {
         return;
+    }
 
     g_PluginTeamSwitch[client] = true;
     if (team > CS_TEAM_SPECTATOR) {
@@ -27,6 +28,7 @@ stock void SwitchPlayerTeam(int client, int team) {
     } else {
         ChangeClientTeam(client, team);
     }
+    
     g_PluginTeamSwitch[client] = false;
 }
 
@@ -38,8 +40,10 @@ stock bool HelpfulAttack(int attacker, int victim) {
     if (!IsValidClient(attacker) || !IsValidClient(victim)) {
         return false;
     }
+    
     int ateam = GetClientTeam(attacker); // Get attacker's team
     int vteam = GetClientTeam(victim);   // Get the victim's team
+    
     return ateam != vteam && attacker != victim;
 }
 
@@ -50,11 +54,11 @@ stock bool HelpfulAttack(int attacker, int victim) {
 stock void GetTeamsClientCounts(int &tHumanCount, int &ctHumanCount) {
     for (int client = 1; client <= MaxClients; client++) {
         if (IsClientConnected(client) && IsClientInGame(client)) {
-            if (GetClientTeam(client) == CS_TEAM_T)
+            if (GetClientTeam(client) == CS_TEAM_T) {
                 tHumanCount++;
-
-            else if (GetClientTeam(client) == CS_TEAM_CT)
+            } else if (GetClientTeam(client) == CS_TEAM_CT) {
                 ctHumanCount++;
+            }
         }
     }
 }
@@ -66,12 +70,14 @@ stock int GetActivePlayerCount() {
     int count = 0;
     for (int client = 1; client <= MaxClients; client++) {
         if (IsClientConnected(client) && IsClientInGame(client)) {
-            if (GetClientTeam(client) == CS_TEAM_T)
+            if (GetClientTeam(client) == CS_TEAM_T) {
                 count++;
-            else if (GetClientTeam(client) == CS_TEAM_CT)
+            } else if (GetClientTeam(client) == CS_TEAM_CT) {
                 count++;
+            }
         }
     }
+    
     return count;
 }
 
@@ -92,9 +98,7 @@ stock bool IsConnected(int client) {
  * Function to identify if a client is valid and in game.
  */
 stock bool IsValidClient(int client) {
-    if (client > 0 && client <= MaxClients && IsClientConnected(client) && IsClientInGame(client))
-        return true;
-    return false;
+    return client > 0 && client <= MaxClients && IsClientConnected(client) && IsClientInGame(client));
 }
 
 /**
@@ -163,8 +167,11 @@ stock bool GetMenuBool(Menu menu, int param2) {
  */
 stock int RandomIndex(ArrayList array) {
     int len = array.Length;
-    if (len == 0)
+    
+    if (len == 0) {
         ThrowError("Can't get random index from empty array");
+    }
+    
     return GetRandomInt(0, len - 1);
 }
 
@@ -231,9 +238,11 @@ stock void GetCleanMapName(char[] buffer, int size) {
     int last_slash = 0;
     int len = strlen(mapName);
     for (int i = 0;  i < len; i++) {
-        if (mapName[i] == '/')
+        if (mapName[i] == '/') {
             last_slash = i + 1;
+        }
     }
+    
     strcopy(buffer, size, mapName[last_slash]);
 }
 
