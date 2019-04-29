@@ -252,8 +252,9 @@ public void OnMapStart() {
     g_EditMode = false;
     CreateTimer(1.0, Timer_ShowSpawns, _, TIMER_REPEAT | TIMER_FLAG_NO_MAPCHANGE);
 
-    if (!g_Enabled)
+    if (!g_Enabled) {
         return;
+    }
 
     ExecConfigs();
 
@@ -276,9 +277,9 @@ public int EnabledChanged(Handle cvar, const char[] oldValue, const char[] newVa
     g_Enabled = !StrEqual(newValue, "0");
 
     if (wasEnabled && !g_Enabled) {
-        if (g_SavedCvars != null)
+        if (g_SavedCvars != null) {
             RestoreCvars(g_SavedCvars, true);
-
+        }
     } else if (!wasEnabled && g_Enabled) {
         Queue_Clear(g_hWaitingQueue);
         ExecConfigs();
@@ -299,6 +300,7 @@ public void ExecConfigs() {
     if (g_SavedCvars != null) {
         CloseCvarStorage(g_SavedCvars);
     }
+    
     g_SavedCvars = ExecuteAndSaveCvars("sourcemod/retakes/retakes_game.cfg");
 }
 
@@ -315,8 +317,10 @@ public void OnClientDisconnect(int client) {
  * Helper functions that resets client variables when they join or leave.
  */
 public void ResetClientVariables(int client) {
-    if (client == g_BombOwner)
+    if (client == g_BombOwner) {
         g_BombOwner = -1;
+    }
+    
     Queue_Drop(g_hWaitingQueue, client);
     g_Team[client] = CS_TEAM_SPECTATOR;
     g_PluginTeamSwitch[client] = false;
@@ -336,6 +340,7 @@ public Action Command_Guns(int client, int args) {
         Call_PushCell(client);
         Call_Finish();
     }
+    
     return Plugin_Handled;
 }
 
@@ -369,8 +374,9 @@ public Action Command_JoinTeam(int client, const char[] command, int argc) {
         return Plugin_Continue;
     }
 
-    if (!IsValidClient(client) || argc < 1)
+    if (!IsValidClient(client) || argc < 1) {
         return Plugin_Handled;
+    }
 
     if (g_EditMode) {
         MovePlayerToEditMode(client);
@@ -490,6 +496,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
                 g_SpawnIndices[i] = SelectSpawn(g_Team[i], false);
             }
         }
+        
         g_RoundSpawnsDecided = true;
     }
 
@@ -536,6 +543,7 @@ public Action Event_DamageDealt(Event event, const char[] name, bool dontBroadca
         int damage = event.GetInt("dmg_PlayerHealth");
         g_RoundPoints[attacker] += (damage * POINTS_DMG);
     }
+    
     return Plugin_Continue;
 }
 
@@ -635,10 +643,11 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 
         for (int i = 1; i <= MaxClients; i++) {
             if (IsPlayer(i)) {
-                if (GetClientTeam(i) == CS_TEAM_CT)
+                if (GetClientTeam(i) == CS_TEAM_CT) {
                     cts.Push(i);
-                else if (GetClientTeam(i) == CS_TEAM_T)
+                } else if (GetClientTeam(i) == CS_TEAM_T) {
                     ts.Push(i);
+                }
             }
         }
 
@@ -733,12 +742,14 @@ public void UpdateTeams() {
     Call_Finish();
 
     g_ActivePlayers = PQ_GetSize(g_hRankingQueue);
-    if (g_ActivePlayers > g_hMaxPlayers.IntValue)
+    if (g_ActivePlayers > g_hMaxPlayers.IntValue) {
         g_ActivePlayers = g_hMaxPlayers.IntValue;
+    }
 
     g_NumT = RoundToNearest(g_hRatioConstant.FloatValue * float(g_ActivePlayers));
-    if (g_NumT < 1)
+    if (g_NumT < 1) {
         g_NumT = 1;
+    }
 
     g_NumCT = g_ActivePlayers - g_NumT;
 
@@ -780,10 +791,12 @@ public void UpdateTeams() {
             if (IsValidClient(i)) {
                 bool ct = GetClientTeam(i) == CS_TEAM_CT;
                 bool t = GetClientTeam(i) == CS_TEAM_T;
-                if ((ct && !g_HalfTime) || (t && g_HalfTime))
+                
+                if ((ct && !g_HalfTime) || (t && g_HalfTime)) {
                     cts.Push(i);
-                else if ((t && !g_HalfTime) || (ct && g_HalfTime))
+                } else if ((t && !g_HalfTime) || (ct && g_HalfTime)) {
                     ts.Push(i);
+                }
             }
         }
         g_NumCT = cts.Length;
@@ -799,6 +812,7 @@ public void UpdateTeams() {
 
     for (int i = 0; i < ts.Length; i++) {
         int client = ts.Get(i);
+        
         if (IsValidClient(client)) {
             SwitchPlayerTeam(client, CS_TEAM_T);
             g_Team[client] = CS_TEAM_T;
@@ -814,6 +828,7 @@ public void UpdateTeams() {
 
     for (int i = 0; i < cts.Length; i++) {
         int client = cts.Get(i);
+        
         if (IsValidClient(client)) {
             SwitchPlayerTeam(client, CS_TEAM_CT);
             g_Team[client] = CS_TEAM_CT;
@@ -866,6 +881,7 @@ public void TerroristsWon() {
             g_ScrambleSignal = true;
             Retakes_MessageToAll("%t", "ScrambleMessage", g_WinStreak);
         }
+        
         g_WinStreak = 0;
     } else if (g_WinStreak >= toScramble - 3 && ScramblesEnabled()) {
         Retakes_MessageToAll("%t", "WinStreakAlmostToScramble", g_WinStreak, toScramble - g_WinStreak);
