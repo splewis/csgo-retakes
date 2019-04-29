@@ -50,8 +50,10 @@ public void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, 
 }
 
 public void OnClientCookiesCached(int client) {
-    if (IsFakeClient(client))
+    if (IsFakeClient(client)) {
         return;
+    }
+    
     g_PistolChoice[client]  = GetCookieInt(client, g_PistolChoiceCookie);
 }
 
@@ -105,9 +107,11 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 public void GiveGunsMenu(int client) {
     Menu menu = new Menu(GunsMenuHandler);
     menu.SetTitle("Select a pistol:");
+    
     for (int i = 0; i < sizeof(g_PistolChoices); i++) {
         AddMenuInt(menu, i, g_PistolChoices[i][1]);
     }
+    
     menu.Display(client, MENU_TIME_LENGTH);
 }
 
