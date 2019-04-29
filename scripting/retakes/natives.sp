@@ -27,8 +27,11 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 public int Native_IsJoined(Handle plugin, int numParams) {
     int client = GetNativeCell(1);
-    if (!IsPlayer(client))
+    
+    if (!IsPlayer(client)) {
         return false;
+    }
+    
     return GetClientTeam(client) == CS_TEAM_T || GetClientTeam(client) == CS_TEAM_CT || Queue_Find(g_hWaitingQueue, client) != -1;
 }
 
@@ -56,7 +59,6 @@ public int Native_RetakeMessage(Handle plugin, int numParams) {
         Colorize(finalMsg, sizeof(finalMsg));
         PrintToChat(client, finalMsg);
     }
-
 }
 
 public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
