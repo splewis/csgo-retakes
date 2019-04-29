@@ -108,6 +108,7 @@ public Action Command_Show(int client, int args) {
     } else {
         ReplyToCommand(client, "Usage: sm_show <site>");
     }
+    
     return Plugin_Handled;
 }
 
@@ -167,8 +168,9 @@ public Action Timer_IterateSpawns(Handle timer, Handle data) {
     int spawnIndex = pack.ReadCell();
     int client = GetClientFromSerial(serial);
 
-    if (!IsPlayer(client))
+    if (!IsPlayer(client)) {
         return Plugin_Handled;
+    }
 
     MoveToSpawnInEditor(client, spawnIndex);
 
