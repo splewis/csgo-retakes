@@ -103,8 +103,9 @@ public void WriteSpawns() {
             break;
         }
 
-        if (g_SpawnDeleted[spawn])
+        if (g_SpawnDeleted[spawn]) {
             continue;
+        }
 
         char sBuf[32];
         IntToString(output_index, sBuf, sizeof(sBuf));
@@ -134,8 +135,9 @@ public void WriteSpawns() {
  */
 public void SetupPlayer(int client) {
     int spawnIndex = g_SpawnIndices[client];
-    if (spawnIndex < 0)
+    if (spawnIndex < 0) {
         return;
+    }
 
     SwitchPlayerTeam(client, g_Team[client]);
     MoveToSpawn(client, spawnIndex);
@@ -153,10 +155,11 @@ public void GiveWeapons(int client) {
 
     Client_RemoveAllWeapons(client);
 
-    if (g_Team[client] == CS_TEAM_T)
+    if (g_Team[client] == CS_TEAM_T) {
         GivePlayerItem(client, "weapon_knife_t");
-    else
+    } else {
         GivePlayerItem(client, "weapon_knife");
+    }
 
     GivePlayerItem(client, g_PlayerPrimary[client]);
     GivePlayerItem(client, g_PlayerSecondary[client]);
@@ -211,8 +214,8 @@ public bool InsideBombSite(float vec[3]) {
         if (in_x && in_y) {
             return true;
         }
-
     }
+    
     return false;
 }
 
@@ -233,14 +236,18 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
 }
 
 public bool CanBombCarrierSpawn(int spawn) {
-    if (g_SpawnTeams[spawn] == CS_TEAM_CT)
+    if (g_SpawnTeams[spawn] == CS_TEAM_CT) {
         return false;
+    }
+    
     return (g_SpawnTypes[spawn] != SpawnType_NeverWithBomb) && SpawnInsideBombSite(spawn);
 }
 
 public bool CanRegularPlayerSpawn(int spawn) {
-    if (g_SpawnTeams[spawn] == CS_TEAM_CT)
+    if (g_SpawnTeams[spawn] == CS_TEAM_CT) {
         return true;
+    }
+    
     return g_SpawnTypes[spawn] != SpawnType_OnlyWithBomb;
 }
 
