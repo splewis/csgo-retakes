@@ -23,8 +23,6 @@
 #include "retakes/natives.sp"
 #include "retakes/spawns.sp"
 
-
-
 /***********************
  *                     *
  * Sourcemod functions *
