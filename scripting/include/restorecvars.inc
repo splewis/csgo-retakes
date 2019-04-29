@@ -18,7 +18,6 @@ stock ArrayList SaveCvars(ArrayList cvarNames) {
             cvarNameList.PushString(nameBuffer);
             cvarValueList.PushString(valueBuffer);
         }
-
     }
 
     storageList.Push(cvarNameList);
@@ -62,8 +61,9 @@ stock bool __firstWord(const char[] line, char[] buffer, int len) {
     strcopy(lineBuffer, strlen(line), line);
     TrimString(lineBuffer);
     int splitIndex = StrContains(line, " ");
-    if (splitIndex == -1)
+    if (splitIndex == -1) {
         splitIndex = StrContains(line, "\t");
+    }
 
     if (splitIndex == -1) {
         Format(buffer,len,  "");
@@ -71,8 +71,9 @@ stock bool __firstWord(const char[] line, char[] buffer, int len) {
     }
 
     int destLen = splitIndex + 1;
-    if (destLen > len)
+    if (destLen > len) {
         destLen = len;
+    }
 
     strcopy(buffer, destLen, lineBuffer);
     return true;
