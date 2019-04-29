@@ -15,13 +15,15 @@ stock ArrayList Queue_Init() {
  * Push a Client to the end of the Queue (don't add a client if already in queue).
  */
 stock void Queue_Enqueue(ArrayList queueHandle, int client) {
-    if (Queue_Find(queueHandle, client) == -1)
+    if (Queue_Find(queueHandle, client) == -1) {
         queueHandle.Push(client);
+    }
 }
 
 stock void Queue_EnqueueFront(ArrayList queueHandle, int client) {
-    if (Queue_Find(queueHandle, client) != -1)
+    if (Queue_Find(queueHandle, client) != -1) {
         return;
+    }
 
     if (queueHandle.Length == 0) {
         Queue_Enqueue(queueHandle, client);
@@ -43,8 +45,9 @@ stock int Queue_Find(ArrayList queueHandle, int client) {
  */
 stock void Queue_Drop(ArrayList queueHandle, int client) {
     int index = Queue_Find(queueHandle, client);
-    if (index != -1)
+    if (index != -1) {
         queueHandle.Erase(index);
+    }
 }
 
 /**
