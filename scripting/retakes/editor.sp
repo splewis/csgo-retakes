@@ -27,8 +27,9 @@ public void ShowSpawns(Bombsite site) {
 }
 
 public Action Timer_ShowSpawns(Handle timer) {
-    if (!g_EditMode || g_hEditorEnabled.IntValue == 0)
+    if (!g_EditMode || g_hEditorEnabled.IntValue == 0) {
         return Plugin_Continue;
+    }
 
     g_iBeamSprite = PrecacheModel("sprites/laserbeam.vmt", true);
     g_iHaloSprite = PrecacheModel("sprites/halo.vmt", true);
@@ -43,6 +44,7 @@ public Action Timer_ShowSpawns(Handle timer) {
         for (int j = 0; j < g_NumSpawns; j++) {
             origin = g_SpawnPoints[j];
             angle = g_SpawnPoints[j];
+            
             if (SpawnFilter(j)) {
                 DisplaySpawnPoint(i, origin, angle, 40.0, g_SpawnTeams[j] == CS_TEAM_CT, g_SpawnTypes[j]);
             }
@@ -180,6 +182,7 @@ stock int FindClosestSpawn(int client) {
             closest = i;
         }
     }
+    
     return closest;
 }
 
