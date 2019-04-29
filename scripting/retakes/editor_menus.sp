@@ -32,7 +32,7 @@ public int EditorMenuHandler(Menu menu, MenuAction action, int param1, int param
 
         } else if (StrEqual(choice, "add_spawn")) {
             GiveNewSpawnMenu(client);
-
+            
         } else if (StrEqual(choice, "change_site")) {
             ShowSpawns(GetOtherSite(g_EditingSite));
             GiveEditorMenu(client, menuPosition);
@@ -46,7 +46,7 @@ public int EditorMenuHandler(Menu menu, MenuAction action, int param1, int param
             }
             GiveEditorMenu(client, menuPosition);
 
-        }else if (StrEqual(choice, "delete_nearest_spawn")) {
+        } else if (StrEqual(choice, "delete_nearest_spawn")) {
             DeleteClosestSpawn(client);
             GiveEditorMenu(client, menuPosition);
 
@@ -85,6 +85,7 @@ public void GiveNewSpawnMenu(int client) {
     } else {
         Format(typeString, sizeof(typeString), "Never bomb-carrier");
     }
+    
     if (g_EditingSpawnTeams[client] == CS_TEAM_CT) {
         AddMenuOptionDisabled(menu, "type", "Spawn type: %s", typeString);
     } else {
@@ -102,18 +103,23 @@ public int GiveNewSpawnMenuHandler(Menu menu, MenuAction action, int param1, int
         int client = param1;
         char choice[64];
         menu.GetItem(param2, choice, sizeof(choice));
+        
         if (StrEqual(choice, "finish")) {
             AddSpawn(client);
             GiveNewSpawnMenu(client);
+            
         } else if (StrEqual(choice, "team")) {
             g_EditingSpawnTeams[client] = GetOtherTeam(g_EditingSpawnTeams[client]);
             GiveNewSpawnMenu(client);
+            
         } else if (StrEqual(choice, "site")) {
             g_EditingSite = GetOtherSite(g_EditingSite);
             GiveNewSpawnMenu(client);
+            
         } else if (StrEqual(choice, "type")) {
             g_EditingSpawnTypes[client] = NextSpawnType(g_EditingSpawnTypes[client]);
             GiveNewSpawnMenu(client);
+            
         } else {
             LogError("unknown menu info string = %s", choice);
         }
