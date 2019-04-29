@@ -40,15 +40,18 @@ stock int PQ_Dequeue(ArrayList queueHandle) {
     for (int i = 0; i < queueHandle.Length; i++) {
         int client = queueHandle.Get(i, 0);
         int score = queueHandle.Get(i, 1);
+      
         if (maxIndex == -1 || score > maxScore) {
             maxIndex = i;
             maxClient = client;
             maxScore = score;
         }
     }
+  
     if (maxIndex != -1) {
         queueHandle.Erase(maxIndex);
     }
+  
     return maxClient;
 }
 
@@ -58,9 +61,11 @@ stock int PQ_Dequeue(ArrayList queueHandle) {
 stock int PQ_FindClient(ArrayList queueHandle, int client) {
     for (int i = 0; i < queueHandle.Length; i++) {
         int c = queueHandle.Get(i, 0);
-        if (client == c)
+        if (client == c) {
             return i;
+        }
     }
+  
     return -1;
 }
 
@@ -69,8 +74,9 @@ stock int PQ_FindClient(ArrayList queueHandle, int client) {
  */
 stock void PQ_DropFromQueue(ArrayList queueHandle, int client) {
     int index = PQ_FindClient(queueHandle, client);
-    if (index != -1)
+    if (index != -1) {
         queueHandle.Erase(index);
+    }
 }
 
 /**
