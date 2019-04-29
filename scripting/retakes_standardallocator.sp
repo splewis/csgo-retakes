@@ -48,8 +48,10 @@ public void Retakes_OnWeaponsAllocated(ArrayList tPlayers, ArrayList ctPlayers, 
  * Updates client weapon settings according to their cookies.
  */
 public void OnClientCookiesCached(int client) {
-    if (IsFakeClient(client))
+    if (IsFakeClient(client)) {
         return;
+    }
+    
     char ctrifle[WEAPON_STRING_LENGTH];
     char trifle[WEAPON_STRING_LENGTH];
     GetClientCookie(client, g_hCTRifleChoiceCookie, ctrifle, sizeof(ctrifle));
