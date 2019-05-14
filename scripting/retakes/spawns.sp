@@ -198,12 +198,12 @@ public Action Timer_StartPlant(Handle timer, int client) {
 }
 
 public bool InsideBombSite(float vec[3]) {
-    for (int i = 0; i < GetArraySize(g_SiteMaxs); i++) {
+    for (int i = 0; i < g_SiteMaxs.Length; i++) {
         float min[3];
         float max[3];
 
-        GetArrayArray(g_SiteMins, i, min, sizeof(min));
-        GetArrayArray(g_SiteMaxs, i, max, sizeof(max));
+        g_SiteMins.GetArray(i, min, sizeof(min));
+        g_SiteMaxs.GetArray(i, max, sizeof(max));
 
         bool in_x = (min[0] <= vec[0] && vec[0] <= max[0]) || (max[0] <= vec[0] && vec[0] <= min[0]);
         bool in_y = (min[1] <= vec[1] && vec[1] <= max[1]) || (max[1] <= vec[1] && vec[1] <= min[1]);

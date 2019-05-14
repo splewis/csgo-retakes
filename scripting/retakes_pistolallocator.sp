@@ -23,7 +23,7 @@ char g_PistolChoices[][][] = {
 };
 
 int g_PistolChoice[MAXPLAYERS+1];
-Handle g_PistolChoiceCookie = INVALID_HANDLE;
+Handle g_PistolChoiceCookie;
 
 public Plugin myinfo = {
     name = "CS:GO Retakes: Pistols and nades",
@@ -66,8 +66,8 @@ public void SetNades(char nades[NADE_STRING_LENGTH]) {
 }
 
 public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bombsite) {
-    int tCount = GetArraySize(tPlayers);
-    int ctCount = GetArraySize(ctPlayers);
+    int tCount = tPlayers.Length;
+    int ctCount = ctPlayers.Length;
 
     char primary[WEAPON_STRING_LENGTH];
     char secondary[WEAPON_STRING_LENGTH];
@@ -78,7 +78,7 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     bool kit = true;
 
     for (int i = 0; i < tCount; i++) {
-        int client = GetArrayCell(tPlayers, i);
+        int client = tPlayers.Get(i);
         int choice = g_PistolChoice[client];
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
         health = 100;
@@ -90,7 +90,7 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     }
 
     for (int i = 0; i < ctCount; i++) {
-        int client = GetArrayCell(ctPlayers, i);
+        int client = ctPlayers.Get(i);
         int choice = g_PistolChoice[client];
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
         kit = true;
@@ -104,11 +104,11 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
 
 public void GiveGunsMenu(int client) {
     Menu menu = new Menu(GunsMenuHandler);
-    SetMenuTitle(menu, "Select a pistol:");
+    menu.SetTitle("Select a pistol:");
     for (int i = 0; i < sizeof(g_PistolChoices); i++) {
         AddMenuInt(menu, i, g_PistolChoices[i][1]);
     }
-    DisplayMenu(menu, client, MENU_TIME_LENGTH);
+    menu.Display(client, MENU_TIME_LENGTH);
 }
 
 public int GunsMenuHandler(Menu menu, MenuAction action, int param1, int param2) {
@@ -118,7 +118,7 @@ public int GunsMenuHandler(Menu menu, MenuAction action, int param1, int param2)
         g_PistolChoice[client] = choice;
         SetCookieInt(client, g_PistolChoiceCookie, choice);
     } else if (action == MenuAction_End) {
-        CloseHandle(menu);
+        delete menu;
     }
 }
 
