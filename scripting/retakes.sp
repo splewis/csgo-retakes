@@ -236,7 +236,7 @@ public void OnPluginEnd() {
 
 public void OnMapStart() {
     PQ_Clear(g_hRankingQueue);
-    PQ_Clear(g_hWaitingQueue);
+    Queue_Clear(g_hWaitingQueue);
     g_ScrambleSignal = false;
     g_WinStreak = 0;
     g_RoundCount = 0;
