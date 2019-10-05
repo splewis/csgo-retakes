@@ -6,42 +6,34 @@
 	}
 	"WaitingQueueMessage"
 	{
-		"#format"		"{1:i}"
 		"pt"			"No momento, o jogo está cheio de jogadores {GREEN}{1}{NORMAL}. Você está na fila de espera."
 	}
 	"RetakeSiteMessage"
 	{
-		"#format"		"{1:s},{2:d},{3:d}"
 		"pt"			"Retake {GREEN}{1}: {LIGHT_RED}{2} Ts {NORMAL}vs {PURPLE}{3} CTs"
 	}
 	"ScrambleMessage"
 	{
-		"#format"		"{1:d}"
 		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}rodadas consecutivas. {PURPLE}Equipes estão sendo embaralhadas!"
 	}
 	"WinStreakAlmostToScramble"
 	{
-		"#format"		"{1:d},{2:d}"
 		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}rodadas consecutivas - se ganharem {GREEN}{2} mais, as equipes {PURPLE}serão embaralhadas."
 	}
 	"WinStreak"
 	{
-		"#format"		"{1:d}"
 		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}seguidas!"
 	}
 	"WinStreakOver"
 	{
-		"#format"		"{1:d}"
 		"pt"			"Os CTs terminaram uma sequência de vitórias longa {GREEN}{1}{NORMAL}!"
 	}
 	"AdminScrambleTeams"
 	{
-		"#format"		"{1:N}"
 		"pt"			"{1} definiu as equipes a serem embaralhadas na próxima rodada."
 	}
 	"FailedToPlant"
 	{
-		"#format"		"{1:N}"
 		"pt"		"{PURPLE}{1} {NORMAL}falhou ao plantar..."
 	}
 }
