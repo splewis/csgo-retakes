@@ -1,0 +1,39 @@
+"Phrases"
+{
+	"JoinedQueueMessage"
+	{
+		"pt"			"Você foi colocado na fila de espera."
+	}
+	"WaitingQueueMessage"
+	{
+		"pt"			"No momento, o jogo está cheio de jogadores {GREEN}{1}{NORMAL}. Você está na fila de espera."
+	}
+	"RetakeSiteMessage"
+	{
+		"pt"			"Retake {GREEN}{1}: {LIGHT_RED}{2} Ts {NORMAL}vs {PURPLE}{3} CTs"
+	}
+	"ScrambleMessage"
+	{
+		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}rodadas consecutivas. {PURPLE}Equipes estão sendo embaralhadas!"
+	}
+	"WinStreakAlmostToScramble"
+	{
+		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}rodadas consecutivas - se ganharem {GREEN}{2} mais, as equipes {PURPLE}serão embaralhadas."
+	}
+	"WinStreak"
+	{
+		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}seguidas!"
+	}
+	"WinStreakOver"
+	{
+		"pt"			"Os CTs terminaram uma sequência de vitórias longa {GREEN}{1}{NORMAL}!"
+	}
+	"AdminScrambleTeams"
+	{
+		"pt"			"{1} definiu as equipes a serem embaralhadas na próxima rodada."
+	}
+	"FailedToPlant"
+	{
+		"pt"		"{PURPLE}{1} {NORMAL}falhou ao plantar..."
+	}
+}

@@ -1,0 +1,47 @@
+"Phrases"
+{
+	"JoinedQueueMessage"
+	{
+		"tr"			"Bekleme sırasına eklendiniz."
+	}
+	"WaitingQueueMessage"
+	{
+		"#format"		"{1:i}"
+		"tr"			"Bu oyun {GREEN}{1} {NORMAL}oyuncu ile dolu durumda. Bekleme sırasındasınız."
+	}
+	"RetakeSiteMessage"
+	{
+		"#format"		"{1:s},{2:d},{3:d}"
+		"tr"			"Retake {GREEN}{1}: {LIGHT_RED}{2} T {NORMAL}vs {PURPLE}{3} AT"
+	}
+	"ScrambleMessage"
+	{
+		"#format"		"{1:d}"
+		"tr"			"Teröristler {GREEN}{1}{NORMAL} el arka arkaya kazandı. {PURPLE}Takımlar karıştırılıyor!"
+	}
+	"WinStreakAlmostToScramble"
+	{
+		"#format"		"{1:d},{2:d}"
+		"tr"			"Teröristler {GREEN}{1}{NORMAL} el arka arkaya kazandı - eğer {GREEN}{2} el daha alırlarsa, {PURPLE}takımlar karıştırılacak."
+	}
+	"WinStreak"
+	{
+		"#format"		"{1:d}"
+		"tr"			"Teröristler {GREEN}{1}{NORMAL} el arka arkaya kazandı!"
+	}
+	"WinStreakOver"
+	{
+		"#format"		"{1:d}"
+		"tr"			"Anti-Teröristler, {GREEN}{1}{NORMAL}-el devam eden seriyi bozdu!"
+	}
+	"AdminScrambleTeams"
+	{
+		"#format"		"{1:N}"
+		"tr"			"{1}, takımları gelecek el karıştırılmaya ayarladı."
+	}
+	"FailedToPlant"
+	{
+		"#format"		"{1:N}"
+		"tr"		"{PURPLE}{1} {NORMAL}bombayı kuramadı..."
+	}
+}
