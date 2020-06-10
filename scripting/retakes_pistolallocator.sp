@@ -20,6 +20,8 @@ char g_PistolChoices[][][] = {
     { "weapon_tec9", "Tec-9" },
     { "weapon_fiveseven", "Five-Seven" },
     { "weapon_deagle", "Deagle" },
+    // Random Pistol
+    { "", "Random" },
 };
 
 int g_PistolChoice[MAXPLAYERS+1];
@@ -80,7 +82,12 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     for (int i = 0; i < tCount; i++) {
         int client = tPlayers.Get(i);
         int choice = g_PistolChoice[client];
+        if(IsRandomPistol(choice)) {
+            int rand = GetRandomInt(0, 6);
+            strcopy(secondary, sizeof(secondary), g_PistolChoices[rand][0]);
+        } else {
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
+        }
         health = 100;
         kevlar = IsDefaultPistol(choice) ? 100 : 0;
         helmet = false;
@@ -92,7 +99,12 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     for (int i = 0; i < ctCount; i++) {
         int client = ctPlayers.Get(i);
         int choice = g_PistolChoice[client];
+        if(IsRandomPistol(choice)) {
+            int rand = GetRandomInt(0, 6);
+            strcopy(secondary, sizeof(secondary), g_PistolChoices[rand][0]);
+        } else {
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
+        }
         kit = true;
         health = 100;
         kevlar = IsDefaultPistol(choice) ? 100 : 0;
@@ -124,4 +136,8 @@ public int GunsMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 
 public bool IsDefaultPistol(int weaponIndex) {
     return weaponIndex <= 2;
+}
+
+public bool IsRandomPistol(int weaponIndex) {
+    return weaponIndex == 7;
 }
