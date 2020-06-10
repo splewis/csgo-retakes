@@ -82,12 +82,9 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     for (int i = 0; i < tCount; i++) {
         int client = tPlayers.Get(i);
         int choice = g_PistolChoice[client];
-        if(IsRandomPistol(choice)) {
-            int rand = GetRandomInt(0, 6);
-            strcopy(secondary, sizeof(secondary), g_PistolChoices[rand][0]);
-        } else {
+        if(IsRandomPistol(choice)) 
+            choice = GetRandomInt(0, 6);
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
-        }
         health = 100;
         kevlar = IsDefaultPistol(choice) ? 100 : 0;
         helmet = false;
@@ -99,12 +96,9 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
     for (int i = 0; i < ctCount; i++) {
         int client = ctPlayers.Get(i);
         int choice = g_PistolChoice[client];
-        if(IsRandomPistol(choice)) {
-            int rand = GetRandomInt(0, 6);
-            strcopy(secondary, sizeof(secondary), g_PistolChoices[rand][0]);
-        } else {
+        if(IsRandomPistol(choice))
+            choice = GetRandomInt(0, 6);
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
-        }
         kit = true;
         health = 100;
         kevlar = IsDefaultPistol(choice) ? 100 : 0;
