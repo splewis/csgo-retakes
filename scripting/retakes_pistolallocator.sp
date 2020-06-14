@@ -20,7 +20,7 @@ char g_PistolChoices[][][] = {
     { "weapon_tec9", "Tec-9" },
     { "weapon_fiveseven", "Five-Seven" },
     { "weapon_deagle", "Deagle" },
-    // Random Pistol
+    // Random pistol, must be last entry in the array
     { "", "Random" },
 };
 
@@ -83,7 +83,7 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         int client = tPlayers.Get(i);
         int choice = g_PistolChoice[client];
         if(IsRandomPistol(choice)) 
-            choice = GetRandomInt(0, 6);
+            choice = GetRandomInt(0, sizeof(g_PistolChoices) - 2);
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
         health = 100;
         kevlar = IsDefaultPistol(choice) ? 100 : 0;
@@ -97,7 +97,7 @@ public void PistolAllocator(ArrayList tPlayers, ArrayList ctPlayers, Bombsite bo
         int client = ctPlayers.Get(i);
         int choice = g_PistolChoice[client];
         if(IsRandomPistol(choice))
-            choice = GetRandomInt(0, 6);
+            choice = GetRandomInt(0, sizeof(g_PistolChoices) - 2);
         strcopy(secondary, sizeof(secondary), g_PistolChoices[choice][0]);
         kit = true;
         health = 100;
@@ -133,5 +133,5 @@ public bool IsDefaultPistol(int weaponIndex) {
 }
 
 public bool IsRandomPistol(int weaponIndex) {
-    return weaponIndex == 7;
+    return sizeof(g_PistolChoices) - 1;
 }
