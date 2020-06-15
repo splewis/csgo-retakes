@@ -133,5 +133,5 @@ public bool IsDefaultPistol(int weaponIndex) {
 }
 
 public bool IsRandomPistol(int weaponIndex) {
-    return sizeof(g_PistolChoices) - 1;
+    return weaponIndex == sizeof(g_PistolChoices) - 1;
 }
