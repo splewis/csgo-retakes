@@ -32,9 +32,6 @@
 #define POINTS_BOMB 50
 #define POINTS_LOSS 5000
 
-#define SITESTRING(%1) ((%1) == BombsiteA ? "A" : "B")
-#define TEAMSTRING(%1) ((%1) == CS_TEAM_CT ? "CT" : "T")
-
 bool g_Enabled = true;
 ArrayList g_SavedCvars;
 
