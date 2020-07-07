@@ -18,7 +18,7 @@
 	}
 	"WinStreakAlmostToScramble"
 	{
-		"chi"			"恐怖分子已经获得了{GREEN}{1}{NORMAL}回合的胜利 —— 如果他们再次以{GREEN}{2}{PURPLE}人组合赢得本回合，那么将会随机重组队伍。"
+		"chi"			"恐怖分子已经获得了{GREEN}{1}{NORMAL}回合的胜利 —— 如果他们再次赢得{GREEN}{2}{PURPLE}回合，那么将会随机重组队伍。"
 	}
 	"WinStreak"
 	{
