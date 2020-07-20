@@ -175,7 +175,7 @@ public void OnPluginStart() {
     RegAdminCmd("sm_new", Command_AddSpawn, ADMFLAG_CHANGEMAP, "Creates a new retakes spawn");
     RegAdminCmd("sm_newspawn", Command_AddSpawn, ADMFLAG_CHANGEMAP, "Creates a new retakes spawn");
     RegAdminCmd("sm_delete", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest retakes spawn");
-    RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest retakes spawn");\
+    RegAdminCmd("sm_deletespawn", Command_DeleteSpawn, ADMFLAG_CHANGEMAP, "Deletes the nearest retakes spawn");
     RegAdminCmd("sm_deletemapspawns", Command_DeleteMapSpawns, ADMFLAG_CHANGEMAP, "Deletes all retakes spawns for the current map");
 
     RegAdminCmd("sm_show", Command_Show, ADMFLAG_CHANGEMAP, "Shows all retakes spawns in a bombsite");
