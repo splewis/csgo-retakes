@@ -445,7 +445,7 @@ public Action Event_PlayerTeam(Event event, const char[] name, bool dontBroadcas
         return Plugin_Continue;
     }
 
-    event.BroadcastDisabled = true;
+    SetEventBool(event, "silent", true);
     return Plugin_Continue;
 }
 
