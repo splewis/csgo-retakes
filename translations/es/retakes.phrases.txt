@@ -1,0 +1,47 @@
+"Phrases"
+{
+	"JoinedQueueMessage"
+	{
+		"es"			"Fuiste puesto en la lista de espera."
+	}
+	"WaitingQueueMessage"
+	{
+		"#format"		"{1:i}"
+		"es"			"La partida está llena con {GREEN}{1} {NORMAL}jugadores. Te encuentras en la lista de espera."
+	}
+	"RetakeSiteMessage"
+	{
+		"#format"		"{1:s},{2:d},{3:d}"
+		"es"			"Retake {GREEN}{1}: {LIGHT_RED}{2} Ts {NORMAL}vs {PURPLE}{3} CTs"
+	}
+	"ScrambleMessage"
+	{
+		"#format"		"{1:d}"
+		"es"			"Los terroristas ganaron {GREEN}{1}{NORMAL} rondas seguidas. {PURPLE}Los equipos serán mezclados!"
+	}
+	"WinStreakAlmostToScramble"
+	{
+		"#format"		"{1:d},{2:d}"
+		"es"			"Los terroristas van ganando {GREEN}{1}{NORMAL} rondas seguidas - Si ganan {GREEN}{2} más, {PURPLE}los equipos serán a mezclados."
+	}
+	"WinStreak"
+	{
+		"#format"		"{1:d}"
+		"es"			"Los terroristas ganaron {GREEN}{1}{NORMAL} rondas seguidas!"
+	}
+	"WinStreakOver"
+	{
+		"#format"		"{1:d}"
+		"es"			"Los CTs habían perdido {GREEN}{1}{NORMAL} rondas, pero al fin ganaron 1."
+	}
+	"AdminScrambleTeams"
+	{
+		"#format"		"{1:N}"
+		"es"			"{1} Los equipos serán a mezclados en la siguiente ronda."
+	}
+	"FailedToPlant"
+	{
+		"#format"		"{1:N}"
+		"es"		"{PURPLE}{1} {NORMAL}Fallaron al plantar..."
+	}
+}
