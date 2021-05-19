@@ -1,0 +1,48 @@
+  
+"Phrases"
+{
+	"JoinedQueueMessage"
+	{
+		"da"			"Du er blevet placeret i køen."
+	}
+	"WaitingQueueMessage"
+	{
+		"#format"		"{1:i}"
+		"da"			"Dette spil er fuldt med {GREEN}{1} {NORMAL}spillere. Du er blevet placeret i køen."
+	}
+	"RetakeSiteMessage"
+	{
+		"#format"		"{1:s},{2:d},{3:d}"
+		"da"			"Retake {GREEN}{1}: {LIGHT_RED}{2} T'er {NORMAL}mod {PURPLE}{3} CT'er"
+	}
+	"ScrambleMessage"
+	{
+		"#format"		"{1:d}"
+		"da"			"Terroristerne har vundet {GREEN}{1}{NORMAL} runder i træk. {PURPLE}Holdende bliver blandet!"
+	}
+	"WinStreakAlmostToScramble"
+	{
+		"#format"		"{1:d},{2:d}"
+		"da"			"Terroristerne har vundet {GREEN}{1}{NORMAL} runder i træk - hvis de vinder {GREEN}{2} mere, {PURPLE}bliver holdende blandet."
+	}
+	"WinStreak"
+	{
+		"#format"		"{1:d}"
+		"da"			"Terroristerne har vundet {GREEN}{1}{NORMAL} runder i træk!"
+	}
+	"WinStreakOver"
+	{
+		"#format"		"{1:d}"
+		"da"			"CT'erne har afsluttet en {GREEN}{1}{NORMAL}-runde lang win streak!"
+	}
+	"AdminScrambleTeams"
+	{
+		"#format"		"{1:N}"
+		"da"			"{1} har sat holdende til at blive blandet."
+	}
+	"FailedToPlant"
+	{
+		"#format"		"{1:N}"
+		"da"		"{PURPLE}{1} {NORMAL}glemte at plante..."
+	}
+}
