@@ -6,7 +6,7 @@
 	}
 	"WaitingQueueMessage"
 	{
-		"pt"			"No momento, o jogo está cheio de jogadores {GREEN}{1}{NORMAL}. Você está na fila de espera."
+		"pt"			"O jogo está cheio no momento com {GREEN}{1} {NORMAL}players. Você está na fila de espera."
 	}
 	"RetakeSiteMessage"
 	{
@@ -14,26 +14,26 @@
 	}
 	"ScrambleMessage"
 	{
-		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}rodadas consecutivas. {PURPLE}Equipes estão sendo embaralhadas!"
+		"pt"			"Os Ts venceram {GREEN}{1} rounds {NORMAL}consecutivos. {PURPLE}Times estão sendo embaralhados!"
 	}
 	"WinStreakAlmostToScramble"
 	{
-		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}rodadas consecutivas - se ganharem {GREEN}{2} mais, as equipes {PURPLE}serão embaralhadas."
+		"pt"			"Os Ts venceram {GREEN}{1} rounds {NORMAL}consecutivos, se ganharem mais {GREEN}{2} rounds{NORMAL}, os times {PURPLE}serão embaralhados."
 	}
 	"WinStreak"
 	{
-		"pt"			"Os terroristas venceram {GREEN}{1} {NORMAL}seguidas!"
+		"pt"			"Os Ts venceram {GREEN}{1} rounds {NORMAL}consecutivos!"
 	}
 	"WinStreakOver"
 	{
-		"pt"			"Os CTs terminaram uma sequência de vitórias longa {GREEN}{1}{NORMAL}!"
+		"pt"			"Os CTs terminaram uma sequência de rounds consecutivos {GREEN}{1}{NORMAL}!"
 	}
 	"AdminScrambleTeams"
 	{
-		"pt"			"{1} definiu as equipes a serem embaralhadas na próxima rodada."
+		"pt"			"{1} definiu para os times serem embaralhados no próximo round."
 	}
 	"FailedToPlant"
 	{
-		"pt"		"{PURPLE}{1} {NORMAL}falhou ao plantar..."
+		"pt"			"{PURPLE}{1} {NORMAL}falhou ao plantar C4..."
 	}
 }
