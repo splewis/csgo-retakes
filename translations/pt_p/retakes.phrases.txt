@@ -1,0 +1,39 @@
+"Phrases"
+{
+	"JoinedQueueMessage"
+	{
+		"pt_p"			"Foste colocado na fila de espera."
+	}
+	"WaitingQueueMessage"
+	{
+		"pt_p"			"Neste momento o jogo está cheio com {GREEN}{1} {NORMAL}jogadores. Foste colocado na fila de espera."
+	}
+	"RetakeSiteMessage"
+	{
+		"pt_p"			"Retake {GREEN}{1}: {LIGHT_RED}{2} Ts {NORMAL}vs {PURPLE}{3} CTs"
+	}
+	"ScrambleMessage"
+	{
+		"pt_p"			"Os Ts venceram {GREEN}{1} rondas {NORMAL}consecutivas. {PURPLE}Equipas vão ser misturadas!"
+	}
+	"WinStreakAlmostToScramble"
+	{
+		"pt_p"			"Os Ts venceram {GREEN}{1} rondas {NORMAL}consecutivas, se ganharem mais {GREEN}{2} rondas{NORMAL}, as equipas {PURPLE}serão misturadas."
+	}
+	"WinStreak"
+	{
+		"pt_p"			"Os Ts venceram {GREEN}{1} rondas {NORMAL}consecutivas!"
+	}
+	"WinStreakOver"
+	{
+		"pt_p"			"Os CTs terminaram uma sequência de rondas consecutivas {GREEN}{1}{NORMAL}!"
+	}
+	"AdminScrambleTeams"
+	{
+		"pt_p"			"{1} definiu para que as equipas sejam misturadas na próxima ronda."
+	}
+	"FailedToPlant"
+	{
+		"pt_p"			"{PURPLE}{1} {NORMAL}falhou ao plantar C4..."
+	}
+}
