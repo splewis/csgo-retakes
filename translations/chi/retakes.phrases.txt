@@ -1,5 +1,9 @@
 "Phrases"
 {
+	"MessagePrefix"
+	{
+		"chi"			"[{GREEN}Retakes{NORMAL}]"
+	}
 	"JoinedQueueMessage"
 	{
 		"chi"			"您已被放置在等待队列中。"
