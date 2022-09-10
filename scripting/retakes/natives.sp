@@ -1,5 +1,3 @@
-#define MESSAGE_PREFIX "[\x05Retakes\x01]"
-
 #define CHECK_CONNECTED(%1) if (!IsClientConnected(%1)) ThrowNativeError(SP_ERROR_PARAM, "Client %d is not connected", %1)
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
@@ -47,7 +45,7 @@ public int Native_RetakeMessage(Handle plugin, int numParams) {
     FormatNativeString(0, 2, 3, sizeof(buffer), bytesWritten, buffer);
 
     char finalMsg[1024];
-    Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
+    Format(finalMsg, sizeof(finalMsg), " %t %s", "MessagePrefix", buffer);
 
     if (client == 0) {
         Colorize(finalMsg, sizeof(finalMsg), true);
@@ -65,7 +63,7 @@ public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
     int bytesWritten = 0;
 
     FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
-    Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
+    Format(finalMsg, sizeof(finalMsg), " %t %s", "MessagePrefix", buffer);
     Colorize(finalMsg, sizeof(finalMsg), true);
     PrintToConsole(0, finalMsg);
 
@@ -73,7 +71,7 @@ public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
         if (IsClientInGame(i)) {
             SetGlobalTransTarget(i);
             FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
-            Format(finalMsg, sizeof(finalMsg), "%s %s", MESSAGE_PREFIX, buffer);
+            Format(finalMsg, sizeof(finalMsg), " %t %s", "MessagePrefix", buffer);
             Colorize(finalMsg, sizeof(finalMsg));
             PrintToChat(i, finalMsg);
         }
