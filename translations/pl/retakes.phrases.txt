@@ -1,6 +1,9 @@
 "Phrases"
 {
-
+	"MessagePrefix"
+	{
+		"pl"			"[{GREEN}Retakes{NORMAL}]"
+	}
 	"WinStreak"
 	{
 		"pl"		"Terroryści wygrali {GREEN}{1}{NORMAL} rund pod rząd!"
