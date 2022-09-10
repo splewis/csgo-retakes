@@ -1,5 +1,9 @@
 "Phrases"
 {
+	"MessagePrefix"
+	{
+		"sv"			"[{GREEN}Retakes{NORMAL}]"
+	}
 	"JoinedQueueMessage"
 	{
 		"sv"			"Du är placerad i kön."
