@@ -1,6 +1,10 @@
   
 "Phrases"
 {
+	"MessagePrefix"
+	{
+		"da"			"[{GREEN}Retakes{NORMAL}]"
+	}
 	"JoinedQueueMessage"
 	{
 		"da"			"Du er blevet placeret i køen."
