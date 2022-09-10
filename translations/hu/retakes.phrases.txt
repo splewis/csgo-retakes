@@ -1,5 +1,9 @@
 "Phrases"
 {
+	"MessagePrefix"
+	{
+		"hu"			"[{GREEN}Retakes{NORMAL}]"
+	}
 	"JoinedQueueMessage"
 	{
 		"hu"			"Át lettél rakva a várólistába."
