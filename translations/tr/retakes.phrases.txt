@@ -1,5 +1,9 @@
 "Phrases"
 {
+	"MessagePrefix"
+	{
+		"tr"			"[{GREEN}Retakes{NORMAL}]"
+	}
 	"JoinedQueueMessage"
 	{
 		"tr"			"Bekleme sırasına eklendiniz."
