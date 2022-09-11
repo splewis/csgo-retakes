@@ -45,8 +45,11 @@ public int Native_RetakeMessage(Handle plugin, int numParams) {
     FormatNativeString(0, 2, 3, sizeof(buffer), bytesWritten, buffer);
 
     char finalMsg[1024];
-    Format(finalMsg, sizeof(finalMsg), " %t %s", "MessagePrefix", buffer);
-
+    char prefix[64];
+    
+    g_MessagePrefix.GetString(prefix, sizeof(prefix));
+    Format(finalMsg, sizeof(finalMsg), " %s %s", prefix, buffer);
+  	
     if (client == 0) {
         Colorize(finalMsg, sizeof(finalMsg), true);
         PrintToConsole(client, finalMsg);
@@ -60,10 +63,12 @@ public int Native_RetakeMessage(Handle plugin, int numParams) {
 public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
     char buffer[1024];
     char finalMsg[1024];
+    char prefix[64];
     int bytesWritten = 0;
-
+    
+    g_MessagePrefix.GetString(prefix, sizeof(prefix));
     FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
-    Format(finalMsg, sizeof(finalMsg), " %t %s", "MessagePrefix", buffer);
+    Format(finalMsg, sizeof(finalMsg), " %s %s", prefix, buffer);
     Colorize(finalMsg, sizeof(finalMsg), true);
     PrintToConsole(0, finalMsg);
 
@@ -71,7 +76,7 @@ public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
         if (IsClientInGame(i)) {
             SetGlobalTransTarget(i);
             FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
-            Format(finalMsg, sizeof(finalMsg), " %t %s", "MessagePrefix", buffer);
+            Format(finalMsg, sizeof(finalMsg), " %s %s", prefix, buffer);
             Colorize(finalMsg, sizeof(finalMsg));
             PrintToChat(i, finalMsg);
         }
