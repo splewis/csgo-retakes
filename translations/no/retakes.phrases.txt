@@ -1,9 +1,5 @@
 "Phrases"
 {
-	"MessagePrefix"
-	{
-		"no"			"[{GREEN}Retakes{NORMAL}]"
-	}
 	"ScrambleMessage"
 	{
 		"no"		"Terroristene har vunnet {GREEN}{1}{NORMAL} runder på rad. {PURPLE}Lagene blir samlet!"
