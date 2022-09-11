@@ -1,9 +1,5 @@
 "Phrases"
 {
-	"MessagePrefix"
-	{
-		"fr"			"[{GREEN}Retakes{NORMAL}]"
-	}
 	"JoinedQueueMessage"
 	{
 		"fr"			"Vous avez été placé dans la file d'attente."
