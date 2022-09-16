@@ -1,6 +1,5 @@
 "Phrases"
 {
-
 	"WinStreak"
 	{
 		"pl"		"Terroryści wygrali {GREEN}{1}{NORMAL} rund pod rząd!"
