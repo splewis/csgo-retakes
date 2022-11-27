@@ -270,7 +270,7 @@ public void OnMapEnd() {
     }
 }
 
-public int EnabledChanged(Handle cvar, const char[] oldValue, const char[] newValue) {
+public void EnabledChanged(Handle cvar, const char[] oldValue, const char[] newValue) {
     bool wasEnabled = !StrEqual(oldValue, "0");
     g_Enabled = !StrEqual(newValue, "0");
 
@@ -327,6 +327,8 @@ public Action Command_ScrambleTeams(int client, int args) {
         g_ScrambleSignal = true;
         Retakes_MessageToAll("%t", "AdminScrambleTeams", client);
     }
+
+    return Plugin_Continue;
 }
 
 public Action Command_Guns(int client, int args) {
@@ -459,11 +461,13 @@ public Action Event_PlayerTeam(Event event, const char[] name, bool dontBroadcas
  */
 public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontBroadcast) {
     if (!g_Enabled) {
-        return;
+        return Plugin_Continue;
     }
 
     int client = GetClientOfUserId(event.GetInt("userid"));
     SetEntPropFloat(client, Prop_Send, "m_fForceTeam", 3600.0);
+
+    return Plugin_Continue;
 }
 
 /**
@@ -472,12 +476,12 @@ public Action Event_PlayerConnectFull(Event event, const char[] name, bool dontB
  */
 public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
     if (!g_Enabled) {
-        return;
+        return Plugin_Continue;
     }
 
     int client = GetClientOfUserId(event.GetInt("userid"));
     if (!IsValidClient(client) || !IsOnTeam(client) || g_EditMode || Retakes_InWarmup())
-        return;
+        return Plugin_Continue;
 
     if (!g_RoundSpawnsDecided) {
         if (IsPlayer(g_BombOwner)) {
@@ -493,6 +497,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
     }
 
     SetupPlayer(client);
+    return Plugin_Continue;
 }
 
 /**
@@ -500,7 +505,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
  */
 public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast) {
     if (!Retakes_Live()) {
-        return;
+        return Plugin_Continue;
     }
 
     int victim = GetClientOfUserId(event.GetInt("userid"));
@@ -516,6 +521,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
             g_RoundPoints[attacker] -= POINTS_KILL;
         }
     }
+
+    return Plugin_Continue;
 }
 
 /**
@@ -543,11 +550,13 @@ public Action Event_DamageDealt(Event event, const char[] name, bool dontBroadca
  */
 public Action Event_BombPlant(Event event, const char[] name, bool dontBroadcast) {
     if (!g_Enabled) {
-        return;
+        return Plugin_Continue;
     }
 
     g_bombPlanted = true;
     g_bombPlantSignal = false;
+
+    return Plugin_Continue;
 }
 
 /**
@@ -555,13 +564,15 @@ public Action Event_BombPlant(Event event, const char[] name, bool dontBroadcast
  */
 public Action Event_Bomb(Event event, const char[] name, bool dontBroadcast) {
     if (!Retakes_Live()) {
-        return;
+        return Plugin_Continue;
     }
 
     int client = GetClientOfUserId(event.GetInt("userid"));
     if (IsValidClient(client)) {
         g_RoundPoints[client] += POINTS_BOMB;
     }
+
+    return Plugin_Continue;
 }
 
 /**
@@ -570,7 +581,7 @@ public Action Event_Bomb(Event event, const char[] name, bool dontBroadcast) {
  */
 public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroadcast) {
     if (!Retakes_Live()) {
-        return;
+        return Plugin_Continue;
     }
 
     g_RoundSpawnsDecided = false;
@@ -593,11 +604,13 @@ public Action Event_RoundPreStart(Event event, const char[] name, bool dontBroad
         g_BombOwner = player;
     }
     delete ts;
+
+    return Plugin_Continue;
 }
 
 public Action Event_RoundPostStart(Event event, const char[] name, bool dontBroadcast) {
     if (!Retakes_Live()) {
-        return;
+        return Plugin_Continue;
     }
 
     if (!g_EditMode) {
@@ -606,6 +619,8 @@ public Action Event_RoundPostStart(Event event, const char[] name, bool dontBroa
     }
 
     g_bombPlanted = false;
+
+    return Plugin_Continue;
 }
 
 /**
@@ -615,6 +630,8 @@ public Action Event_RoundFreezeEnd(Event event, const char[] name, bool dontBroa
     for (int i = 1; i <= MaxClients; i++) {
         g_RoundPoints[i] = 0;
     }
+
+    return Plugin_Continue;
 }
 
 /**
@@ -622,7 +639,7 @@ public Action Event_RoundFreezeEnd(Event event, const char[] name, bool dontBroa
  */
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) {
     if (!Retakes_Live()) {
-        return;
+        return Plugin_Continue;
     }
 
     if (g_ActivePlayers >= 2) {
@@ -662,11 +679,15 @@ public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
             CounterTerroristsWon();
         }
     }
+
+    return Plugin_Continue;
 }
 
 public Action Event_HalfTime(Event event, const char[] name, bool dontBroadcast)
 {
     g_HalfTime = true;
+
+    return Plugin_Continue;
 }
 
 /***********************
