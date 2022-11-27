@@ -68,6 +68,8 @@ public int EditorMenuHandler(Menu menu, MenuAction action, int param1, int param
     } else if (action == MenuAction_End) {
         delete menu;
     }
+
+    return 0;
 }
 
 public void GiveNewSpawnMenu(int client) {
@@ -123,6 +125,8 @@ public int GiveNewSpawnMenuHandler(Menu menu, MenuAction action, int param1, int
     } else if (action == MenuAction_End) {
         delete menu;
     }
+
+    return 0;
 }
 
 public SpawnType NextSpawnType(SpawnType type) {

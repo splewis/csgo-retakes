@@ -195,6 +195,8 @@ public Action Timer_StartPlant(Handle timer, int client) {
     if (IsPlayer(client)) {
         g_bombPlantSignal = true;
     }
+
+    return Plugin_Continue;
 }
 
 public bool InsideBombSite(float vec[3]) {

@@ -48,7 +48,7 @@ public int Native_RetakeMessage(Handle plugin, int numParams) {
     char prefix[64];
     
     g_MessagePrefix.GetString(prefix, sizeof(prefix));
-    Format(finalMsg, sizeof(finalMsg), " %s %s", prefix, buffer);
+    int finalBytesWritten = Format(finalMsg, sizeof(finalMsg), " %s %s", prefix, buffer);
   	
     if (client == 0) {
         Colorize(finalMsg, sizeof(finalMsg), true);
@@ -58,6 +58,7 @@ public int Native_RetakeMessage(Handle plugin, int numParams) {
         PrintToChat(client, finalMsg);
     }
 
+    return finalBytesWritten;
 }
 
 public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
@@ -68,7 +69,7 @@ public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
     
     g_MessagePrefix.GetString(prefix, sizeof(prefix));
     FormatNativeString(0, 1, 2, sizeof(buffer), bytesWritten, buffer);
-    Format(finalMsg, sizeof(finalMsg), " %s %s", prefix, buffer);
+    int finalBytesWritten = Format(finalMsg, sizeof(finalMsg), " %s %s", prefix, buffer);
     Colorize(finalMsg, sizeof(finalMsg), true);
     PrintToConsole(0, finalMsg);
 
@@ -81,6 +82,8 @@ public int Native_RetakeMessageToAll(Handle plugin, int numParams) {
             PrintToChat(i, finalMsg);
         }
     }
+
+    return finalBytesWritten + sizeof(prefix) - 1;
 }
 
 public int Native_GetNumActiveTs(Handle plugin, int numParams) {
@@ -110,6 +113,8 @@ public int Native_SetRoundPoints(Handle plugin, int numParams) {
     CHECK_CONNECTED(client);
     int points = GetNativeCell(2);
     g_RoundPoints[client] = points;
+
+    return 0;
 }
 
 public int Native_ChangeRoundPoints(Handle plugin, int numParams) {
@@ -117,6 +122,8 @@ public int Native_ChangeRoundPoints(Handle plugin, int numParams) {
     CHECK_CONNECTED(client);
     int dp = GetNativeCell(2);
     g_RoundPoints[client] += dp;
+
+    return 0;
 }
 
 public int Native_GetPlayerInfo(Handle plugin, int numParams) {
@@ -130,6 +137,8 @@ public int Native_GetPlayerInfo(Handle plugin, int numParams) {
     SetNativeCellRef(6, g_PlayerArmor[client]);
     SetNativeCellRef(7, g_PlayerHelmet[client]);
     SetNativeCellRef(8, g_PlayerKit[client]);
+
+    return 0;
 }
 
 public int Native_SetPlayerInfo(Handle plugin, int numParams) {
@@ -144,6 +153,8 @@ public int Native_SetPlayerInfo(Handle plugin, int numParams) {
     g_PlayerArmor[client] = GetNativeCell(6);
     g_PlayerHelmet[client] = GetNativeCell(7);
     g_PlayerKit[client] = GetNativeCell(8);
+
+    return 0;
 }
 
 public int Native_GetRetakeRoundsPlayed(Handle plugin, int numParams) {
