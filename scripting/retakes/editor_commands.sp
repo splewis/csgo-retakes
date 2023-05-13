@@ -178,7 +178,7 @@ public Action Timer_IterateSpawns(Handle timer, DataPack data) {
         spawnIndex++;
     }
 
-    if (!g_SpawnDeleted[spawnIndex] && !g_SpawnDeleted[spawnIndex]) {
+    if (!g_SpawnDeleted[spawnIndex] && spawnIndex < g_NumSpawns) {
         DataPack newData;
         CreateDataTimer(2.0, Timer_IterateSpawns, newData);
         newData.WriteCell(serial);
