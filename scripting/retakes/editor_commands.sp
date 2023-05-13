@@ -153,18 +153,19 @@ public Action Command_IterateSpawns(int client, int args) {
         startIndex = StringToInt(buf);
     }
 
-    DataPack pack = new DataPack();
+    DataPack pack;
+
+    CreateDataTimer(2.0, Timer_IterateSpawns, pack);
     pack.WriteCell(GetClientSerial(client));
     pack.WriteCell(startIndex);
-    CreateDataTimer(2.0, Timer_IterateSpawns, pack);
+
     return Plugin_Handled;
 }
 
-public Action Timer_IterateSpawns(Handle timer, Handle data) {
-    DataPack pack = view_as<DataPack>(data);
-    pack.Reset();
-    int serial = pack.ReadCell();
-    int spawnIndex = pack.ReadCell();
+public Action Timer_IterateSpawns(Handle timer, DataPack data) {
+    data.Reset();
+    int serial = data.ReadCell();
+    int spawnIndex = data.ReadCell();
     int client = GetClientFromSerial(serial);
 
     if (!IsPlayer(client))
@@ -178,10 +179,10 @@ public Action Timer_IterateSpawns(Handle timer, Handle data) {
     }
 
     if (!g_SpawnDeleted[spawnIndex] && !g_SpawnDeleted[spawnIndex]) {
-        pack = new DataPack();
-        pack.WriteCell(serial);
-        pack.WriteCell(spawnIndex);
-        CreateDataTimer(2.0, Timer_IterateSpawns, pack);
+        DataPack newData;
+        CreateDataTimer(2.0, Timer_IterateSpawns, newData);
+        newData.WriteCell(serial);
+        newData.WriteCell(spawnIndex);
     }
 
     return Plugin_Handled;
