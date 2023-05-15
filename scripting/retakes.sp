@@ -257,7 +257,9 @@ public void OnMapStart() {
     ExecConfigs();
 
     // Restart warmup for players to connect.
-    StartTimedWarmup(g_WarmupTimeCvar.IntValue);
+    if (g_WarmupTimeCvar.IntValue > 0) {
+        StartTimedWarmup(g_WarmupTimeCvar.IntValue);
+    }
 }
 
 public void OnMapEnd() {

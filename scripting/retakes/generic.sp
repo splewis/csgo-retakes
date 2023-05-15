@@ -257,6 +257,11 @@ stock void StartPausedWarmup() {
 }
 
 stock void StartTimedWarmup(int time) {
+    // avoid infinite warmup start spam
+    if (time < 6) {
+        time = 6;
+    }
+
     ServerCommand("mp_do_warmup_period 1");
     ServerCommand("mp_warmup_pausetimer 0");
     ServerCommand("mp_warmuptime %d", time);
